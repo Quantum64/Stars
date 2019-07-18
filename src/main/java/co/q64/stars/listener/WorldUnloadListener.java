@@ -2,24 +2,11 @@ package co.q64.stars.listener;
 
 import co.q64.stars.binders.ConstantBinders.ModId;
 import co.q64.stars.util.Logger;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.dimension.Dimension;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.event.world.RegisterDimensionsEvent;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.registries.ClearableRegistry;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.Iterator;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class WorldUnloadListener implements Listener {
@@ -31,7 +18,6 @@ public class WorldUnloadListener implements Listener {
     private ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
     protected @Inject WorldUnloadListener() {}
-
 
     /*
     @SubscribeEvent

@@ -1,5 +1,7 @@
 package co.q64.stars.tile;
 
+import co.q64.stars.block.AirDecayBlock;
+import co.q64.stars.block.AirDecayEdgeBlock;
 import co.q64.stars.block.DecayBlock;
 import co.q64.stars.block.DecayEdgeBlock;
 import co.q64.stars.block.FormingBlock;
@@ -34,6 +36,7 @@ public class FormingTile extends TileEntity implements ITickableTileEntity {
     private FormingBlockTypes types;
     private FormingBlock formingBlock;
     private DecayEdgeBlock decayEdgeBlock;
+    private AirDecayEdgeBlock airDecayEdgeBlock;
 
     private @Setter @Getter boolean calculated = false;
     private @Setter @Getter boolean first = true;
@@ -46,11 +49,12 @@ public class FormingTile extends TileEntity implements ITickableTileEntity {
     private int ticks = 0;
     private int formTicks;
 
-    public FormingTile(@Provided FormingTileType type, @Provided FormingBlock formingBlock, @Provided FormingBlockTypes types, @Provided DecayEdgeBlock decayEdgeBlock) {
+    public FormingTile(@Provided FormingTileType type, @Provided FormingBlock formingBlock, @Provided FormingBlockTypes types, @Provided DecayEdgeBlock decayEdgeBlock, @Provided AirDecayEdgeBlock airDecayEdgeBlock) {
         super(type);
         this.types = types;
         this.formingBlock = formingBlock;
         this.decayEdgeBlock = decayEdgeBlock;
+        this.airDecayEdgeBlock = airDecayEdgeBlock;
         setup(ThreadLocalRandom.current().nextBoolean() ? types.purpleFormingBlockType : types.yellowFormingBlockType);
     }
 
@@ -140,7 +144,9 @@ public class FormingTile extends TileEntity implements ITickableTileEntity {
                 // Check if decay needs to be reactivated
                 for (Direction direction : DIRECTIONS) {
                     BlockPos target = getPos().offset(direction);
-                    if (world.getBlockState(target).getBlock() instanceof DecayBlock) {
+                    if (world.getBlockState(target).getBlock() instanceof AirDecayBlock) {
+                        world.setBlockState(target, airDecayEdgeBlock.getDefaultState());
+                    } else if (world.getBlockState(target).getBlock() instanceof DecayBlock) {
                         world.setBlockState(target, decayEdgeBlock.getDefaultState());
                     }
                 }

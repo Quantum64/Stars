@@ -17,5 +17,4 @@ public class ClientRegistryListener implements Listener {
     @SubscribeEvent
     public void modelLoadEvent(ModelRegistryEvent event) {
     }
-
 }

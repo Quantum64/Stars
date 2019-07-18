@@ -1,6 +1,6 @@
 package co.q64.stars.block;
 
-import co.q64.stars.tile.DecayEdgeTileFactory;
+import co.q64.stars.tile.DarknessEdgeTileFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
@@ -14,11 +14,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class DecayEdgeBlock extends BaseBlock {
-    protected @Inject DecayEdgeTileFactory tileFactory;
+public class DarknessEdgeBlock extends BaseBlock {
+    protected @Inject DarknessEdgeTileFactory tileFactory;
 
-    protected @Inject DecayEdgeBlock() {
-        super("decay_edge", Properties.create(Material.IRON).hardnessAndResistance(1.5f, 6.0f));
+    protected @Inject DarknessEdgeBlock() {
+        super("darkness_edge", Properties.create(Material.IRON).hardnessAndResistance(1.5f, 6.0f));
     }
 
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {

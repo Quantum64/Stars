@@ -1,9 +1,10 @@
 package co.q64.stars.block;
 
-import co.q64.stars.tile.DecayEdgeTileFactory;
+import co.q64.stars.tile.AirDecayEdgeTileFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -14,11 +15,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class DecayEdgeBlock extends BaseBlock {
-    protected @Inject DecayEdgeTileFactory tileFactory;
+public class AirDecayEdgeBlock extends BaseBlock {
+    protected @Inject AirDecayEdgeTileFactory tileFactory;
 
-    protected @Inject DecayEdgeBlock() {
-        super("decay_edge", Properties.create(Material.IRON).hardnessAndResistance(1.5f, 6.0f));
+    protected @Inject AirDecayEdgeBlock() {
+        super("air_decay_edge", Properties.create(Material.IRON).hardnessAndResistance(1.5f, 6.0f));
     }
 
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
@@ -31,5 +32,9 @@ public class DecayEdgeBlock extends BaseBlock {
 
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         return tileFactory.create();
+    }
+
+    public BlockRenderLayer getRenderLayer() {
+        return BlockRenderLayer.TRANSLUCENT;
     }
 }
