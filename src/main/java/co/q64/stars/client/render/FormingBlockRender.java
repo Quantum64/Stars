@@ -27,23 +27,27 @@ public class FormingBlockRender extends TileEntityRenderer<FormingTile> {
     }
 
     public void render(FormingTile tile, double x, double y, double z, float partialTicks, int destroyStage) {
+        if (!tile.isCalculated()) {
+            return;
+        }
         FormingBlockType type = tile.getFormType();
         Direction direction = tile.getDirection();
-        int buildTime = type.getBuildTime();
+        int buildTime = tile.getBuildTime();
         float timeSincePlace = System.currentTimeMillis() - tile.getPlaced();
         if (timeSincePlace > buildTime) {
             timeSincePlace = buildTime;
         }
         float progress = timeSincePlace / buildTime;
-        /*
+
         float bottomCapProgress = progress * 5;
         float sideProgress = (progress - 0.2f) * 1.666f;
         float topCapProgress = (progress - 0.8f) * 5;
-         */
 
+        /*
         float bottomCapProgress = progress * 3;
         float sideProgress = (progress - 0.333f) * 3;
         float topCapProgress = (progress - 0.666f) * 3;
+         */
 
         bottomCapProgress = bottomCapProgress > 1 ? 1 : bottomCapProgress;
         sideProgress = sideProgress > 1 ? 1 : sideProgress;

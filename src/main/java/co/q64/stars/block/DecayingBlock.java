@@ -1,6 +1,6 @@
 package co.q64.stars.block;
 
-import co.q64.stars.tile.FormingTileFactory;
+import co.q64.stars.tile.DecayingTileFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
@@ -17,21 +17,16 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class FormingBlock extends BaseBlock {
-    protected @Inject FormingTileFactory tileFactory;
+public class DecayingBlock extends BaseBlock {
+    protected @Inject DecayingTileFactory tileFactory;
 
-    protected @Inject FormingBlock() {
-        super("forming", Properties.create(Material.IRON).hardnessAndResistance(1.5f, 6.0f));
-        //setDefaultState(getStateContainer().getBaseState().with(BlockStates.TYPE, 0));
+    protected @Inject DecayingBlock() {
+        super("decaying", Properties.create(Material.IRON).hardnessAndResistance(1.5f, 6.0f));
     }
 
     @OnlyIn(Dist.CLIENT)
     public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.CUTOUT;
-    }
-
-    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
-        return VoxelShapes.empty();
     }
 
     public boolean hasTileEntity(BlockState state) {

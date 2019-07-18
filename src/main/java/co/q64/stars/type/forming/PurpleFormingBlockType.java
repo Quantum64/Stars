@@ -1,6 +1,6 @@
 package co.q64.stars.type.forming;
 
-import co.q64.stars.block.YellowFormedBlock;
+import co.q64.stars.block.PurpleFormedBlock;
 import co.q64.stars.type.FormingBlockType;
 import lombok.Getter;
 import net.minecraft.util.Direction;
@@ -9,29 +9,29 @@ import net.minecraft.world.World;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 @Singleton
-public class YellowFormingBlockType implements FormingBlockType {
-    private final @Getter int id = 0;
-    private final @Getter String name = "yellow";
-    private final @Getter int buildTime = 200;
-    private final @Getter int buildTimeOffset = 0;
-    private final @Getter float r = 200, g = 200, b = 20;
+public class PurpleFormingBlockType implements FormingBlockType {
+    private final @Getter int id = 1;
+    private final @Getter String name = "purple";
+    private final @Getter int buildTime = 3000;
+    private final @Getter int buildTimeOffset = 500;
+    private final @Getter float r = 140, g = 50, b = 140;
 
-    protected @Getter @Inject YellowFormedBlock formedBlock;
+    protected @Getter @Inject PurpleFormedBlock formedBlock;
 
-    protected @Inject YellowFormingBlockType() {}
+    protected @Inject PurpleFormingBlockType() {}
 
     public int getIterations(long seed) {
-        return (int) (5 + (seed % 4));
+        return 3;
     }
 
     public Direction getInitialDirection(World world, BlockPos position) {
         Direction result = Direction.UP;
         for (Direction direction : Direction.values()) {
-            if (direction == Direction.UP || direction == direction.DOWN) {
+            if (direction == Direction.UP || direction == Direction.DOWN) {
                 continue;
             }
             if (hasBlock(world, position, direction)) {
@@ -44,13 +44,18 @@ public class YellowFormingBlockType implements FormingBlockType {
     }
 
     public List<Direction> getNextDirections(World world, BlockPos position, Direction last, int iterations) {
-        if (!hasBlock(world, position, last)) {
-            return Collections.singletonList(last);
+        List<Direction> result = new ArrayList<>();
+        for (Direction direction : Direction.values()) {
+            if (direction.getAxis() != last.getAxis()) {
+                if (!hasBlock(world, position, direction)) {
+                    result.add(direction);
+                }
+            }
         }
-        return Collections.emptyList();
+        return result;
     }
 
     public int getDecayTime(long seed) {
-        return 40 + (int) seed % 10;
+        return 150 + (int) seed % 50;
     }
 }
