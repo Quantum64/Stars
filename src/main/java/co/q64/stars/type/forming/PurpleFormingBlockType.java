@@ -18,7 +18,7 @@ public class PurpleFormingBlockType implements FormingBlockType {
     private final @Getter String name = "purple";
     private final @Getter int buildTime = 3000;
     private final @Getter int buildTimeOffset = 500;
-    private final @Getter float r = 140, g = 50, b = 140;
+    private final @Getter float r = 160, g = 0, b = 255;
 
     protected @Getter @Inject PurpleFormedBlock formedBlock;
 
@@ -29,7 +29,10 @@ public class PurpleFormingBlockType implements FormingBlockType {
     }
 
     public Direction getInitialDirection(World world, BlockPos position) {
-        Direction result = Direction.UP;
+        Direction result = null;
+        if (!hasBlock(world, position, Direction.UP)) {
+            result = Direction.UP;
+        }
         for (Direction direction : Direction.values()) {
             if (direction == Direction.UP || direction == Direction.DOWN) {
                 continue;

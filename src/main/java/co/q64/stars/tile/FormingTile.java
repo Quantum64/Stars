@@ -4,6 +4,7 @@ import co.q64.stars.block.AirDecayBlock;
 import co.q64.stars.block.AirDecayEdgeBlock;
 import co.q64.stars.block.DecayBlock;
 import co.q64.stars.block.DecayEdgeBlock;
+import co.q64.stars.block.FormedBlock;
 import co.q64.stars.block.FormingBlock;
 import co.q64.stars.tile.type.FormingTileType;
 import co.q64.stars.type.FormingBlockType;
@@ -123,6 +124,9 @@ public class FormingTile extends TileEntity implements ITickableTileEntity {
         if (!world.isRemote) {
             if (first && !calculated) {
                 direction = formType.getInitialDirection(world, pos);
+                if (direction == null) {
+                    direction = Direction.UP;
+                }
                 calculated = true;
                 world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 2);
             }
@@ -136,7 +140,12 @@ public class FormingTile extends TileEntity implements ITickableTileEntity {
                         if (player.posX > getPos().getX() - 0.3 && player.posX < getPos().getX() + 1.3
                                 && player.posZ > getPos().getZ() - 0.3 && player.posZ < getPos().getZ() + 1.3
                                 && player.posY > getPos().getY() - 0.01 && player.posY < getPos().getY() + 1.01) {
-                            player.connection.setPlayerLocation(player.posX, player.posY + 1, player.posZ, player.rotationYaw, player.rotationPitch, Arrays.asList(Flags.X, Flags.Y, Flags.Z, Flags.X_ROT, Flags.Y_ROT).stream().collect(Collectors.toSet()));
+                            if (world.getBlockState(getPos().offset(Direction.UP)).getBlock() instanceof FormedBlock) {
+                                world.setBlockState(getPos(), decayEdgeBlock.getDefaultState());
+                                player.teleport((ServerWorld) world, getPos().getX() + 0.5, getPos().getY() + 0.1, getPos().getZ() + 0.5, player.rotationYaw, player.rotationPitch);
+                            } else {
+                                player.connection.setPlayerLocation(player.posX, player.posY + 1, player.posZ, player.rotationYaw, player.rotationPitch, Arrays.asList(Flags.X, Flags.Y, Flags.Z, Flags.X_ROT, Flags.Y_ROT).stream().collect(Collectors.toSet()));
+                            }
                         }
                     }
                 }

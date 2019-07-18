@@ -16,7 +16,7 @@ import javax.inject.Singleton;
 public class AirDecayBlock extends DecayBlock {
 
     protected @Inject AirDecayBlock() {
-        super("air_decay", Properties.create(Material.IRON).hardnessAndResistance(1.5f, 6.0f));
+        super("air_decay", Properties.create(Material.IRON).hardnessAndResistance(-1f, 3600000f));
     }
 
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {

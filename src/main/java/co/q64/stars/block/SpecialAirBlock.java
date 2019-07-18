@@ -16,7 +16,7 @@ import javax.inject.Singleton;
 public class SpecialAirBlock extends BaseBlock {
 
     protected @Inject SpecialAirBlock() {
-        super("special_air", Properties.create(Material.AIR).hardnessAndResistance(1.5f, 6.0f));
+        super("special_air", Properties.create(Material.AIR).hardnessAndResistance(0f, 0f));
     }
 
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {

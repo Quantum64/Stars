@@ -21,7 +21,7 @@ public class DecayingBlock extends BaseBlock {
     protected @Inject DecayingTileFactory tileFactory;
 
     protected @Inject DecayingBlock() {
-        super("decaying", Properties.create(Material.IRON).hardnessAndResistance(1.5f, 6.0f));
+        super("decaying", Properties.create(Material.GLASS).hardnessAndResistance(0f, 0f));
     }
 
     @OnlyIn(Dist.CLIENT)

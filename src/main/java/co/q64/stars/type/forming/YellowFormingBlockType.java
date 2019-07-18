@@ -16,9 +16,9 @@ import java.util.List;
 public class YellowFormingBlockType implements FormingBlockType {
     private final @Getter int id = 0;
     private final @Getter String name = "yellow";
-    private final @Getter int buildTime = 200;
+    private final @Getter int buildTime = 150;
     private final @Getter int buildTimeOffset = 0;
-    private final @Getter float r = 200, g = 200, b = 20;
+    private final @Getter float r = 255, g = 234, b = 0;
 
     protected @Getter @Inject YellowFormedBlock formedBlock;
 
@@ -29,7 +29,10 @@ public class YellowFormingBlockType implements FormingBlockType {
     }
 
     public Direction getInitialDirection(World world, BlockPos position) {
-        Direction result = Direction.UP;
+        Direction result = null;
+        if (!hasBlock(world, position, Direction.UP)) {
+            result = Direction.UP;
+        }
         for (Direction direction : Direction.values()) {
             if (direction == Direction.UP || direction == direction.DOWN) {
                 continue;
@@ -51,6 +54,6 @@ public class YellowFormingBlockType implements FormingBlockType {
     }
 
     public int getDecayTime(long seed) {
-        return 40 + (int) seed % 10;
+        return 30 + (int) seed % 10;
     }
 }

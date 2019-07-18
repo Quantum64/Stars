@@ -6,12 +6,14 @@ import co.q64.stars.block.DecayBlock;
 import co.q64.stars.block.DecayEdgeBlock;
 import co.q64.stars.block.DecayingBlock;
 import co.q64.stars.block.FormedBlock;
+import co.q64.stars.block.FormingBlock;
 import co.q64.stars.tile.type.DecayEdgeTileType;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.FormingBlockTypes;
 import com.google.auto.factory.AutoFactory;
 import com.google.auto.factory.Provided;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -99,6 +101,8 @@ public class DecayEdgeTile extends TileEntity implements ITickableTileEntity {
                         decayAmount.put(direction, decay + 1);
                         counts++;
                     }
+                } else if (block instanceof FormingBlock) {
+                    world.setBlockState(target, Blocks.AIR.getDefaultState());
                 }
             }
             if (counts == 0) {

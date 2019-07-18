@@ -16,7 +16,7 @@ import java.nio.FloatBuffer;
 
 @Singleton
 public class FormingBlockRender extends TileEntityRenderer<FormingTile> {
-    private static final float width = 0.1f;
+    private static final float width = 0.125f;
     private FloatBuffer verticalFlip = FloatBuffer.allocate(16);
 
     protected @Inject FormingBlockRender() {

@@ -18,7 +18,7 @@ public class DecayEdgeBlock extends BaseBlock {
     protected @Inject DecayEdgeTileFactory tileFactory;
 
     protected @Inject DecayEdgeBlock() {
-        super("decay_edge", Properties.create(Material.IRON).hardnessAndResistance(1.5f, 6.0f));
+        super("decay_edge", Properties.create(Material.GLASS).hardnessAndResistance(-1f, 3600000f));
     }
 
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {

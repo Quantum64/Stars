@@ -16,7 +16,7 @@ import javax.inject.Singleton;
 public class DarkAirBlock extends BaseBlock {
 
     protected @Inject DarkAirBlock() {
-        super("dark_air", Properties.create(Material.IRON).hardnessAndResistance(1.5f, 6.0f));
+        super("dark_air", Properties.create(Material.GLASS).hardnessAndResistance(-1f, 3600000f));
     }
 
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {

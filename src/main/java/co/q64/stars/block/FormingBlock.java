@@ -21,7 +21,7 @@ public class FormingBlock extends BaseBlock {
     protected @Inject FormingTileFactory tileFactory;
 
     protected @Inject FormingBlock() {
-        super("forming", Properties.create(Material.IRON).hardnessAndResistance(1.5f, 6.0f));
+        super("forming", Properties.create(Material.GLASS).hardnessAndResistance(0f, 0f));
         //setDefaultState(getStateContainer().getBaseState().with(BlockStates.TYPE, 0));
     }
 

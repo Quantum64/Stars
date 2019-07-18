@@ -1,7 +1,7 @@
 package co.q64.stars.command;
 
 import co.q64.stars.dimension.Dimensions;
-import co.q64.stars.util.SpawnpointManager;
+import co.q64.stars.util.EntryManager;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
@@ -16,7 +16,7 @@ import javax.inject.Singleton;
 @Singleton
 public class TestEnterCommand {
     protected @Inject Dimensions dimensions;
-    protected @Inject SpawnpointManager spawnpointManager;
+    protected @Inject EntryManager spawnpointManager;
 
     protected @Inject TestEnterCommand() {}
 
@@ -29,10 +29,7 @@ public class TestEnterCommand {
     private int execute(CommandContext<CommandSource> context) {
         try {
             ServerPlayerEntity player = context.getSource().asPlayer();
-            BlockPos pos = player.getPosition();
-            BlockPos spawnpoint = spawnpointManager.getNext();
-            player.teleport(DimensionManager.getWorld(player.getServer(), dimensions.getAdventureDimensionType(), false, true),
-                    spawnpoint.getX(), spawnpoint.getY(), spawnpoint.getZ(), player.getYaw(1.0f), player.getPitch(1.0f));
+            spawnpointManager.enter(player);
         } catch (Exception e) {
             e.printStackTrace();
         }

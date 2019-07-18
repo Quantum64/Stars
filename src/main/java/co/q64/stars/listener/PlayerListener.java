@@ -1,15 +1,23 @@
 package co.q64.stars.listener;
 
+import co.q64.stars.block.BaseBlock;
+import co.q64.stars.block.BlueFormedBlock;
 import co.q64.stars.block.DarkAirBlock;
+import co.q64.stars.block.DarknessBlock;
 import co.q64.stars.block.DarknessEdgeBlock;
 import co.q64.stars.block.DecayBlock;
 import co.q64.stars.block.DecayEdgeBlock;
+import co.q64.stars.block.FormingBlock;
 import co.q64.stars.dimension.AdventureDimension;
+import co.q64.stars.tile.FormingTile;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -19,8 +27,10 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.event.entity.EntityEvent.EyeHeight;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
+import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
@@ -78,6 +88,25 @@ public class PlayerListener implements Listener {
             World world = event.player.getEntityWorld();
             if (world.getDimension() instanceof AdventureDimension) {
                 ServerPlayerEntity player = (ServerPlayerEntity) event.player;
+                boolean hasNoJump = false;
+                for (EffectInstance instance : player.getActivePotionEffects()) {
+                    if (instance.getPotion() == Effects.JUMP_BOOST && instance.getAmplifier() == -50) {
+                        hasNoJump = true;
+                        break;
+                    }
+                }
+                if (!hasNoJump) {
+                    Block block = entity.getEntityWorld().getBlockState(entity.getPosition().offset(Direction.DOWN)).getBlock();
+                    player.removePotionEffect(Effects.JUMP_BOOST);
+                    if (block instanceof DarknessBlock) {
+                        player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 10000000, -50, true, false));
+                    } else if (block instanceof BlueFormedBlock) {
+                        player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, 9, true, false));
+                    } else {
+                        player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, 3, true, false));
+                    }
+                }
+
                 Block currentBlock = world.getBlockState(player.getPosition()).getBlock();
                 if (currentBlock == decayBlock || currentBlock == decayEdgeBlock) {
                     double x = player.posX, y = player.posY, z = player.posZ;
@@ -135,11 +164,40 @@ public class PlayerListener implements Listener {
     }
 
     @SubscribeEvent
+    public void onEntityDamage(LivingDamageEvent event) {
+        if (event.getEntity().getEntityWorld().getDimension() instanceof AdventureDimension) {
+            event.setAmount(0);
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
     public void onBlockBreak(BreakEvent event) {
         IWorld world = event.getWorld();
         if (world.getDimension() instanceof AdventureDimension) {
             world.setBlockState(event.getPos(), darkAirBlock.getDefaultState(), 3);
             event.setCanceled(true);
+            if (!world.isRemote()) {
+                for (Direction direction : DIRECTIONS) {
+                    if (world.getBlockState(event.getPos().offset(direction)).getBlock() instanceof FormingBlock) {
+                        FormingTile tile = (FormingTile) world.getTileEntity(event.getPos().offset(direction));
+                        if (tile != null) {
+                            if (tile.getDirection() == direction) {
+                                world.setBlockState(event.getPos().offset(direction), Blocks.AIR.getDefaultState(), 3);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onBlockPlace(EntityPlaceEvent event) {
+        if (event.getWorld().getDimension() instanceof AdventureDimension) {
+            if (!(event.getPlacedBlock().getBlock() instanceof BaseBlock)) {
+                event.setCanceled(true);
+            }
         }
     }
 

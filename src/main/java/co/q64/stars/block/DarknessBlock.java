@@ -13,6 +13,6 @@ public class DarknessBlock extends BaseBlock {
     }
 
     protected @Inject DarknessBlock() {
-        super("darkness", Properties.create(Material.IRON).hardnessAndResistance(1.5f, 6.0f));
+        super("darkness", Properties.create(Material.GLASS).hardnessAndResistance(-1f, 3600000f));
     }
 }

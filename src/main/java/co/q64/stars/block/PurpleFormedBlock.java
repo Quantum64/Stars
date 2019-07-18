@@ -9,6 +9,6 @@ import javax.inject.Singleton;
 public class PurpleFormedBlock extends FormedBlock {
 
     protected @Inject PurpleFormedBlock() {
-        super("purple_formed", Properties.create(Material.IRON).hardnessAndResistance(1.5f, 6.0f));
+        super("purple_formed", Properties.create(Material.GLASS).hardnessAndResistance(0f, 0f));
     }
 }

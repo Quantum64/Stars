@@ -19,7 +19,7 @@ public class AirDecayEdgeBlock extends BaseBlock {
     protected @Inject AirDecayEdgeTileFactory tileFactory;
 
     protected @Inject AirDecayEdgeBlock() {
-        super("air_decay_edge", Properties.create(Material.IRON).hardnessAndResistance(1.5f, 6.0f));
+        super("air_decay_edge", Properties.create(Material.IRON).hardnessAndResistance(-1f, 3600000f));
     }
 
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {

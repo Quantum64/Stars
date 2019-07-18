@@ -1,5 +1,6 @@
 package co.q64.stars.type;
 
+import co.q64.stars.block.DarkAirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.Direction;
@@ -37,6 +38,7 @@ public interface FormingBlockType {
 
     public default boolean hasBlock(World world, BlockPos pos, Direction direction) {
         BlockPos target = pos.offset(direction);
-        return world.getBlockState(target).getBlock() != Blocks.AIR;
+        Block block = world.getBlockState(target).getBlock();
+        return block != Blocks.AIR && !(block instanceof DarkAirBlock);
     }
 }

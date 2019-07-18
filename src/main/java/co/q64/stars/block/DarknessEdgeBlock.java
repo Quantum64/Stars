@@ -18,7 +18,7 @@ public class DarknessEdgeBlock extends BaseBlock {
     protected @Inject DarknessEdgeTileFactory tileFactory;
 
     protected @Inject DarknessEdgeBlock() {
-        super("darkness_edge", Properties.create(Material.IRON).hardnessAndResistance(1.5f, 6.0f));
+        super("darkness_edge", Properties.create(Material.GLASS).hardnessAndResistance(-1f, 3600000f));
     }
 
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
