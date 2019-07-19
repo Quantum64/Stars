@@ -21,6 +21,8 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ServerWorld;
+import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelDataMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -111,5 +113,9 @@ public class DecayEdgeTile extends TileEntity implements ITickableTileEntity {
         }
         //}
         ticks++;
+    }
+
+    public IModelData getModelData() {
+        return new ModelDataMap.Builder().build();
     }
 }

@@ -1,0 +1,52 @@
+package co.q64.stars.net.packets;
+
+import co.q64.stars.util.ClientEffects;
+import com.google.auto.factory.AutoFactory;
+import com.google.auto.factory.Provided;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkEvent.Context;
+
+import java.util.function.Supplier;
+
+@AutoFactory
+public class PlayClientEffectPacket {
+    private ClientEffectType type;
+    private ClientEffects clientEffects;
+
+    protected PlayClientEffectPacket(@Provided ClientEffects clientEffects, PacketBuffer buffer) {
+        CompoundNBT tag = buffer.readCompoundTag();
+        this.clientEffects = clientEffects;
+        this.type = ClientEffectType.valueOf(tag.getString("type"));
+    }
+
+    protected PlayClientEffectPacket(@Provided ClientEffects clientEffects, ClientEffectType type) {
+        this.clientEffects = clientEffects;
+        this.type = type;
+    }
+
+    public void encode(PacketBuffer buffer) {
+        CompoundNBT tag = new CompoundNBT();
+        tag.putString("type", type.name());
+        buffer.writeCompoundTag(tag);
+    }
+
+    public void handle(Supplier<Context> context) {
+        context.get().enqueueWork(() -> {
+            switch (type) {
+                case ENTRY:
+                    clientEffects.playEntryEffect();
+                    break;
+                case DARKNESS:
+                    clientEffects.playDarknessEffect();
+                    break;
+            }
+        });
+        context.get().setPacketHandled(true);
+    }
+
+    public static enum ClientEffectType {
+        ENTRY, DARKNESS
+    }
+}
+

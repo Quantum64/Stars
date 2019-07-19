@@ -41,6 +41,7 @@ import co.q64.stars.tile.type.AirDecayEdgeTileType;
 import co.q64.stars.tile.type.DarknessEdgeTileType;
 import co.q64.stars.tile.type.DecayEdgeTileType;
 import co.q64.stars.tile.type.DecayingTileType;
+import co.q64.stars.tile.type.ForceRenderCullTileType;
 import co.q64.stars.tile.type.FormingTileType;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.forming.BlueFormingBlockType;
@@ -115,6 +116,7 @@ public interface CommonModule {
     @Binds @IntoSet TileEntityType<?> bindDecayingTileType(DecayingTileType type);
     @Binds @IntoSet TileEntityType<?> bindAirDecayEdgeTileType(AirDecayEdgeTileType type);
     @Binds @IntoSet TileEntityType<?> bindDarknessEdgeTileType(DarknessEdgeTileType type);
+    @Binds @IntoSet TileEntityType<?> bindForceRenderCullTileType(ForceRenderCullTileType type);
 
     static @Provides @Singleton FMLJavaModLoadingContext provideFMLModLoadingContext() { return FMLJavaModLoadingContext.get(); }
     static @Provides @Singleton Logger provideLogger() { return LogManager.getLogger(); }

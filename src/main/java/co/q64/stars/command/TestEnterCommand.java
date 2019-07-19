@@ -7,8 +7,6 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.DimensionManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

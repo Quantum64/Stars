@@ -1,5 +1,10 @@
 {
   "variants": {
-    "": {"model": "stars:block/air_decay_1" }
+    "": [
+		{"model": "stars:block/air_decay_1" },
+		{"model": "stars:block/air_decay_2" },
+		{"model": "stars:block/air_decay_3" },
+		{"model": "stars:block/air_decay_4" }
+	]
   }
 }

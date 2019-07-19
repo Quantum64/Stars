@@ -6,6 +6,7 @@ import co.q64.stars.block.FormingBlock;
 import co.q64.stars.tile.FormingTile;
 import co.q64.stars.type.FormingBlockType;
 import net.minecraft.block.Block;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
@@ -19,8 +20,8 @@ public abstract class CruxItem extends BaseItem {
 
     private FormingBlockType type;
 
-    public CruxItem(String id, FormingBlockType type) {
-        super(id);
+    public CruxItem(String id, FormingBlockType type, ItemGroup group) {
+        super(id, group);
         this.type = type;
     }
 

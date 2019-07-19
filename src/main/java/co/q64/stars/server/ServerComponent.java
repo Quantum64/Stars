@@ -6,7 +6,7 @@ import dagger.Component;
 import javax.inject.Singleton;
 
 @Singleton
-@Component(modules = {CommonModule.class})
+@Component(modules = {ServerModule.class, CommonModule.class})
 public interface ServerComponent {
     public ServerProxy getProxy();
 }

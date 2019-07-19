@@ -1,7 +1,9 @@
 package co.q64.stars.block;
 
+import co.q64.stars.tile.ForceRenderCullTileFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
@@ -14,6 +16,7 @@ import javax.inject.Singleton;
 
 @Singleton
 public class DarkAirBlock extends BaseBlock {
+    protected @Inject ForceRenderCullTileFactory tileFactory;
 
     protected @Inject DarkAirBlock() {
         super("dark_air", Properties.create(Material.GLASS).hardnessAndResistance(-1f, 3600000f));
@@ -25,5 +28,13 @@ public class DarkAirBlock extends BaseBlock {
 
     public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.TRANSLUCENT;
+    }
+
+    public boolean hasTileEntity(BlockState state) {
+        return true;
+    }
+
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+        return tileFactory.create();
     }
 }

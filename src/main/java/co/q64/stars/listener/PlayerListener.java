@@ -10,6 +10,7 @@ import co.q64.stars.block.DecayEdgeBlock;
 import co.q64.stars.block.FormingBlock;
 import co.q64.stars.dimension.AdventureDimension;
 import co.q64.stars.tile.FormingTile;
+import co.q64.stars.util.EntryManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -44,12 +45,12 @@ public class PlayerListener implements Listener {
     private static final double TOLERANCE = 0.15;
     private static final Direction[] DIRECTIONS = Direction.values();
 
+    protected @Inject EntryManager entryManager;
     protected @Inject DarkAirBlock darkAirBlock;
     protected @Inject DecayBlock decayBlock;
     protected @Inject DecayEdgeBlock decayEdgeBlock;
-    protected @Inject DarknessEdgeBlock darknessEdgeBlock;
 
-    private EntitySize size = new EntitySize(0.6f, 0.5f, false);
+    private EntitySize size = new EntitySize(0.6f, 0.85f, false);
     private Field sizeField;
 
     @Inject
@@ -154,9 +155,7 @@ public class PlayerListener implements Listener {
                         }
                     }
                     if (inToleranceMinusX && inTolerancePlusX && inToleranceMinusY && inTolerancePlusY && inToleranceMinusZ && inTolerancePlusZ) {
-                        BlockPos playerPosition = player.getPosition();
-                        world.setBlockState(playerPosition, darknessEdgeBlock.getDefaultState());
-                        player.teleport((ServerWorld) world, playerPosition.getX() + 0.5, playerPosition.getY() + 0.1, playerPosition.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
+                        entryManager.createDarkness(player);
                     }
                 }
             }

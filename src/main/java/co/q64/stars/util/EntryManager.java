@@ -1,16 +1,25 @@
 package co.q64.stars.util;
 
+import co.q64.stars.block.DarknessEdgeBlock;
 import co.q64.stars.block.DecayEdgeBlock;
 import co.q64.stars.block.OrangeFormedBlock;
 import co.q64.stars.dimension.Dimensions;
+import co.q64.stars.net.PacketManager;
+import co.q64.stars.net.packets.PlayClientEffectPacket.ClientEffectType;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ServerWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @Singleton
 public class EntryManager {
@@ -19,16 +28,55 @@ public class EntryManager {
     protected @Inject Dimensions dimensions;
     protected @Inject OrangeFormedBlock orangeFormedBlock;
     protected @Inject DecayEdgeBlock decayEdgeBlock;
+    protected @Inject DarknessEdgeBlock darknessEdgeBlock;
+    protected @Inject PacketManager packetManager;
 
+    private Map<UUID, AdventureStage> stages = new HashMap<>();
     private int index = 0;
 
     protected @Inject EntryManager() {}
 
     public void enter(ServerPlayerEntity player) {
+        enter(player, false);
+    }
+
+    public void enter(ServerPlayerEntity player, boolean showEffect) {
+        if (showEffect) {
+            packetManager.getChannel().send(PacketDistributor.PLAYER.with(() -> player), packetManager.getPlayClientEffectPacketFactory().create(ClientEffectType.ENTRY));
+        }
         BlockPos spawnpoint = getNext();
         ServerWorld world = DimensionManager.getWorld(player.getServer(), dimensions.getAdventureDimensionType(), false, true);
         setupSpawnpoint(world, spawnpoint);
         player.teleport(world, spawnpoint.getX() + 0.5, spawnpoint.getY(), spawnpoint.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
+        stages.put(player.getUniqueID(), AdventureStage.LIGHT);
+    }
+
+    public AdventureStage getStage(ServerPlayerEntity player) {
+        return stages.getOrDefault(player.getUniqueID(), AdventureStage.NONE);
+    }
+
+    public void clearStage(ServerPlayerEntity player) {
+        stages.remove(player.getUniqueID());
+    }
+
+    public void updateJumpStatus(ServerPlayerEntity player, boolean jumping) {
+        if (getStage(player) == AdventureStage.DARK) {
+            // TODO check
+            if (jumping) {
+                player.addPotionEffect(new EffectInstance(Effects.LEVITATION, 200, 1, true, false));
+            } else {
+                player.removePotionEffect(Effects.LEVITATION);
+            }
+        }
+    }
+
+    public void createDarkness(ServerPlayerEntity player) {
+        stages.put(player.getUniqueID(), AdventureStage.DARK);
+        World world = player.getServerWorld();
+        BlockPos playerPosition = player.getPosition();
+        packetManager.getChannel().send(PacketDistributor.PLAYER.with(() -> player), packetManager.getPlayClientEffectPacketFactory().create(ClientEffectType.DARKNESS));
+        world.setBlockState(playerPosition, darknessEdgeBlock.getDefaultState());
+        player.teleport((ServerWorld) world, playerPosition.getX() + 0.5, playerPosition.getY() + 0.1, playerPosition.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
     }
 
     // TODO set the initial decay according to level
@@ -43,7 +91,7 @@ public class EntryManager {
         world.setBlockState(new BlockPos(pos.getX(), pos.getY() - 8, pos.getZ()), decayEdgeBlock.getDefaultState());
     }
 
-    public BlockPos getNext() {
+    private BlockPos getNext() {
         double sidelen = Math.floor(Math.sqrt(index));
         double layer = Math.floor((sidelen + 1) / 2.0);
         double offset = offset = index - sidelen * sidelen;
@@ -68,5 +116,9 @@ public class EntryManager {
         y *= SPREAD_DISTANCE;
         index++;
         return new BlockPos(x, 64, y);
+    }
+
+    public static enum AdventureStage {
+        LIGHT, DARK, NONE
     }
 }
