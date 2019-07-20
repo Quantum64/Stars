@@ -1,6 +1,6 @@
 package co.q64.stars.client.listener;
 
-import co.q64.stars.dimension.AdventureDimension;
+import co.q64.stars.dimension.FleetingDimension;
 import co.q64.stars.listener.Listener;
 import co.q64.stars.net.PacketManager;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -32,7 +32,7 @@ public class ClientPlayerListener implements Listener {
     @SubscribeEvent
     public void onEntityJoinWorld(EntityJoinWorldEvent event) {
         if (event.getEntity() == Minecraft.getInstance().player) {
-            if (event.getWorld().getDimension() instanceof AdventureDimension) {
+            if (event.getWorld().getDimension() instanceof FleetingDimension) {
                 ForgeIngameGui.renderVignette = false;
                 autoJump = Minecraft.getInstance().gameSettings.autoJump;
                 Minecraft.getInstance().gameSettings.autoJump = false;
@@ -51,7 +51,7 @@ public class ClientPlayerListener implements Listener {
         if (Minecraft.getInstance().player == null || Minecraft.getInstance().player.getEntityWorld() == null || Minecraft.getInstance().gameSettings == null) {
             return;
         }
-        if (Minecraft.getInstance().player.getEntityWorld().getDimension() instanceof AdventureDimension) {
+        if (Minecraft.getInstance().player.getEntityWorld().getDimension() instanceof FleetingDimension) {
             if (Minecraft.getInstance().gameSettings.keyBindJump.isKeyDown()) {
                 if (!pressingJump) {
                     pressingJump = true;

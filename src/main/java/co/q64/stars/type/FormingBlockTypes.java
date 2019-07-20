@@ -1,6 +1,7 @@
 package co.q64.stars.type;
 
-import co.q64.stars.type.forming.PurpleFormingBlockType;
+import co.q64.stars.block.RedFormedBlock;
+import co.q64.stars.type.forming.RedFormingBlockType;
 import co.q64.stars.type.forming.YellowFormingBlockType;
 import net.minecraft.block.Block;
 
@@ -15,8 +16,9 @@ public class FormingBlockTypes {
     private Map<Integer, FormingBlockType> cache = new HashMap<>();
     private Map<Block, FormingBlockType> formed = new HashMap<>();
 
-    public @Inject YellowFormingBlockType yellowFormingBlockType;
-    public @Inject PurpleFormingBlockType purpleFormingBlockType;
+    protected @Inject YellowFormingBlockType yellowFormingBlockType;
+    protected @Inject RedFormingBlockType redFormingBlockType;
+    protected @Inject RedFormedBlock redFormedBlock;
 
     @Inject
     protected FormingBlockTypes(Set<FormingBlockType> types) {
@@ -26,11 +28,20 @@ public class FormingBlockTypes {
         }
     }
 
+    @Inject
+    protected void setup() {
+        formed.put(redFormedBlock, redFormingBlockType);
+    }
+
     public FormingBlockType get(int id) {
         return cache.getOrDefault(id, yellowFormingBlockType);
     }
 
     public FormingBlockType get(Block block) {
         return formed.getOrDefault(block, yellowFormingBlockType);
+    }
+
+    public FormingBlockType getDefault() {
+        return yellowFormingBlockType;
     }
 }

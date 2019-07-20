@@ -1,16 +1,17 @@
 package co.q64.stars.tile;
 
-import co.q64.stars.block.AirDecayBlock;
 import co.q64.stars.block.AirDecayEdgeBlock;
-import co.q64.stars.block.DecayBlock;
 import co.q64.stars.block.DecayEdgeBlock;
+import co.q64.stars.block.DecayingBlock;
 import co.q64.stars.block.FormedBlock;
 import co.q64.stars.block.FormingBlock;
+import co.q64.stars.block.RedPrimedBlock;
 import co.q64.stars.tile.type.FormingTileType;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.FormingBlockTypes;
-import com.google.auto.factory.AutoFactory;
-import com.google.auto.factory.Provided;
+import co.q64.stars.type.forming.RedFormingBlockType;
+import co.q64.stars.type.forming.YellowFormingBlockType;
+import co.q64.stars.util.DecayManager;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -25,19 +26,21 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ServerWorld;
 
+import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
-@AutoFactory
 public class FormingTile extends TileEntity implements ITickableTileEntity {
     private static final Direction[] DIRECTIONS = Direction.values();
     private static final long SALT = 0x1029adbc3847efefL;
 
-    private FormingBlockTypes types;
-    private FormingBlock formingBlock;
-    private DecayEdgeBlock decayEdgeBlock;
-    private AirDecayEdgeBlock airDecayEdgeBlock;
+    protected @Inject FormingBlockTypes types;
+    protected @Inject FormingBlock formingBlock;
+    protected @Inject DecayEdgeBlock decayEdgeBlock;
+    protected @Inject AirDecayEdgeBlock airDecayEdgeBlock;
+    protected @Inject RedFormingBlockType redFormingBlockType;
+    protected @Inject DecayManager decayManager;
 
     private @Setter @Getter boolean calculated = false;
     private @Setter @Getter boolean first = true;
@@ -50,13 +53,14 @@ public class FormingTile extends TileEntity implements ITickableTileEntity {
     private int ticks = 0;
     private int formTicks;
 
-    public FormingTile(@Provided FormingTileType type, @Provided FormingBlock formingBlock, @Provided FormingBlockTypes types, @Provided DecayEdgeBlock decayEdgeBlock, @Provided AirDecayEdgeBlock airDecayEdgeBlock) {
+    @Inject
+    protected FormingTile(FormingTileType type) {
         super(type);
-        this.types = types;
-        this.formingBlock = formingBlock;
-        this.decayEdgeBlock = decayEdgeBlock;
-        this.airDecayEdgeBlock = airDecayEdgeBlock;
-        setup(ThreadLocalRandom.current().nextBoolean() ? types.purpleFormingBlockType : types.yellowFormingBlockType);
+    }
+
+    @Inject
+    protected void setupDefault(YellowFormingBlockType type) {
+        setup(type);
     }
 
     public void setup(FormingBlockType type) {
@@ -134,8 +138,21 @@ public class FormingTile extends TileEntity implements ITickableTileEntity {
                 ((ServerWorld) world).spawnParticle(ParticleTypes.CLOUD, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5, 20, 0.4, 0.4, 0.4, 0.01);
                 world.setBlockState(getPos(), formType.getFormedBlock().getDefaultState());
 
-                // Move nearby
-                if (!world.isRemote) {
+                // Check for primed block
+                BlockPos primed = getPos().offset(direction.getOpposite());
+                boolean explode = world.getBlockState(primed).getBlock() instanceof RedPrimedBlock;
+                if (!explode) {
+                    if (world.getBlockState(primed).getBlock() instanceof DecayingBlock) {
+                        DecayingTile tile = (DecayingTile) world.getTileEntity(primed);
+                        if (tile != null) {
+                            explode = tile.isPrimed();
+                        }
+                    }
+                }
+                if (explode) {
+                    redFormingBlockType.explode((ServerWorld) world, primed, false);
+                } else {
+                    // Move nearby
                     for (ServerPlayerEntity player : ((ServerWorld) world).getPlayers()) {
                         if (player.posX > getPos().getX() - 0.3 && player.posX < getPos().getX() + 1.3
                                 && player.posZ > getPos().getZ() - 0.3 && player.posZ < getPos().getZ() + 1.3
@@ -148,31 +165,23 @@ public class FormingTile extends TileEntity implements ITickableTileEntity {
                             }
                         }
                     }
-                }
 
-                // Check if decay needs to be reactivated
-                for (Direction direction : DIRECTIONS) {
-                    BlockPos target = getPos().offset(direction);
-                    if (world.getBlockState(target).getBlock() instanceof AirDecayBlock) {
-                        world.setBlockState(target, airDecayEdgeBlock.getDefaultState());
-                    } else if (world.getBlockState(target).getBlock() instanceof DecayBlock) {
-                        world.setBlockState(target, decayEdgeBlock.getDefaultState());
-                    }
-                }
+                    decayManager.activateDecay((ServerWorld) world, pos);
 
-                if (iterationsRemaining > 0) {
-                    for (Direction next : formType.getNextDirections(world, pos, direction, iterationsRemaining - 1)) {
-                        BlockPos placed = getPos().add(next.getXOffset(), next.getYOffset(), next.getZOffset());
-                        world.setBlockState(placed, formingBlock.getDefaultState());
-                        FormingTile spawned = (FormingTile) world.getTileEntity(placed);
-                        if (spawned != null) {
-                            spawned.setFirst(false);
-                            spawned.setIterationsRemaining(iterationsRemaining - 1);
-                            spawned.setDirection(next);
-                            spawned.setup(formType);
-                            spawned.setCalculated(true);
-                        } else {
-                            System.out.println("Problem");
+                    if (iterationsRemaining > 0) {
+                        for (Direction next : formType.getNextDirections(world, pos, direction, iterationsRemaining - 1)) {
+                            BlockPos placed = getPos().add(next.getXOffset(), next.getYOffset(), next.getZOffset());
+                            world.setBlockState(placed, formingBlock.getDefaultState());
+                            FormingTile spawned = (FormingTile) world.getTileEntity(placed);
+                            if (spawned != null) {
+                                spawned.setFirst(false);
+                                spawned.setIterationsRemaining(iterationsRemaining - 1);
+                                spawned.setDirection(next);
+                                spawned.setup(formType);
+                                spawned.setCalculated(true);
+                            } else {
+                                System.out.println("Problem");
+                            }
                         }
                     }
                 }

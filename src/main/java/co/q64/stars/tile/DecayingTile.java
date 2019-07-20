@@ -3,8 +3,6 @@ package co.q64.stars.tile;
 import co.q64.stars.tile.type.DecayingTileType;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.FormingBlockTypes;
-import com.google.auto.factory.AutoFactory;
-import com.google.auto.factory.Provided;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.nbt.CompoundNBT;
@@ -12,21 +10,27 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 
-@AutoFactory
+import javax.inject.Inject;
+
 public class DecayingTile extends TileEntity {
     private static final long SALT = 0x1029adbc3847efefL;
-    private FormingBlockTypes types;
+
+    protected @Inject FormingBlockTypes types;
 
     private @Getter @Setter boolean calculated;
     private @Getter @Setter FormingBlockType formingBlockType;
     private @Getter @Setter int expectedDecayTime;
     private @Getter @Setter long placed = System.currentTimeMillis();
+    private @Getter @Setter boolean primed = false;
 
-    public DecayingTile(@Provided DecayingTileType formingBlockType, @Provided FormingBlockTypes types) {
+    @Inject
+    protected DecayingTile(DecayingTileType formingBlockType) {
         super(formingBlockType);
-        this.types = types;
-        //TODO
-        this.formingBlockType = types.yellowFormingBlockType;
+    }
+
+    @Inject
+    protected void setupDefault(FormingBlockTypes types) {
+        this.formingBlockType = types.getDefault();
     }
 
     public void read(CompoundNBT compound) {
@@ -35,6 +39,7 @@ public class DecayingTile extends TileEntity {
         formingBlockType = types.get(compound.getInt("formingBlockType"));
         placed = compound.getLong("placed");
         calculated = compound.getBoolean("calculated");
+        primed = compound.getBoolean("primed");
     }
 
     public CompoundNBT write(CompoundNBT compound) {
@@ -43,6 +48,7 @@ public class DecayingTile extends TileEntity {
         result.putInt("formingBlockType", formingBlockType.getId());
         result.putLong("placed", placed);
         result.putBoolean("calculated", calculated);
+        result.putBoolean("primed", primed);
         return result;
     }
 

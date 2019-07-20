@@ -1,6 +1,6 @@
 package co.q64.stars.block;
 
-import co.q64.stars.tile.FormingTileFactory;
+import co.q64.stars.tile.FormingTile;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
@@ -14,11 +14,12 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 @Singleton
 public class FormingBlock extends BaseBlock {
-    protected @Inject FormingTileFactory tileFactory;
+    protected @Inject Provider<FormingTile> tileFactory;
 
     protected @Inject FormingBlock() {
         super("forming", Properties.create(Material.GLASS).hardnessAndResistance(0f, 0f));
@@ -39,6 +40,6 @@ public class FormingBlock extends BaseBlock {
     }
 
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return tileFactory.create();
+        return tileFactory.get();
     }
 }

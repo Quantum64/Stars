@@ -1,7 +1,6 @@
 package co.q64.stars.type.forming;
 
 import co.q64.stars.block.PinkFormedBlock;
-import co.q64.stars.block.YellowFormedBlock;
 import co.q64.stars.type.FormingBlockType;
 import lombok.Getter;
 import net.minecraft.util.Direction;

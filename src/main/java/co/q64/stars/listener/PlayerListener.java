@@ -4,12 +4,10 @@ import co.q64.stars.block.BaseBlock;
 import co.q64.stars.block.BlueFormedBlock;
 import co.q64.stars.block.DarkAirBlock;
 import co.q64.stars.block.DarknessBlock;
-import co.q64.stars.block.DarknessEdgeBlock;
-import co.q64.stars.block.DecayBlock;
-import co.q64.stars.block.DecayEdgeBlock;
 import co.q64.stars.block.FormingBlock;
-import co.q64.stars.dimension.AdventureDimension;
+import co.q64.stars.dimension.FleetingDimension;
 import co.q64.stars.tile.FormingTile;
+import co.q64.stars.util.DecayManager;
 import co.q64.stars.util.EntryManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -21,7 +19,6 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.ServerWorld;
 import net.minecraft.world.World;
@@ -47,8 +44,7 @@ public class PlayerListener implements Listener {
 
     protected @Inject EntryManager entryManager;
     protected @Inject DarkAirBlock darkAirBlock;
-    protected @Inject DecayBlock decayBlock;
-    protected @Inject DecayEdgeBlock decayEdgeBlock;
+    protected @Inject DecayManager decayManager;
 
     private EntitySize size = new EntitySize(0.6f, 0.85f, false);
     private Field sizeField;
@@ -78,7 +74,7 @@ public class PlayerListener implements Listener {
     @SubscribeEvent
     public void onPlayerTick(PlayerTickEvent event) throws IllegalAccessException {
         PlayerEntity entity = event.player;
-        if (entity.getEntityWorld().getDimension() instanceof AdventureDimension) {
+        if (entity.getEntityWorld().getDimension() instanceof FleetingDimension) {
             if (entity.getBoundingBox().getYSize() < size.height - 0.02 || entity.getBoundingBox().getYSize() > size.height + 0.02) {
                 sizeField.set(entity, size);
                 AxisAlignedBB aabb = entity.getBoundingBox();
@@ -87,7 +83,7 @@ public class PlayerListener implements Listener {
         }
         if (event.side == LogicalSide.SERVER) {
             World world = event.player.getEntityWorld();
-            if (world.getDimension() instanceof AdventureDimension) {
+            if (world.getDimension() instanceof FleetingDimension) {
                 ServerPlayerEntity player = (ServerPlayerEntity) event.player;
                 boolean hasNoJump = false;
                 for (EffectInstance instance : player.getActivePotionEffects()) {
@@ -108,8 +104,7 @@ public class PlayerListener implements Listener {
                     }
                 }
 
-                Block currentBlock = world.getBlockState(player.getPosition()).getBlock();
-                if (currentBlock == decayBlock || currentBlock == decayEdgeBlock) {
+                if (decayManager.isDecayBlock((ServerWorld) world, player.getPosition())) {
                     double x = player.posX, y = player.posY, z = player.posZ;
                     double offsetX = x - Math.floor(x);
                     double offsetY = y - Math.floor(y);
@@ -118,8 +113,7 @@ public class PlayerListener implements Listener {
                     boolean inToleranceMinusY = offsetY > TOLERANCE, inTolerancePlusY = offsetY < 1 - TOLERANCE;
                     boolean inToleranceMinusZ = offsetZ > TOLERANCE, inTolerancePlusZ = offsetZ < 1 - TOLERANCE;
                     for (Direction direction : DIRECTIONS) {
-                        Block offsetBlock = world.getBlockState(player.getPosition().offset(direction)).getBlock();
-                        if (offsetBlock == decayBlock || offsetBlock == decayEdgeBlock) {
+                        if (decayManager.isDecayBlock((ServerWorld) world, player.getPosition().offset(direction))) {
                             switch (direction.getAxis()) {
                                 case X:
                                     switch (direction.getAxisDirection()) {
@@ -164,7 +158,7 @@ public class PlayerListener implements Listener {
 
     @SubscribeEvent
     public void onEntityDamage(LivingDamageEvent event) {
-        if (event.getEntity().getEntityWorld().getDimension() instanceof AdventureDimension) {
+        if (event.getEntity().getEntityWorld().getDimension() instanceof FleetingDimension) {
             event.setAmount(0);
             event.setCanceled(true);
         }
@@ -173,7 +167,7 @@ public class PlayerListener implements Listener {
     @SubscribeEvent
     public void onBlockBreak(BreakEvent event) {
         IWorld world = event.getWorld();
-        if (world.getDimension() instanceof AdventureDimension) {
+        if (world.getDimension() instanceof FleetingDimension) {
             world.setBlockState(event.getPos(), darkAirBlock.getDefaultState(), 3);
             event.setCanceled(true);
             if (!world.isRemote()) {
@@ -193,7 +187,7 @@ public class PlayerListener implements Listener {
 
     @SubscribeEvent
     public void onBlockPlace(EntityPlaceEvent event) {
-        if (event.getWorld().getDimension() instanceof AdventureDimension) {
+        if (event.getWorld().getDimension() instanceof FleetingDimension) {
             if (!(event.getPlacedBlock().getBlock() instanceof BaseBlock)) {
                 event.setCanceled(true);
             }
@@ -204,7 +198,7 @@ public class PlayerListener implements Listener {
     public void onPlayerChangeDimension(EntityJoinWorldEvent event) {
         if (event.getEntity() instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) event.getEntity();
-            if (event.getWorld().getDimension() instanceof AdventureDimension) {
+            if (event.getWorld().getDimension() instanceof FleetingDimension) {
             }
         }
     }
@@ -213,7 +207,7 @@ public class PlayerListener implements Listener {
     public void onEyeHeight(EyeHeight event) throws IllegalAccessException {
         if (event.getEntity() instanceof PlayerEntity) {
             PlayerEntity entity = (PlayerEntity) event.getEntity();
-            if (event.getEntity().getEntityWorld().getDimension() instanceof AdventureDimension) {
+            if (event.getEntity().getEntityWorld().getDimension() instanceof FleetingDimension) {
                 event.setNewHeight(0.5f);
             }
         }

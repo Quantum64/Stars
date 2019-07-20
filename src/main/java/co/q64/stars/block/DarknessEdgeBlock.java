@@ -1,6 +1,6 @@
 package co.q64.stars.block;
 
-import co.q64.stars.tile.DarknessEdgeTileFactory;
+import co.q64.stars.tile.DarknessEdgeTile;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
@@ -11,11 +11,12 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 @Singleton
 public class DarknessEdgeBlock extends BaseBlock {
-    protected @Inject DarknessEdgeTileFactory tileFactory;
+    protected @Inject Provider<DarknessEdgeTile> tileFactory;
 
     protected @Inject DarknessEdgeBlock() {
         super("darkness_edge", Properties.create(Material.GLASS).hardnessAndResistance(-1f, 3600000f));
@@ -30,6 +31,6 @@ public class DarknessEdgeBlock extends BaseBlock {
     }
 
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return tileFactory.create();
+        return tileFactory.get();
     }
 }

@@ -61,7 +61,7 @@ public class WorldUnloadListener implements Listener {
     public void onChunkLoad(ChunkEvent.Load loadEvent) {
         if (loadEvent.getChunk() instanceof Chunk) {
             Chunk chunk = (Chunk) loadEvent.getChunk();
-            if (chunk.getWorld().getDimension() instanceof AdventureDimension && !chunk.getWorld().isRemote()) {
+            if (chunk.getWorld().getDimension() instanceof FleetingDimension && !chunk.getWorld().isRemote()) {
                 checkForcedChunk(chunk, "chunk load");
             }
         }
@@ -71,7 +71,7 @@ public class WorldUnloadListener implements Listener {
     public void onChunkUnload(ChunkEvent.Unload unloadEvent) {
         if (unloadEvent.getChunk() instanceof Chunk) {
             Chunk chunk = (Chunk) unloadEvent.getChunk();
-            if (chunk.getWorld().getDimension() instanceof AdventureDimension) {
+            if (chunk.getWorld().getDimension() instanceof FleetingDimension) {
                 if (!chunk.getWorldForge().isRemote()) {
                     chunk.setLastSaveTime(chunk.getWorld().getGameTime());
                     chunk.setModified(false);
@@ -83,7 +83,7 @@ public class WorldUnloadListener implements Listener {
 
     @SubscribeEvent
     public void onChunkModify(PlayerInteractEvent.RightClickBlock event) {
-        if (!event.getWorld().isRemote && event.getWorld().getDimension() instanceof AdventureDimension) {
+        if (!event.getWorld().isRemote && event.getWorld().getDimension() instanceof FleetingDimension) {
             IChunk chunk = event.getWorld().getChunk(event.getPos());
             ((ServerWorld) event.getWorld()).forceChunk(chunk.getPos().x, chunk.getPos().z, true);
             logger.info("Added force on interact");
@@ -92,7 +92,7 @@ public class WorldUnloadListener implements Listener {
 
     @SubscribeEvent
     public void onServerTick(WorldTickEvent event) {
-        if (!event.world.isRemote() && event.world.getDimension() instanceof AdventureDimension) {
+        if (!event.world.isRemote() && event.world.getDimension() instanceof FleetingDimension) {
             World world = event.world;
             for (long l : ((ServerWorld) world).getForcedChunks()) {
                 long x = ChunkPos.getX(l) << 4;

@@ -1,11 +1,14 @@
 package co.q64.stars.util;
 
 import co.q64.stars.block.DarknessEdgeBlock;
-import co.q64.stars.block.DecayEdgeBlock;
 import co.q64.stars.block.OrangeFormedBlock;
+import co.q64.stars.block.SpecialDecayBlock;
+import co.q64.stars.block.SpecialDecayEdgeBlock;
 import co.q64.stars.dimension.Dimensions;
 import co.q64.stars.net.PacketManager;
 import co.q64.stars.net.packets.PlayClientEffectPacket.ClientEffectType;
+import co.q64.stars.tile.SpecialDecayEdgeTile;
+import co.q64.stars.tile.SpecialDecayEdgeTile.SpecialDecayType;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -27,7 +30,7 @@ public class EntryManager {
 
     protected @Inject Dimensions dimensions;
     protected @Inject OrangeFormedBlock orangeFormedBlock;
-    protected @Inject DecayEdgeBlock decayEdgeBlock;
+    protected @Inject SpecialDecayEdgeBlock specialDecayEdgeBlock;
     protected @Inject DarknessEdgeBlock darknessEdgeBlock;
     protected @Inject PacketManager packetManager;
 
@@ -45,7 +48,7 @@ public class EntryManager {
             packetManager.getChannel().send(PacketDistributor.PLAYER.with(() -> player), packetManager.getPlayClientEffectPacketFactory().create(ClientEffectType.ENTRY));
         }
         BlockPos spawnpoint = getNext();
-        ServerWorld world = DimensionManager.getWorld(player.getServer(), dimensions.getAdventureDimensionType(), false, true);
+        ServerWorld world = DimensionManager.getWorld(player.getServer(), dimensions.getFleetingDimensionType(), false, true);
         setupSpawnpoint(world, spawnpoint);
         player.teleport(world, spawnpoint.getX() + 0.5, spawnpoint.getY(), spawnpoint.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
         stages.put(player.getUniqueID(), AdventureStage.LIGHT);
@@ -88,7 +91,9 @@ public class EntryManager {
                 }
             }
         }
-        world.setBlockState(new BlockPos(pos.getX(), pos.getY() - 8, pos.getZ()), decayEdgeBlock.getDefaultState());
+        BlockPos door = new BlockPos(pos.getX(), pos.getY() - 8, pos.getZ());
+        world.setBlockState(door, specialDecayEdgeBlock.getDefaultState().with(SpecialDecayBlock.TYPE, SpecialDecayType.DOOR));
+        SpecialDecayEdgeTile tile = (SpecialDecayEdgeTile) world.getTileEntity(door);
     }
 
     private BlockPos getNext() {

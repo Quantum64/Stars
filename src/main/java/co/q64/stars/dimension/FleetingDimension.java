@@ -14,16 +14,16 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @AutoFactory
-public class AdventureDimension extends Dimension {
+public class FleetingDimension extends Dimension {
     private static final Vec3d fogColor = new Vec3d(1, 1, 1);
 
     private EmptyChunkGeneratorFactory generatorFactory;
     private World world;
     private EmptyBiome emptyBiome;
 
-    protected AdventureDimension(World world, DimensionType type,
-                                 @Provided EmptyChunkGeneratorFactory generatorFactory,
-                                 @Provided EmptyBiome emptyBiome) {
+    protected FleetingDimension(World world, DimensionType type,
+                                @Provided EmptyChunkGeneratorFactory generatorFactory,
+                                @Provided EmptyBiome emptyBiome) {
         super(world, type);
         this.world = world;
         this.emptyBiome = emptyBiome;

@@ -1,7 +1,7 @@
 package co.q64.stars.tile.type;
 
-import co.q64.stars.block.DecayingBlock;
-import co.q64.stars.tile.DecayingTile;
+import co.q64.stars.block.DoorBlock;
+import co.q64.stars.tile.DoorTile;
 import co.q64.stars.util.Identifiers;
 import net.minecraft.tileentity.TileEntityType;
 
@@ -11,10 +11,10 @@ import javax.inject.Singleton;
 import java.util.Collections;
 
 @Singleton
-public class DecayingTileType extends TileEntityType<DecayingTile> {
+public class DoorTileType extends TileEntityType<DoorTile> {
 
-    protected @Inject DecayingTileType(Provider<DecayingTile> provider, DecayingBlock type, Identifiers identifiers) {
+    protected @Inject DoorTileType(Provider<DoorTile> provider, DoorBlock type, Identifiers identifiers) {
         super(provider::get, Collections.singleton(type), null);
-        setRegistryName(identifiers.get("decaying"));
+        setRegistryName(identifiers.get("door"));
     }
 }

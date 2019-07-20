@@ -15,12 +15,12 @@ import net.minecraft.world.World;
 
 import javax.inject.Inject;
 
-public abstract class CruxItem extends BaseItem {
+public abstract class SeedItem extends BaseItem {
     protected @Inject FormingBlock formingBlock;
 
     private FormingBlockType type;
 
-    public CruxItem(String id, FormingBlockType type, ItemGroup group) {
+    public SeedItem(String id, FormingBlockType type, ItemGroup group) {
         super(id, group);
         this.type = type;
     }

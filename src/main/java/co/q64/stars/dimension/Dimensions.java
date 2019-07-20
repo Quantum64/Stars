@@ -16,15 +16,15 @@ import java.util.function.BiFunction;
 @Singleton
 public class Dimensions {
     protected @Inject @ModId String modId;
-    protected @Inject AdventureDimensionFactory dimensionFactory;
+    protected @Inject FleetingDimensionFactory dimensionFactory;
 
-    private @Getter DimensionType adventureDimensionType;
+    private @Getter DimensionType fleetingDimensionType;
 
     protected @Inject Dimensions() {}
 
     public void register() {
-        ResourceLocation dimensionId = new ResourceLocation(modId, "stars");
-        this.adventureDimensionType = DimensionManager.registerDimension(dimensionId, new ModDimension() {
+        ResourceLocation dimensionId = new ResourceLocation(modId, "fleeting");
+        this.fleetingDimensionType = DimensionManager.registerDimension(dimensionId, new ModDimension() {
             public BiFunction<World, DimensionType, ? extends Dimension> getFactory() {
                 return dimensionFactory::create;
             }

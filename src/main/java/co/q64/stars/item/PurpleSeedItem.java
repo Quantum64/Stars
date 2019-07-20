@@ -7,9 +7,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class PurpleCruxItem extends CruxItem {
+public class PurpleSeedItem extends SeedItem {
     @Inject
-    protected PurpleCruxItem(PurpleFormingBlockType type, StarsGroup group) {
-        super("purple_crux", type, group);
+    protected PurpleSeedItem(PurpleFormingBlockType type, StarsGroup group) {
+        super("purple_seed", type, group);
     }
 }

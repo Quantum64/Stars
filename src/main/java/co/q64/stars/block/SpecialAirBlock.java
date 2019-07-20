@@ -3,6 +3,7 @@ package co.q64.stars.block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -25,5 +26,9 @@ public class SpecialAirBlock extends BaseBlock {
 
     public BlockRenderType getRenderType(BlockState state) {
         return BlockRenderType.INVISIBLE;
+    }
+
+    public boolean isReplaceable(BlockState state, BlockItemUseContext useContext) {
+        return true;
     }
 }

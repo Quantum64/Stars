@@ -1,6 +1,6 @@
 package co.q64.stars.group;
 
-import co.q64.stars.item.PinkCruxItem;
+import co.q64.stars.item.PinkSeedItem;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -12,7 +12,7 @@ import javax.inject.Singleton;
 
 @Singleton
 public class StarsGroup extends ItemGroup {
-    protected @Inject Provider<PinkCruxItem> itemProvider;
+    protected @Inject Provider<PinkSeedItem> itemProvider;
 
     protected @Inject StarsGroup() {
         super("stars");

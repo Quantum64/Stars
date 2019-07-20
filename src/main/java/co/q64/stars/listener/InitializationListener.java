@@ -31,7 +31,7 @@ public class InitializationListener implements Listener {
     @SubscribeEvent
     public void onServerPreInit(FMLServerStartedEvent event) {
         dimensions.register();
-        File dimension = dimensions.getAdventureDimensionType().getDirectory(event.getServer().getWorld(dimensions.getAdventureDimensionType()).getSaveHandler().getWorldDirectory());
+        File dimension = dimensions.getFleetingDimensionType().getDirectory(event.getServer().getWorld(dimensions.getFleetingDimensionType()).getSaveHandler().getWorldDirectory());
         try {
             Files.walk(dimension.toPath())
                     .sorted(Comparator.reverseOrder())
