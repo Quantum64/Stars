@@ -17,7 +17,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -29,7 +28,7 @@ import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DecayEdgeTile extends TileEntity implements ITickableTileEntity {
+public class DecayEdgeTile extends SyncTileEntity implements ITickableTileEntity {
     private static final Direction[] DIRECTIONS = Direction.values();
     private static final long SALT = 0xabcd0123dcba3210L;
 
@@ -53,17 +52,6 @@ public class DecayEdgeTile extends TileEntity implements ITickableTileEntity {
     protected DecayEdgeTile(TileEntityType<?> type) {
         super(type);
     }
-
-    /*
-    public DecayEdgeTile(DecayEdgeBlock decayEdgeBlock, DecayBlock decayBlock, DecayingBlock decayingBlock, AirDecayEdgeBlock airDecayEdgeBlock, FormingBlockTypes types, TileEntityType<?> type) {
-        super(type);
-        this.types = types;
-        this.decayBlock = decayBlock;
-        this.decayingBlock = decayingBlock;
-        this.decayEdgeBlock = decayEdgeBlock;
-        this.airDecayEdgeBlock = airDecayEdgeBlock;
-    }
-     */
 
     public void tick() {
         if (!world.isRemote) {

@@ -1,11 +1,10 @@
 package co.q64.stars.type.forming;
 
-import co.q64.stars.block.AirDecayBlock;
-import co.q64.stars.block.AirDecayEdgeBlock;
-import co.q64.stars.block.DecayBlock;
 import co.q64.stars.block.DecayEdgeBlock;
 import co.q64.stars.block.RedFormedBlock;
 import co.q64.stars.block.RedPrimedBlock;
+import co.q64.stars.item.BlueSeedItem;
+import co.q64.stars.item.RedSeedItem;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.util.DecayManager;
 import co.q64.stars.util.EntryManager;
@@ -18,6 +17,7 @@ import net.minecraft.world.ServerWorld;
 import net.minecraft.world.World;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +33,9 @@ public class RedFormingBlockType implements FormingBlockType {
     protected @Inject EntryManager entryManager;
     protected @Inject DecayEdgeBlock decayBlock;
     protected @Inject RedFormedBlock redBlock;
+    protected @Inject DecayManager decayManager;
     protected @Getter @Inject RedPrimedBlock formedBlock;
+    protected @Getter @Inject Provider<RedSeedItem> itemProvider;
 
     protected @Inject RedFormingBlockType() {}
 
@@ -66,7 +68,9 @@ public class RedFormingBlockType implements FormingBlockType {
                         continue;
                     }
                     BlockPos target = pos.add(x, y, z);
-                    world.setBlockState(target, block.getDefaultState());
+                    if (!decayManager.isDecayBlock(world, target)) {
+                        world.setBlockState(target, block.getDefaultState());
+                    }
                 }
             }
         }

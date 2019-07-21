@@ -3,12 +3,12 @@ package co.q64.stars.listener;
 import co.q64.stars.block.BaseBlock;
 import co.q64.stars.block.BlueFormedBlock;
 import co.q64.stars.block.DarkAirBlock;
-import co.q64.stars.block.DarknessBlock;
 import co.q64.stars.block.FormingBlock;
 import co.q64.stars.dimension.FleetingDimension;
 import co.q64.stars.tile.FormingTile;
 import co.q64.stars.util.DecayManager;
 import co.q64.stars.util.EntryManager;
+import co.q64.stars.util.EntryManager.AdventureStage;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -85,23 +85,15 @@ public class PlayerListener implements Listener {
             World world = event.player.getEntityWorld();
             if (world.getDimension() instanceof FleetingDimension) {
                 ServerPlayerEntity player = (ServerPlayerEntity) event.player;
-                boolean hasNoJump = false;
-                for (EffectInstance instance : player.getActivePotionEffects()) {
-                    if (instance.getPotion() == Effects.JUMP_BOOST && instance.getAmplifier() == -50) {
-                        hasNoJump = true;
-                        break;
-                    }
-                }
-                if (!hasNoJump) {
-                    Block block = entity.getEntityWorld().getBlockState(entity.getPosition().offset(Direction.DOWN)).getBlock();
-                    player.removePotionEffect(Effects.JUMP_BOOST);
-                    if (block instanceof DarknessBlock) {
-                        player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 10000000, -50, true, false));
-                    } else if (block instanceof BlueFormedBlock) {
-                        player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, 9, true, false));
-                    } else {
-                        player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, 3, true, false));
-                    }
+                AdventureStage stage = entryManager.getStage(player);
+                Block block = entity.getEntityWorld().getBlockState(entity.getPosition().offset(Direction.DOWN)).getBlock();
+                player.removePotionEffect(Effects.JUMP_BOOST);
+                if (stage == AdventureStage.DARK) {
+                    player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, -50, true, false));
+                } else if (block instanceof BlueFormedBlock) {
+                    player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, 9, true, false));
+                } else {
+                    player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, 3, true, false));
                 }
 
                 if (decayManager.isDecayBlock((ServerWorld) world, player.getPosition())) {
@@ -110,7 +102,7 @@ public class PlayerListener implements Listener {
                     double offsetY = y - Math.floor(y);
                     double offsetZ = z - Math.floor(z);
                     boolean inToleranceMinusX = offsetX > TOLERANCE, inTolerancePlusX = offsetX < 1 - TOLERANCE;
-                    boolean inToleranceMinusY = offsetY > TOLERANCE, inTolerancePlusY = offsetY < 1 - TOLERANCE;
+                    boolean inToleranceMinusY = offsetY > -1, inTolerancePlusY = offsetY < 1 - TOLERANCE;
                     boolean inToleranceMinusZ = offsetZ > TOLERANCE, inTolerancePlusZ = offsetZ < 1 - TOLERANCE;
                     for (Direction direction : DIRECTIONS) {
                         if (decayManager.isDecayBlock((ServerWorld) world, player.getPosition().offset(direction))) {

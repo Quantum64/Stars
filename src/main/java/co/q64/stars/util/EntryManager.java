@@ -26,7 +26,7 @@ import java.util.UUID;
 
 @Singleton
 public class EntryManager {
-    private static final int SPREAD_DISTANCE = 1000;
+    private static final int SPREAD_DISTANCE = 2000;
 
     protected @Inject Dimensions dimensions;
     protected @Inject OrangeFormedBlock orangeFormedBlock;
@@ -39,11 +39,11 @@ public class EntryManager {
 
     protected @Inject EntryManager() {}
 
-    public void enter(ServerPlayerEntity player) {
-        enter(player, false);
+    public void enterFleeting(ServerPlayerEntity player) {
+        enterFleeting(player, false);
     }
 
-    public void enter(ServerPlayerEntity player, boolean showEffect) {
+    public void enterFleeting(ServerPlayerEntity player, boolean showEffect) {
         if (showEffect) {
             packetManager.getChannel().send(PacketDistributor.PLAYER.with(() -> player), packetManager.getPlayClientEffectPacketFactory().create(ClientEffectType.ENTRY));
         }

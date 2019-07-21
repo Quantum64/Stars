@@ -20,7 +20,7 @@ import javax.inject.Singleton;
 
 @Singleton
 public class ClientPlayerListener implements Listener {
-    private static final long ENTRY_EFFECT_TIME = 10000, DARKNESS_EFFECT_TIME = 5000;
+    private static final long ENTRY_EFFECT_TIME = 10000, DARKNESS_EFFECT_TIME = 1000, LOST_EFFECT_TIME = 15000;
     protected @Inject PacketManager packetManager;
 
     private long entryEffectTime, darknessEffectTime;
@@ -71,36 +71,12 @@ public class ClientPlayerListener implements Listener {
         long now = System.currentTimeMillis();
         long entryEffectMs = entryEffectTime - now + ENTRY_EFFECT_TIME;
         long darknessEffectMs = darknessEffectTime - now + DARKNESS_EFFECT_TIME;
-        if (darknessEffectMs > 0 || entryEffectMs > 0) {
-            int width = Minecraft.getInstance().mainWindow.getWidth();
-            int height = Minecraft.getInstance().mainWindow.getHeight();
-            if (darknessEffectMs > 0) {
-                double progress = (darknessEffectMs / Double.valueOf(DARKNESS_EFFECT_TIME));
-                if (progress > 1.0) {
-                    progress = 1.0;
-                }
-                GlStateManager.disableAlphaTest();
-                GlStateManager.disableDepthTest();
-                GlStateManager.disableTexture();
-                GlStateManager.depthMask(false);
-                GlStateManager.enableBlend();
-                GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-                GlStateManager.color4f(0f, 0f, 0f, (float) progress);
-                Tessellator tessellator = Tessellator.getInstance();
-                BufferBuilder bufferbuilder = tessellator.getBuffer();
-                bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-                bufferbuilder.pos(0, height, -90).endVertex();
-                bufferbuilder.pos(width, height, -90).endVertex();
-                bufferbuilder.pos(width, 0, -90).endVertex();
-                bufferbuilder.pos(0, 0, -90).endVertex();
-                tessellator.draw();
-                GlStateManager.depthMask(true);
-                GlStateManager.enableDepthTest();
-                GlStateManager.enableAlphaTest();
-                GlStateManager.enableTexture();
-                GlStateManager.disableBlend();
-                GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        if (darknessEffectMs > 0) {
+            double progress = (darknessEffectMs / Double.valueOf(DARKNESS_EFFECT_TIME));
+            if (progress > 1.0) {
+                progress = 1.0;
             }
+            drawScreenColorOverlay(0, 0, 0, (float) progress);
         }
     }
 
@@ -110,5 +86,31 @@ public class ClientPlayerListener implements Listener {
 
     public void playDarknessEffect() {
         darknessEffectTime = System.currentTimeMillis();
+    }
+
+    private void drawScreenColorOverlay(float r, float g, float b, float a) {
+        int width = Minecraft.getInstance().mainWindow.getWidth();
+        int height = Minecraft.getInstance().mainWindow.getHeight();
+        GlStateManager.disableAlphaTest();
+        GlStateManager.disableDepthTest();
+        GlStateManager.disableTexture();
+        GlStateManager.depthMask(false);
+        GlStateManager.enableBlend();
+        GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.color4f(r, g, b, a);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+        bufferbuilder.pos(0, height, -90).endVertex();
+        bufferbuilder.pos(width, height, -90).endVertex();
+        bufferbuilder.pos(width, 0, -90).endVertex();
+        bufferbuilder.pos(0, 0, -90).endVertex();
+        tessellator.draw();
+        GlStateManager.depthMask(true);
+        GlStateManager.enableDepthTest();
+        GlStateManager.enableAlphaTest();
+        GlStateManager.enableTexture();
+        GlStateManager.disableBlend();
+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
     }
 }

@@ -37,30 +37,6 @@ public class SpecialDecayEdgeTile extends DecayEdgeTile implements ITickableTile
         return super.write(compound);
     }
 
-    public CompoundNBT getUpdateTag() {
-        CompoundNBT tag = super.getUpdateTag();
-        write(tag);
-        return tag;
-    }
-
-    public void handleUpdateTag(CompoundNBT tag) {
-        super.read(tag);
-        read(tag);
-    }
-
-    @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        CompoundNBT tag = new CompoundNBT();
-        write(tag);
-        return new SUpdateTileEntityPacket(getPos(), 1, tag);
-    }
-
-    @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet) {
-        CompoundNBT tag = packet.getNbtCompound();
-        read(tag);
-    }
-
     protected BlockState getDecayState(DecayBlock block) {
         return block.getDefaultState().with(SpecialDecayBlock.TYPE, decayType);
     }

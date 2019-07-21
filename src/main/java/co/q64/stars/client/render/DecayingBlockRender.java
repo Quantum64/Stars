@@ -32,6 +32,8 @@ public class DecayingBlockRender extends TileEntityRenderer<DecayingTile> {
     private static final int COUNTS_PER_SIDE = 20;
     private static final int ANIMATION_TIME = 150;
 
+    protected @Inject SeedBlockRender seedBlockRender;
+
     private Map<Direction, long[]> salts = new HashMap<>();
     private Map<FormingBlockType, IBakedModel> modelCache = new HashMap<>();
     private Random random = new Random();
@@ -71,6 +73,10 @@ public class DecayingBlockRender extends TileEntityRenderer<DecayingTile> {
         buffer.setTranslation(0, 0, 0);
         tessellator.draw();
         RenderHelper.enableStandardItemLighting();
+
+        if (tile.isHasSeed()) {
+            seedBlockRender.drawItems(x, y, z, tile.getSeedType());
+        }
 
         GlStateManager.disableTexture();
         GlStateManager.color4f(0, 0, 0, 1);

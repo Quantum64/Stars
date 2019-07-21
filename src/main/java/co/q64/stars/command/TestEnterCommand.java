@@ -27,7 +27,7 @@ public class TestEnterCommand {
     private int execute(CommandContext<CommandSource> context) {
         try {
             ServerPlayerEntity player = context.getSource().asPlayer();
-            spawnpointManager.enter(player);
+            spawnpointManager.enterFleeting(player);
         } catch (Exception e) {
             e.printStackTrace();
         }

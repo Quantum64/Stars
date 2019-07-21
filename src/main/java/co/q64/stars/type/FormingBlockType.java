@@ -3,10 +3,12 @@ package co.q64.stars.type;
 import co.q64.stars.block.DarkAirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import javax.inject.Provider;
 import java.util.List;
 
 public interface FormingBlockType {
@@ -31,6 +33,8 @@ public interface FormingBlockType {
     public int getDecayTime(long seed);
 
     public int getIterations(long seed);
+
+    public Provider<? extends Item> getItemProvider();
 
     public Direction getInitialDirection(World world, BlockPos position);
 

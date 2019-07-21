@@ -6,74 +6,50 @@ import co.q64.stars.type.FormingBlockTypes;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.TileEntity;
 
 import javax.inject.Inject;
 
-public class DecayingTile extends TileEntity {
+public class DecayingTile extends SeedTile {
     private static final long SALT = 0x1029adbc3847efefL;
 
     protected @Inject FormingBlockTypes types;
 
     private @Getter @Setter boolean calculated;
-    private @Getter @Setter FormingBlockType formingBlockType;
+    private @Getter @Setter boolean hasSeed;
     private @Getter @Setter int expectedDecayTime;
     private @Getter @Setter long placed = System.currentTimeMillis();
-    private @Getter @Setter boolean primed = false;
 
     @Inject
-    protected DecayingTile(DecayingTileType formingBlockType) {
-        super(formingBlockType);
-    }
-
-    @Inject
-    protected void setupDefault(FormingBlockTypes types) {
-        this.formingBlockType = types.getDefault();
+    protected DecayingTile(DecayingTileType type) {
+        super(type);
     }
 
     public void read(CompoundNBT compound) {
         super.read(compound);
         expectedDecayTime = compound.getInt("expectedDecayTime");
-        formingBlockType = types.get(compound.getInt("formingBlockType"));
         placed = compound.getLong("placed");
         calculated = compound.getBoolean("calculated");
-        primed = compound.getBoolean("primed");
+        hasSeed = compound.getBoolean("hasSeed");
     }
 
     public CompoundNBT write(CompoundNBT compound) {
         CompoundNBT result = super.write(compound);
         result.putInt("expectedDecayTime", expectedDecayTime);
-        result.putInt("formingBlockType", formingBlockType.getId());
         result.putLong("placed", placed);
         result.putBoolean("calculated", calculated);
-        result.putBoolean("primed", primed);
+        result.putBoolean("hasSeed", hasSeed);
         return result;
     }
 
-    public CompoundNBT getUpdateTag() {
-        CompoundNBT tag = super.getUpdateTag();
-        write(tag);
-        return tag;
+    protected boolean hasSeed() {
+        return hasSeed;
     }
 
-    public void handleUpdateTag(CompoundNBT tag) {
-        super.read(tag);
-        read(tag);
-    }
-
-    @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        CompoundNBT tag = new CompoundNBT();
-        write(tag);
-        return new SUpdateTileEntityPacket(getPos(), 1, tag);
-    }
-
-    @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet) {
-        CompoundNBT tag = packet.getNbtCompound();
-        read(tag);
+    public void grow(FormingBlockType type) {
+        setSeedType(type);
+        setGrowTicks(getInitialGrowTicks());
+        setHasSeed(true);
+        world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
     }
 
     public long getSeed() {

@@ -24,6 +24,7 @@ import co.q64.stars.block.PinkFormedBlock;
 import co.q64.stars.block.PurpleFormedBlock;
 import co.q64.stars.block.RedFormedBlock;
 import co.q64.stars.block.RedPrimedBlock;
+import co.q64.stars.block.SeedBlock;
 import co.q64.stars.block.SpecialAirBlock;
 import co.q64.stars.block.SpecialDecayBlock;
 import co.q64.stars.block.SpecialDecayEdgeBlock;
@@ -49,6 +50,7 @@ import co.q64.stars.tile.type.DecayingTileType;
 import co.q64.stars.tile.type.DoorTileType;
 import co.q64.stars.tile.type.ForceRenderCullTileType;
 import co.q64.stars.tile.type.FormingTileType;
+import co.q64.stars.tile.type.SeedTileType;
 import co.q64.stars.tile.type.SpecialDecayEdgeTileType;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.forming.BlueFormingBlockType;
@@ -98,6 +100,7 @@ public interface CommonModule {
     @Binds @IntoSet BaseBlock bindDarknessBlock(DarknessBlock darknessBlock);
     @Binds @IntoSet BaseBlock bindDarknessEdgeBlock(DarknessEdgeBlock darknessEdgeBlock);
     @Binds @IntoSet BaseBlock bindDoorBlock(DoorBlock doorBlock);
+    @Binds @IntoSet BaseBlock bindSeedBlock(SeedBlock seedBlock);
     @Binds @IntoSet BaseBlock bindYellowFormedBlock(YellowFormedBlock yellowFormedBlock);
     @Binds @IntoSet BaseBlock bindPurpleFormedBlock(PurpleFormedBlock purpleFormedBlock);
     @Binds @IntoSet BaseBlock bindBlueFormedBlock(BlueFormedBlock blueFormedBlock);
@@ -130,7 +133,8 @@ public interface CommonModule {
     @Binds @IntoSet TileEntityType<?> bindDarknessEdgeTileType(DarknessEdgeTileType type);
     @Binds @IntoSet TileEntityType<?> bindForceRenderCullTileType(ForceRenderCullTileType type);
     @Binds @IntoSet TileEntityType<?> bindSpecialDecayEdgeTileType(SpecialDecayEdgeTileType type);
-    @Binds @IntoSet TileEntityType<?> bindDoorTileTypr(DoorTileType type);
+    @Binds @IntoSet TileEntityType<?> bindDoorTileType(DoorTileType type);
+    @Binds @IntoSet TileEntityType<?> bindSeedTileType(SeedTileType type);
 
     static @Provides @Singleton FMLJavaModLoadingContext provideFMLModLoadingContext() { return FMLJavaModLoadingContext.get(); }
     static @Provides @Singleton Logger provideLogger() { return LogManager.getLogger(); }

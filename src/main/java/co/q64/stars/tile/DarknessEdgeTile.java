@@ -43,7 +43,7 @@ public class DarknessEdgeTile extends TileEntity implements ITickableTileEntity 
             for (Direction direction : DIRECTIONS) {
                 BlockPos target = getPos().offset(direction);
                 Block block = world.getBlockState(target).getBlock();
-                if (block == Blocks.AIR || block instanceof DarkAirBlock || block instanceof AirDecayBlock || block instanceof AirDecayEdgeBlock) {
+                if (block == Blocks.AIR) {
                     world.setBlockState(target, darknessBlock.getDefaultState());
                 } else if (block instanceof SpecialDecayEdgeBlock || block instanceof SpecialDecayBlock) {
                     SpecialDecayType type = SpecialDecayType.HEART;
@@ -57,6 +57,7 @@ public class DarknessEdgeTile extends TileEntity implements ITickableTileEntity 
                     }
                     switch (type) {
                         case HEART:
+                            world.setBlockState(target, darknessEdgeBlock.getDefaultState());
                             break;
                         case DOOR:
                             world.setBlockState(target, doorBlock.getDefaultState());
@@ -64,7 +65,8 @@ public class DarknessEdgeTile extends TileEntity implements ITickableTileEntity 
                         case CHALLENGE_DOOR:
                             break;
                     }
-                } else if (block instanceof FormedBlock || block instanceof DecayBlock || block instanceof DecayEdgeBlock || block instanceof DecayingBlock) {
+                } else if (block instanceof FormedBlock || block instanceof DecayBlock || block instanceof DecayEdgeBlock || block instanceof DecayingBlock
+                        || block instanceof DarkAirBlock || block instanceof AirDecayBlock || block instanceof AirDecayEdgeBlock) {
                     world.setBlockState(target, darknessEdgeBlock.getDefaultState());
                 }
             }

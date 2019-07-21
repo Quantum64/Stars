@@ -1,6 +1,8 @@
 package co.q64.stars.type.forming;
 
 import co.q64.stars.block.GreenFormedBlock;
+import co.q64.stars.item.BlueSeedItem;
+import co.q64.stars.item.GreenSeedItem;
 import co.q64.stars.type.FormingBlockType;
 import lombok.Getter;
 import net.minecraft.util.Direction;
@@ -8,6 +10,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +26,7 @@ public class GreenFormingBlockType implements FormingBlockType {
     private final @Getter float r = 48, g = 255, b = 0;
 
     protected @Getter @Inject GreenFormedBlock formedBlock;
+    protected @Getter @Inject Provider<GreenSeedItem> itemProvider;
 
     protected @Inject GreenFormingBlockType() {}
 
