@@ -1,5 +1,6 @@
 package co.q64.stars.client.listener;
 
+import co.q64.stars.client.render.ExtraWorldRender;
 import co.q64.stars.client.render.PlayerOverlayRender;
 import co.q64.stars.dimension.FleetingDimension;
 import co.q64.stars.listener.Listener;
@@ -8,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.ForgeIngameGui;
 import net.minecraftforge.client.event.InputEvent.KeyInputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -18,6 +20,7 @@ import javax.inject.Singleton;
 public class ClientPlayerListener implements Listener {
     protected @Inject PacketManager packetManager;
     protected @Inject PlayerOverlayRender playerOverlayRender;
+    protected @Inject ExtraWorldRender extraWorldRender;
 
     private Boolean autoJump;
     private boolean pressingJump;
@@ -67,5 +70,10 @@ public class ClientPlayerListener implements Listener {
     @SubscribeEvent
     public void onOverlayRender(RenderGameOverlayEvent.Post event) {
         playerOverlayRender.renderOverlay();
+    }
+
+    @SubscribeEvent
+    public void onWorldRender(RenderWorldLastEvent event) {
+        extraWorldRender.render();
     }
 }

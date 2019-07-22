@@ -136,15 +136,17 @@ public class FormingTile extends SyncTileEntity implements ITickableTileEntity {
                     redFormingBlockType.explode((ServerWorld) world, primed, false);
                 } else {
                     // Move nearby
-                    for (ServerPlayerEntity player : ((ServerWorld) world).getPlayers()) {
-                        if (player.posX > getPos().getX() - 0.3 && player.posX < getPos().getX() + 1.3
-                                && player.posZ > getPos().getZ() - 0.3 && player.posZ < getPos().getZ() + 1.3
-                                && player.posY > getPos().getY() - 0.01 && player.posY < getPos().getY() + 1.01) {
-                            if (world.getBlockState(getPos().offset(Direction.UP)).getBlock() instanceof FormedBlock) {
-                                world.setBlockState(getPos(), decayEdgeBlock.getDefaultState());
-                                player.teleport((ServerWorld) world, getPos().getX() + 0.5, getPos().getY() + 0.1, getPos().getZ() + 0.5, player.rotationYaw, player.rotationPitch);
-                            } else {
-                                player.connection.setPlayerLocation(player.posX, player.posY + 1, player.posZ, player.rotationYaw, player.rotationPitch, Arrays.asList(Flags.X, Flags.Y, Flags.Z, Flags.X_ROT, Flags.Y_ROT).stream().collect(Collectors.toSet()));
+                    if (direction == Direction.UP) {
+                        for (ServerPlayerEntity player : ((ServerWorld) world).getPlayers()) {
+                            if (player.posX > getPos().getX() - 0.3 && player.posX < getPos().getX() + 1.3
+                                    && player.posZ > getPos().getZ() - 0.3 && player.posZ < getPos().getZ() + 1.3
+                                    && player.posY > getPos().getY() - 0.01 && player.posY < getPos().getY() + 1.01) {
+                                if (world.getBlockState(getPos().offset(Direction.UP)).getBlock() instanceof FormedBlock) {
+                                    world.setBlockState(getPos(), decayEdgeBlock.getDefaultState());
+                                    player.teleport((ServerWorld) world, getPos().getX() + 0.5, getPos().getY() + 0.1, getPos().getZ() + 0.5, player.rotationYaw, player.rotationPitch);
+                                } else {
+                                    player.connection.setPlayerLocation(player.posX, player.posY + 1, player.posZ, player.rotationYaw, player.rotationPitch, Arrays.asList(Flags.X, Flags.Y, Flags.Z, Flags.X_ROT, Flags.Y_ROT).stream().collect(Collectors.toSet()));
+                                }
                             }
                         }
                     }

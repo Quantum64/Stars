@@ -66,6 +66,7 @@ public class EntryManager {
         BlockPos spawnpoint = getNext();
         ServerWorld world = DimensionManager.getWorld(player.getServer(), dimensions.getFleetingDimensionType(), false, true);
         setupSpawnpoint(world, spawnpoint);
+        player.setMotion(0, 0, 0);
         player.teleport(world, spawnpoint.getX() + 0.5, spawnpoint.getY(), spawnpoint.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
         setStage(player, FleetingStage.LIGHT);
         setSeeds(player, 13); // TODO

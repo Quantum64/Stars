@@ -23,10 +23,12 @@ import java.util.Map;
 @Singleton
 public class PlayerOverlayRender {
     private static final long ENTRY_EFFECT_TIME = 10000, DARKNESS_EFFECT_TIME = 1000, LOST_EFFECT_TIME = 15000;
+
+    protected @Inject ExtraWorldRender extraWorldRender;
+
     private long entryEffectTime, darknessEffectTime;
     private Map<FormingBlockType, ItemStack> seedItemCache = new HashMap<>();
     private FleetingStage lastStage = FleetingStage.NONE;
-
     private GardenerCapability gardenerCapability;
 
     protected @Inject PlayerOverlayRender() {}
@@ -65,7 +67,7 @@ public class PlayerOverlayRender {
     }
 
     public void playDarknessEffect() {
-        darknessEffectTime = System.currentTimeMillis();
+
     }
 
     private void stageChange(FleetingStage stage) {
@@ -76,6 +78,10 @@ public class PlayerOverlayRender {
                     keyName = keyName.split(" ")[1];
                 }
                 Minecraft.getInstance().ingameGUI.addChatMessage(ChatType.GAME_INFO, new StringTextComponent(TextFormatting.GRAY + "Touch " + TextFormatting.BOLD + keyName + TextFormatting.GRAY + " to grow."));
+                break;
+            case DARK:
+                extraWorldRender.setAnimationStart(System.currentTimeMillis());
+                darknessEffectTime = System.currentTimeMillis();
                 break;
         }
     }

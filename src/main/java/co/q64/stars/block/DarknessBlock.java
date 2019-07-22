@@ -1,6 +1,7 @@
 package co.q64.stars.block;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.util.BlockRenderLayer;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -14,5 +15,9 @@ public class DarknessBlock extends BaseBlock {
 
     protected @Inject DarknessBlock() {
         super("darkness", Properties.create(Material.GLASS).hardnessAndResistance(-1f, 3600000f));
+    }
+
+    public BlockRenderLayer getRenderLayer() {
+        return BlockRenderLayer.CUTOUT;
     }
 }
