@@ -45,4 +45,8 @@ public interface FormingBlockType {
         Block block = world.getBlockState(target).getBlock();
         return block != Blocks.AIR && !(block instanceof DarkAirBlock);
     }
+
+    public default boolean canGrow() {
+        return true;
+    }
 }

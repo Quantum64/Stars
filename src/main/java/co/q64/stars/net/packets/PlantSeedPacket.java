@@ -9,27 +9,22 @@ import net.minecraftforge.fml.network.NetworkEvent.Context;
 import java.util.function.Supplier;
 
 @AutoFactory
-public class UpdateJumpPacket {
+public class PlantSeedPacket {
     private EntryManager entryManager;
-    private boolean jumping;
 
-    protected UpdateJumpPacket(@Provided EntryManager entryManager, PacketBuffer buffer) {
+    protected PlantSeedPacket(@Provided EntryManager entryManager, PacketBuffer buffer) {
         this.entryManager = entryManager;
-        this.jumping = buffer.readBoolean();
     }
 
-    protected UpdateJumpPacket(@Provided EntryManager entryManager, boolean jumping) {
+    protected PlantSeedPacket(@Provided EntryManager entryManager) {
         this.entryManager = entryManager;
-        this.jumping = jumping;
     }
 
-    public void encode(PacketBuffer buffer) {
-        buffer.writeBoolean(jumping);
-    }
+    public void encode(PacketBuffer buffer) {}
 
     public void handle(Supplier<Context> context) {
         context.get().enqueueWork(() -> {
-            entryManager.updateJumpStatus(context.get().getSender(), jumping);
+            entryManager.grow(context.get().getSender());
         });
         context.get().setPacketHandled(true);
     }

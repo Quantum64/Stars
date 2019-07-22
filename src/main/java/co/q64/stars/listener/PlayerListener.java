@@ -4,11 +4,13 @@ import co.q64.stars.block.BaseBlock;
 import co.q64.stars.block.BlueFormedBlock;
 import co.q64.stars.block.DarkAirBlock;
 import co.q64.stars.block.FormingBlock;
+import co.q64.stars.capability.gardener.GardenerCapabilityProvider;
 import co.q64.stars.dimension.FleetingDimension;
 import co.q64.stars.tile.FormingTile;
+import co.q64.stars.type.FleetingStage;
 import co.q64.stars.util.DecayManager;
 import co.q64.stars.util.EntryManager;
-import co.q64.stars.util.EntryManager.AdventureStage;
+import co.q64.stars.util.Identifiers;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -20,9 +22,10 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.ServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityEvent.EyeHeight;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -34,6 +37,7 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.lang.reflect.Field;
 
@@ -45,6 +49,8 @@ public class PlayerListener implements Listener {
     protected @Inject EntryManager entryManager;
     protected @Inject DarkAirBlock darkAirBlock;
     protected @Inject DecayManager decayManager;
+    protected @Inject Identifiers identifiers;
+    protected @Inject Provider<GardenerCapabilityProvider> gardenerCapabilityProvider;
 
     private EntitySize size = new EntitySize(0.6f, 0.85f, false);
     private Field sizeField;
@@ -72,6 +78,13 @@ public class PlayerListener implements Listener {
     }
 
     @SubscribeEvent
+    public void onCapabilityAttach(AttachCapabilitiesEvent<Entity> event) {
+        if (event.getObject() instanceof ServerPlayerEntity) {
+            event.addCapability(identifiers.get("gardener"), gardenerCapabilityProvider.get());
+        }
+    }
+
+    @SubscribeEvent
     public void onPlayerTick(PlayerTickEvent event) throws IllegalAccessException {
         PlayerEntity entity = event.player;
         if (entity.getEntityWorld().getDimension() instanceof FleetingDimension) {
@@ -85,10 +98,10 @@ public class PlayerListener implements Listener {
             World world = event.player.getEntityWorld();
             if (world.getDimension() instanceof FleetingDimension) {
                 ServerPlayerEntity player = (ServerPlayerEntity) event.player;
-                AdventureStage stage = entryManager.getStage(player);
+                FleetingStage stage = entryManager.getStage(player);
                 Block block = entity.getEntityWorld().getBlockState(entity.getPosition().offset(Direction.DOWN)).getBlock();
                 player.removePotionEffect(Effects.JUMP_BOOST);
-                if (stage == AdventureStage.DARK) {
+                if (stage == FleetingStage.DARK) {
                     player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, -50, true, false));
                 } else if (block instanceof BlueFormedBlock) {
                     player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, 9, true, false));

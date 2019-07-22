@@ -1,6 +1,6 @@
 package co.q64.stars.net.packets;
 
-import co.q64.stars.util.ClientEffects;
+import co.q64.stars.util.ClientNetHandler;
 import com.google.auto.factory.AutoFactory;
 import com.google.auto.factory.Provided;
 import net.minecraft.nbt.CompoundNBT;
@@ -12,16 +12,16 @@ import java.util.function.Supplier;
 @AutoFactory
 public class PlayClientEffectPacket {
     private ClientEffectType type;
-    private ClientEffects clientEffects;
+    private ClientNetHandler clientNetHandler;
 
-    protected PlayClientEffectPacket(@Provided ClientEffects clientEffects, PacketBuffer buffer) {
+    protected PlayClientEffectPacket(@Provided ClientNetHandler clientNetHandler, PacketBuffer buffer) {
         CompoundNBT tag = buffer.readCompoundTag();
-        this.clientEffects = clientEffects;
+        this.clientNetHandler = clientNetHandler;
         this.type = ClientEffectType.valueOf(tag.getString("type"));
     }
 
-    protected PlayClientEffectPacket(@Provided ClientEffects clientEffects, ClientEffectType type) {
-        this.clientEffects = clientEffects;
+    protected PlayClientEffectPacket(@Provided ClientNetHandler clientNetHandler, ClientEffectType type) {
+        this.clientNetHandler = clientNetHandler;
         this.type = type;
     }
 
@@ -35,10 +35,10 @@ public class PlayClientEffectPacket {
         context.get().enqueueWork(() -> {
             switch (type) {
                 case ENTRY:
-                    clientEffects.playEntryEffect();
+                    clientNetHandler.playEntryEffect();
                     break;
                 case DARKNESS:
-                    clientEffects.playDarknessEffect();
+                    clientNetHandler.playDarknessEffect();
                     break;
             }
         });

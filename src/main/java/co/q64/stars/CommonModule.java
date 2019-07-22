@@ -19,6 +19,7 @@ import co.q64.stars.block.DecayingBlock;
 import co.q64.stars.block.DoorBlock;
 import co.q64.stars.block.FormingBlock;
 import co.q64.stars.block.GreenFormedBlock;
+import co.q64.stars.block.GreenFruitBlock;
 import co.q64.stars.block.OrangeFormedBlock;
 import co.q64.stars.block.PinkFormedBlock;
 import co.q64.stars.block.PurpleFormedBlock;
@@ -29,14 +30,21 @@ import co.q64.stars.block.SpecialAirBlock;
 import co.q64.stars.block.SpecialDecayBlock;
 import co.q64.stars.block.SpecialDecayEdgeBlock;
 import co.q64.stars.block.YellowFormedBlock;
+import co.q64.stars.capability.GardenerCapability;
+import co.q64.stars.capability.gardener.GardenerCapabilityImpl;
+import co.q64.stars.entity.PickupEntity;
+import co.q64.stars.entity.PickupEntityFactory;
 import co.q64.stars.item.BaseItem;
 import co.q64.stars.item.BlueSeedItem;
 import co.q64.stars.item.BrownSeedItem;
 import co.q64.stars.item.CyanSeedItem;
 import co.q64.stars.item.GreenSeedItem;
+import co.q64.stars.item.HeartItem;
+import co.q64.stars.item.KeyItem;
 import co.q64.stars.item.PinkSeedItem;
 import co.q64.stars.item.PurpleSeedItem;
 import co.q64.stars.item.RedSeedItem;
+import co.q64.stars.item.SeedPouchItem;
 import co.q64.stars.item.YellowSeedItem;
 import co.q64.stars.listener.InitializationListener;
 import co.q64.stars.listener.Listener;
@@ -62,11 +70,16 @@ import co.q64.stars.type.forming.PinkFormingBlockType;
 import co.q64.stars.type.forming.PurpleFormingBlockType;
 import co.q64.stars.type.forming.RedFormingBlockType;
 import co.q64.stars.type.forming.YellowFormingBlockType;
+import co.q64.stars.util.Identifiers;
+import co.q64.stars.util.UnfortunateForgeBlackMagic;
 import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoSet;
+import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.EntityType;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -76,6 +89,8 @@ import javax.inject.Singleton;
 @Module
 public interface CommonModule {
     // @formatter:off
+
+    @Binds GardenerCapability bindGardenerCapability(GardenerCapabilityImpl gardenerCapability);
 
     @Binds @IntoSet FormingBlockType bindYellowFormingBlockType(YellowFormingBlockType type);
     @Binds @IntoSet FormingBlockType bindPurpleFormingBlockType(PurpleFormingBlockType type);
@@ -107,6 +122,7 @@ public interface CommonModule {
     @Binds @IntoSet BaseBlock bindRedFormedBlock(RedFormedBlock redFormedBlock);
     @Binds @IntoSet BaseBlock bindRedPrimedBlock(RedPrimedBlock redPrimedBlock);
     @Binds @IntoSet BaseBlock bindGreenFormedBlock(GreenFormedBlock greenFormedBlock);
+    @Binds @IntoSet BaseBlock bindGreenFruitBlock(GreenFruitBlock greenFruitBlock);
     @Binds @IntoSet BaseBlock bindCyanFormedBlock(CyanFormedBlock cyanFormedBlock);
     @Binds @IntoSet BaseBlock bindPinkFormedBlock(PinkFormedBlock pinkFormedBlock);
     @Binds @IntoSet BaseBlock bindBrownFormedBlock(BrownFormedBlock brownFormedBlock);
@@ -120,6 +136,9 @@ public interface CommonModule {
     @Binds @IntoSet BaseItem bindGreenSeedItem(GreenSeedItem greenSeedItem);
     @Binds @IntoSet BaseItem bindBrownSeedItem(BrownSeedItem brownSeedItem);
     @Binds @IntoSet BaseItem bindRedSeedItem(RedSeedItem redSeedItem);
+    @Binds @IntoSet BaseItem bindSeedPouchItem(SeedPouchItem seedPouchItem);
+    @Binds @IntoSet BaseItem bindHeartItem(HeartItem heartItem);
+    @Binds @IntoSet BaseItem bindKeyItem(KeyItem keyItem);
 
     @Binds @IntoSet Listener bindRegistryListener(RegistryListener serverStartListener);
     @Binds @IntoSet Listener bindInitializationListener(InitializationListener initializationListener);
@@ -136,6 +155,10 @@ public interface CommonModule {
     @Binds @IntoSet TileEntityType<?> bindDoorTileType(DoorTileType type);
     @Binds @IntoSet TileEntityType<?> bindSeedTileType(SeedTileType type);
 
+    @Binds @IntoSet EntityType<?> bindPickupEntityType(EntityType<PickupEntity> pickupEntityEntityType);
+
+    static @Provides Capability<GardenerCapability> provideGardenerCapability(UnfortunateForgeBlackMagic blackMagic) { return blackMagic.getGardenerCapability(); }
+
     static @Provides @Singleton FMLJavaModLoadingContext provideFMLModLoadingContext() { return FMLJavaModLoadingContext.get(); }
     static @Provides @Singleton Logger provideLogger() { return LogManager.getLogger(); }
 
@@ -145,4 +168,11 @@ public interface CommonModule {
     static @Provides @Author String provideVersion() { return ModInformation.AUTHOR; }
 
     // @formatter:on
+
+    static @Provides @Singleton EntityType<PickupEntity> providePickupEntityType(PickupEntityFactory pickupEntityFactory, Identifiers identifiers) {
+        EntityType<PickupEntity> result = EntityType.Builder.<PickupEntity>create((type, world) -> pickupEntityFactory.create(world), EntityClassification.MISC)
+                .disableSerialization().size(0.5f, 0.5f).setCustomClientFactory((packet, world) -> pickupEntityFactory.create(world)).build("pickup");
+        result.setRegistryName(identifiers.get("pickup"));
+        return result;
+    }
 }

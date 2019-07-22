@@ -16,6 +16,7 @@ import net.minecraftforge.client.model.data.ModelProperty;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @AutoFactory
@@ -29,7 +30,7 @@ public class ForceRenderCullModel implements IDynamicBakedModel {
     }
 
     public List<BakedQuad> getQuads(BlockState state, Direction side, Random rand, IModelData extraData) {
-        if ((side != null && extraData != null) && extraData.getData(CullProperties.get(side))) {
+        if ((side != null && extraData != null) && Optional.ofNullable(extraData.getData(CullProperties.get(side))).orElse(false)) {
             return Collections.emptyList();
         }
         return model.getQuads(state, side, rand, extraData);

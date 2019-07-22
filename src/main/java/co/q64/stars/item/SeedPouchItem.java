@@ -6,9 +6,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class SeedPouch extends BaseItem {
+public class SeedPouchItem extends BaseItem {
     @Inject
-    protected SeedPouch(StarsGroup group) {
+    protected SeedPouchItem(StarsGroup group) {
         super("seed_pouch", group);
     }
 }

@@ -16,6 +16,7 @@ import net.minecraft.world.World;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.Optional;
 
 @Singleton
 public class SeedManager {
@@ -36,15 +37,12 @@ public class SeedManager {
                 return false;
             }
             world.setBlockState(pos, seedBlock.getDefaultState(), 3);
-            SeedTile tile = (SeedTile) world.getTileEntity(pos);
-            if (tile == null) {
-                System.out.println("null tile on place " + pos.toString());
-            } else {
+            Optional.ofNullable((SeedTile) world.getTileEntity(pos)).ifPresent(tile -> {
                 tile.setFormingBlockType(types.get(block));
                 tile.setPrimed(primed);
                 tile.setSeedType(type);
                 tile.setCalculated(true);
-            }
+            });
             return true;
         }
         if (block instanceof DecayingBlock) {

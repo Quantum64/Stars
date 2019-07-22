@@ -6,14 +6,12 @@ import co.q64.stars.tile.type.DoorTileType;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 
 import javax.inject.Inject;
+import java.util.Optional;
 
 public class DoorTile extends SyncTileEntity implements ITickableTileEntity {
     private static final int SEARCH_DEPTH = 30;
@@ -57,9 +55,10 @@ public class DoorTile extends SyncTileEntity implements ITickableTileEntity {
             }
             world.setBlockState(getPos().offset(Direction.DOWN), getBlockState());
             world.setBlockState(getPos(), specialAirBlock.getDefaultState());
-            DoorTile tile = (DoorTile) world.getTileEntity(getPos().offset(Direction.DOWN));
-            tile.setFallen(true);
-            world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 2);
+            Optional.ofNullable((DoorTile) world.getTileEntity(getPos().offset(Direction.DOWN))).ifPresent(tile -> {
+                tile.setFallen(true);
+                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 2);
+            });
         }
         ticks++;
     }

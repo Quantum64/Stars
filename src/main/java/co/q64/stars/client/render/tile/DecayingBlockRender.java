@@ -1,7 +1,7 @@
-package co.q64.stars.client.render;
+package co.q64.stars.client.render.tile;
 
+import co.q64.stars.client.util.ModelUtil;
 import co.q64.stars.tile.DecayingTile;
-import co.q64.stars.type.FormingBlockType;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -33,9 +33,9 @@ public class DecayingBlockRender extends TileEntityRenderer<DecayingTile> {
     private static final int ANIMATION_TIME = 150;
 
     protected @Inject SeedBlockRender seedBlockRender;
+    protected @Inject ModelUtil modelUtil;
 
     private Map<Direction, long[]> salts = new HashMap<>();
-    private Map<FormingBlockType, IBakedModel> modelCache = new HashMap<>();
     private Random random = new Random();
     private float[] cutoffs = new float[COUNTS_PER_SIDE];
 
@@ -65,7 +65,7 @@ public class DecayingBlockRender extends TileEntityRenderer<DecayingTile> {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        IBakedModel model = modelCache.computeIfAbsent(tile.getFormingBlockType(), type -> Minecraft.getInstance().getModelManager().getBlockModelShapes().getModel(type.getFormedBlock().getDefaultState())).getBakedModel();
+        IBakedModel model = modelUtil.getModel(tile.getFormingBlockType(), tile.isPrimed(), tile.isFruit());
         BlockPos pos = tile.getPos();
         ChunkRenderCache world = MinecraftForgeClient.getRegionRenderCache(tile.getWorld(), pos);
         buffer.setTranslation(x - (double) pos.getX(), y - (double) pos.getY(), z - (double) pos.getZ());

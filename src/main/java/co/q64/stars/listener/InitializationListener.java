@@ -1,8 +1,12 @@
 package co.q64.stars.listener;
 
+import co.q64.stars.capability.GardenerCapability;
+import co.q64.stars.capability.gardener.GardenerCapabilityFactory;
+import co.q64.stars.capability.gardener.GardenerCapabilityStorage;
 import co.q64.stars.command.StarsCommand;
 import co.q64.stars.dimension.Dimensions;
 import co.q64.stars.net.PacketManager;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
@@ -20,12 +24,15 @@ public class InitializationListener implements Listener {
     protected @Inject PacketManager packetManager;
     protected @Inject Dimensions dimensions;
     protected @Inject StarsCommand command;
+    protected @Inject GardenerCapabilityStorage gardenerCapabilityStorage;
+    protected @Inject GardenerCapabilityFactory gardenerCapabilityFactory;
 
     protected @Inject InitializationListener() {}
 
     @SubscribeEvent
     public void onInitialize(FMLCommonSetupEvent event) {
         packetManager.register();
+        CapabilityManager.INSTANCE.register(GardenerCapability.class, gardenerCapabilityStorage, gardenerCapabilityFactory);
     }
 
     @SubscribeEvent

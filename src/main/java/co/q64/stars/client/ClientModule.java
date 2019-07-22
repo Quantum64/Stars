@@ -2,9 +2,9 @@ package co.q64.stars.client;
 
 import co.q64.stars.client.listener.ClientPlayerListener;
 import co.q64.stars.client.listener.ClientRegistryListener;
-import co.q64.stars.client.util.ClientEffectsImpl;
+import co.q64.stars.client.util.ClientNetHandlerImpl;
 import co.q64.stars.listener.Listener;
-import co.q64.stars.util.ClientEffects;
+import co.q64.stars.util.ClientNetHandler;
 import dagger.Binds;
 import dagger.Module;
 import dagger.multibindings.IntoSet;
@@ -15,6 +15,6 @@ public interface ClientModule {
     @Binds @IntoSet Listener bindClientRegistryListener(ClientRegistryListener clientRegistryListener);
     @Binds @IntoSet Listener bindClientPlayerListener(ClientPlayerListener clientPlayerListener);
 
-    @Binds ClientEffects bindClientEffects(ClientEffectsImpl clientEffects);
+    @Binds ClientNetHandler bindClientEffects(ClientNetHandlerImpl clientEffects);
     // @formatter:on
 }

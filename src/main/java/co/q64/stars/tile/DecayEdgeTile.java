@@ -7,7 +7,11 @@ import co.q64.stars.block.DecayEdgeBlock;
 import co.q64.stars.block.DecayingBlock;
 import co.q64.stars.block.FormedBlock;
 import co.q64.stars.block.FormingBlock;
+import co.q64.stars.block.GreenFruitBlock;
 import co.q64.stars.block.RedPrimedBlock;
+import co.q64.stars.block.SpecialDecayBlock;
+import co.q64.stars.block.SpecialDecayEdgeBlock;
+import co.q64.stars.tile.SpecialDecayEdgeTile.SpecialDecayType;
 import co.q64.stars.tile.type.DecayEdgeTileType;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.FormingBlockTypes;
@@ -20,13 +24,14 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ServerWorld;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 
 import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class DecayEdgeTile extends SyncTileEntity implements ITickableTileEntity {
     private static final Direction[] DIRECTIONS = Direction.values();
@@ -38,6 +43,7 @@ public class DecayEdgeTile extends SyncTileEntity implements ITickableTileEntity
     protected @Inject DecayBlock decayBlock;
     protected @Inject AirDecayEdgeBlock airDecayEdgeBlock;
     protected @Inject RedFormingBlockType redFormingBlockType;
+    protected @Inject SpecialDecayEdgeBlock specialDecayEdgeBlock;
 
     private Map<Direction, Integer> decayAmount = new HashMap<>();
 
@@ -66,15 +72,13 @@ public class DecayEdgeTile extends SyncTileEntity implements ITickableTileEntity
                 if (block instanceof FormedBlock) {
                     FormingBlockType type = types.get(block);
                     world.setBlockState(target, decayingBlock.getDefaultState());
-                    DecayingTile decayingTile = (DecayingTile) world.getTileEntity(target);
-                    decayingTile.setFormingBlockType(type);
-                    decayingTile.setPrimed(block instanceof RedPrimedBlock);
-                    decayingTile.setExpectedDecayTime(type.getDecayTime(target.toLong() ^ SALT) * 50);
-                    decayingTile.setCalculated(true);
-                    if (decayingTile == null) {
-                        System.out.println("decaying tile null");
-                        continue;
-                    }
+                    Optional.ofNullable((DecayingTile) world.getTileEntity(target)).ifPresent(decayingTile -> {
+                        decayingTile.setFormingBlockType(type);
+                        decayingTile.setPrimed(block instanceof RedPrimedBlock);
+                        decayingTile.setFruit(block instanceof GreenFruitBlock);
+                        decayingTile.setExpectedDecayTime(type.getDecayTime(target.toLong() ^ SALT) * 50);
+                        decayingTile.setCalculated(true);
+                    });
                     counts++;
                 } else if (block instanceof DecayingBlock) {
                     int decay = decayAmount.getOrDefault(direction, 0);
@@ -88,6 +92,8 @@ public class DecayEdgeTile extends SyncTileEntity implements ITickableTileEntity
                         ((ServerWorld) world).spawnParticle(ParticleTypes.LARGE_SMOKE, target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5, 20, 0.5, 0.5, 0.5, 0.01);
                         if (decayingTile.isPrimed()) {
                             redFormingBlockType.explode((ServerWorld) world, target, true);
+                        } else if (decayingTile.isFruit()) {
+                            world.setBlockState(target, specialDecayEdgeBlock.getDefaultState().with(SpecialDecayBlock.TYPE, SpecialDecayType.HEART));
                         } else {
                             world.setBlockState(target, decayEdgeBlock.getDefaultState());
                         }

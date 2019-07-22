@@ -1,4 +1,4 @@
-package co.q64.stars.client.render;
+package co.q64.stars.client.render.tile;
 
 import co.q64.stars.tile.DoorTile;
 import com.mojang.blaze3d.platform.GlStateManager;

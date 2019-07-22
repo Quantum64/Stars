@@ -42,7 +42,7 @@ public class SpecialDecayEdgeTile extends DecayEdgeTile implements ITickableTile
     }
 
     public static enum SpecialDecayType implements IStringSerializable {
-        HEART, DOOR, CHALLENGE_DOOR;
+        HEART, DOOR, CHALLENGE_DOOR, KEY;
 
         public String getName() {
             return name().toLowerCase();

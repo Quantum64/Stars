@@ -10,7 +10,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ServerWorld;
+import net.minecraft.world.server.ServerWorld;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

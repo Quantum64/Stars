@@ -1,5 +1,7 @@
 package co.q64.stars.loader;
 
+import co.q64.stars.capability.gardener.GardenerCapabilityFactory;
+import co.q64.stars.capability.gardener.GardenerCapabilityStorage;
 import co.q64.stars.listener.Listener;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;

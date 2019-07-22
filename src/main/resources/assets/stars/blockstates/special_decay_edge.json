@@ -2,6 +2,7 @@
   "variants": {
     "type=heart": {"model": "stars:block/special_decay" },
 	"type=door": {"model": "stars:block/special_decay" },
-	"type=challenge_door": {"model": "stars:block/special_decay" }
+	"type=challenge_door": {"model": "stars:block/special_decay" },
+	"type=key": {"model": "stars:block/special_decay"}
   }
 }

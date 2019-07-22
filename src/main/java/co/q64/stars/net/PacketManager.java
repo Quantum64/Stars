@@ -1,9 +1,13 @@
 package co.q64.stars.net;
 
+import co.q64.stars.net.packets.PlantSeedPacket;
+import co.q64.stars.net.packets.PlantSeedPacketFactory;
 import co.q64.stars.net.packets.PlayClientEffectPacket;
 import co.q64.stars.net.packets.PlayClientEffectPacketFactory;
 import co.q64.stars.net.packets.UpdateJumpPacket;
 import co.q64.stars.net.packets.UpdateJumpPacketFactory;
+import co.q64.stars.net.packets.UpdateOverlayPacket;
+import co.q64.stars.net.packets.UpdateOverlayPacketFactory;
 import co.q64.stars.util.Identifiers;
 import lombok.Getter;
 import net.minecraftforge.fml.network.NetworkRegistry.ChannelBuilder;
@@ -18,6 +22,8 @@ public class PacketManager {
 
     protected @Getter @Inject PlayClientEffectPacketFactory playClientEffectPacketFactory;
     protected @Getter @Inject UpdateJumpPacketFactory updateJumpPacketFactory;
+    protected @Getter @Inject UpdateOverlayPacketFactory updateOverlayPacketFactory;
+    protected @Getter @Inject PlantSeedPacketFactory plantSeedPacketFactory;
 
     private @Getter SimpleChannel channel;
 
@@ -33,5 +39,7 @@ public class PacketManager {
         int id = 0;
         channel.registerMessage(id++, PlayClientEffectPacket.class, (packet, buffer) -> packet.encode(buffer), buffer -> playClientEffectPacketFactory.create(buffer), (packet, context) -> packet.handle(context));
         channel.registerMessage(id++, UpdateJumpPacket.class, (packet, buffer) -> packet.encode(buffer), buffer -> updateJumpPacketFactory.create(buffer), (packet, context) -> packet.handle(context));
+        channel.registerMessage(id++, UpdateOverlayPacket.class, (packet, buffer) -> packet.encode(buffer), buffer -> updateOverlayPacketFactory.create(buffer), (packet, context) -> packet.handle(context));
+        channel.registerMessage(id++, PlantSeedPacket.class, (packet, buffer) -> packet.encode(buffer), buffer -> plantSeedPacketFactory.create(buffer), (packet, context) -> packet.handle(context));
     }
 }

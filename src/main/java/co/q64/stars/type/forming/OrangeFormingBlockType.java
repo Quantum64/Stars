@@ -43,4 +43,8 @@ public class OrangeFormingBlockType implements FormingBlockType {
     public int getDecayTime(long seed) {
         return 150 + (int) seed % 50;
     }
+
+    public boolean canGrow() {
+        return false;
+    }
 }

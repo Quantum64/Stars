@@ -3,6 +3,7 @@ package co.q64.stars.listener;
 import co.q64.stars.block.BaseBlock;
 import co.q64.stars.item.BaseItem;
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityType;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -20,6 +21,7 @@ public class RegistryListener implements Listener {
     protected @Inject Set<BaseBlock> blocks;
     protected @Inject Set<BaseItem> items;
     protected @Inject Set<TileEntityType<?>> tileEntityTypes;
+    protected @Inject Set<EntityType<?>> entityTypes;
     //protected @Inject Set<ContainerType<?>> containerTypes;
 
     protected @Inject RegistryListener() {}
@@ -40,6 +42,11 @@ public class RegistryListener implements Listener {
     @SubscribeEvent
     public void onTileEntityRegistry(Register<TileEntityType<?>> event) {
         event.getRegistry().registerAll(tileEntityTypes.toArray(new TileEntityType[0]));
+    }
+
+    @SubscribeEvent
+    public void onEntityRegistry(Register<EntityType<?>> event) {
+        event.getRegistry().registerAll(entityTypes.toArray(new EntityType[0]));
     }
 
     @SubscribeEvent

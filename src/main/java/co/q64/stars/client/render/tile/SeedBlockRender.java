@@ -1,5 +1,6 @@
-package co.q64.stars.client.render;
+package co.q64.stars.client.render.tile;
 
+import co.q64.stars.client.util.ModelUtil;
 import co.q64.stars.tile.SeedTile;
 import co.q64.stars.type.FormingBlockType;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -30,7 +31,8 @@ import java.util.Random;
 public class SeedBlockRender extends TileEntityRenderer<SeedTile> {
     private static final Direction[] DIRECTIONS = Direction.values();
 
-    private Map<FormingBlockType, IBakedModel> modelCache = new HashMap<>();
+    protected @Inject ModelUtil modelUtil;
+
     private Map<FormingBlockType, ItemStack> stackCache = new HashMap<>();
     private Random random = new Random();
 
@@ -52,7 +54,7 @@ public class SeedBlockRender extends TileEntityRenderer<SeedTile> {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        IBakedModel model = modelCache.computeIfAbsent(tile.getFormingBlockType(), type -> Minecraft.getInstance().getModelManager().getBlockModelShapes().getModel(type.getFormedBlock().getDefaultState())).getBakedModel();
+        IBakedModel model = modelUtil.getModel(tile.getFormingBlockType(), tile.isPrimed(), tile.isFruit());
         BlockPos pos = tile.getPos();
         ChunkRenderCache world = MinecraftForgeClient.getRegionRenderCache(tile.getWorld(), pos);
         buffer.setTranslation(x - (double) pos.getX(), y - (double) pos.getY(), z - (double) pos.getZ());

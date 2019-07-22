@@ -1,4 +1,4 @@
-package co.q64.stars.client.render;
+package co.q64.stars.client.render.tile;
 
 import co.q64.stars.tile.FormingTile;
 import co.q64.stars.type.FormingBlockType;

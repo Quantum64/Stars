@@ -3,7 +3,6 @@ package co.q64.stars.type.forming;
 import co.q64.stars.block.DecayEdgeBlock;
 import co.q64.stars.block.RedFormedBlock;
 import co.q64.stars.block.RedPrimedBlock;
-import co.q64.stars.item.BlueSeedItem;
 import co.q64.stars.item.RedSeedItem;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.util.DecayManager;
@@ -13,7 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ServerWorld;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.World;
 
 import javax.inject.Inject;
@@ -30,7 +29,7 @@ public class RedFormingBlockType implements FormingBlockType {
     private final @Getter int buildTimeOffset = 0;
     private final @Getter float r = 255, g = 0, b = 0;
 
-    protected @Inject EntryManager entryManager;
+    protected @Inject Provider<EntryManager> entryManager;
     protected @Inject DecayEdgeBlock decayBlock;
     protected @Inject RedFormedBlock redBlock;
     protected @Inject DecayManager decayManager;
@@ -76,7 +75,7 @@ public class RedFormingBlockType implements FormingBlockType {
         }
         for (ServerPlayerEntity player : world.getPlayers()) {
             if (player.getPosition().distanceSq(pos) < 2.9 * 2.9) {
-                entryManager.createDarkness(player);
+                entryManager.get().createDarkness(player);
             }
         }
     }

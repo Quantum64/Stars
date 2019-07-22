@@ -1,12 +1,12 @@
 package co.q64.stars.server;
 
-import co.q64.stars.util.ClientEffects;
+import co.q64.stars.util.ClientNetHandler;
 import dagger.Binds;
 import dagger.Module;
 
 @Module
 public interface ServerModule {
     // @formatter:off
-    @Binds ClientEffects bindClientEffects(MockClientEffects mockClientEffects);
+    @Binds ClientNetHandler bindClientEffects(MockClientNetHandler mockClientEffects);
     // @formatter:on
 }

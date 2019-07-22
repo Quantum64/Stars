@@ -12,7 +12,7 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ServerWorld;
+import net.minecraft.world.server.ServerWorld;
 
 import javax.inject.Inject;
 
