@@ -5,16 +5,18 @@ import co.q64.stars.block.BlueFormedBlock;
 import co.q64.stars.block.DarkAirBlock;
 import co.q64.stars.block.FormingBlock;
 import co.q64.stars.capability.gardener.GardenerCapabilityProvider;
-import co.q64.stars.dimension.FleetingDimension;
+import co.q64.stars.dimension.fleeting.FleetingDimension;
 import co.q64.stars.tile.FormingTile;
 import co.q64.stars.type.FleetingStage;
 import co.q64.stars.util.DecayManager;
-import co.q64.stars.util.EntryManager;
+import co.q64.stars.util.FleetingManager;
 import co.q64.stars.util.Identifiers;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.EffectInstance;
@@ -46,13 +48,14 @@ public class PlayerListener implements Listener {
     private static final double TOLERANCE = 0.15;
     private static final Direction[] DIRECTIONS = Direction.values();
 
-    protected @Inject EntryManager entryManager;
+    protected @Inject FleetingManager fleetingManager;
     protected @Inject DarkAirBlock darkAirBlock;
     protected @Inject DecayManager decayManager;
     protected @Inject Identifiers identifiers;
     protected @Inject Provider<GardenerCapabilityProvider> gardenerCapabilityProvider;
 
     private EntitySize size = new EntitySize(0.6f, 0.85f, false);
+    private AttributeModifier reach = new AttributeModifier("stars_reach", -3.6, Operation.ADDITION);
     private Field sizeField;
 
     @Inject
@@ -98,12 +101,11 @@ public class PlayerListener implements Listener {
             World world = event.player.getEntityWorld();
             if (world.getDimension() instanceof FleetingDimension) {
                 ServerPlayerEntity player = (ServerPlayerEntity) event.player;
-                FleetingStage stage = entryManager.getStage(player);
+                fleetingManager.tickPlayer(player);
+                FleetingStage stage = fleetingManager.getStage(player);
                 Block block = entity.getEntityWorld().getBlockState(entity.getPosition().offset(Direction.DOWN)).getBlock();
                 player.removePotionEffect(Effects.JUMP_BOOST);
-                if (stage == FleetingStage.DARK) {
-                    player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, -50, true, false));
-                } else if (block instanceof BlueFormedBlock) {
+                if (block instanceof BlueFormedBlock) {
                     player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, 9, true, false));
                 } else {
                     player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, 3, true, false));
@@ -154,7 +156,7 @@ public class PlayerListener implements Listener {
                         }
                     }
                     if (inToleranceMinusX && inTolerancePlusX && inToleranceMinusY && inTolerancePlusY && inToleranceMinusZ && inTolerancePlusZ) {
-                        entryManager.createDarkness(player);
+                        fleetingManager.createDarkness(player);
                     }
                 }
             }
@@ -203,7 +205,11 @@ public class PlayerListener implements Listener {
     public void onPlayerChangeDimension(EntityJoinWorldEvent event) {
         if (event.getEntity() instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) event.getEntity();
+            player.getAttribute(PlayerEntity.REACH_DISTANCE).removeAllModifiers(); // TODO ?
             if (event.getWorld().getDimension() instanceof FleetingDimension) {
+                player.getAttribute(PlayerEntity.REACH_DISTANCE).applyModifier(reach);
+            } else {
+                player.getAttribute(PlayerEntity.REACH_DISTANCE).removeModifier(reach);
             }
         }
     }

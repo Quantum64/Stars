@@ -1,7 +1,7 @@
 package co.q64.stars.block;
 
 import co.q64.stars.tile.SpecialDecayEdgeTile;
-import co.q64.stars.tile.SpecialDecayEdgeTile.SpecialDecayType;
+import co.q64.stars.util.DecayManager.SpecialDecayType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;

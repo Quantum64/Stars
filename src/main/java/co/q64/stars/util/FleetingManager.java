@@ -1,19 +1,20 @@
 package co.q64.stars.util;
 
 import co.q64.stars.block.DarknessEdgeBlock;
+import co.q64.stars.block.DecayBlock;
 import co.q64.stars.block.OrangeFormedBlock;
-import co.q64.stars.block.SpecialDecayBlock;
-import co.q64.stars.block.SpecialDecayEdgeBlock;
 import co.q64.stars.capability.GardenerCapability;
 import co.q64.stars.dimension.Dimensions;
+import co.q64.stars.entity.PickupEntity;
 import co.q64.stars.net.PacketManager;
 import co.q64.stars.net.packets.PlayClientEffectPacket.ClientEffectType;
-import co.q64.stars.tile.SpecialDecayEdgeTile.SpecialDecayType;
 import co.q64.stars.type.FleetingStage;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.forming.GreenFormingBlockType;
 import co.q64.stars.type.forming.PinkFormingBlockType;
 import co.q64.stars.type.forming.YellowFormingBlockType;
+import co.q64.stars.util.DecayManager.SpecialDecayType;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -28,17 +29,21 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Singleton
-public class EntryManager {
-    private static final int SPREAD_DISTANCE = 2000;
+public class FleetingManager {
+    public static final int SPREAD_DISTANCE = 2000;
+    public static final int SPAWN_HEIGHT = 100;
 
     protected @Inject Dimensions dimensions;
     protected @Inject OrangeFormedBlock orangeFormedBlock;
-    protected @Inject SpecialDecayEdgeBlock specialDecayEdgeBlock;
+    protected @Inject DecayBlock decayBlock;
     protected @Inject DarknessEdgeBlock darknessEdgeBlock;
     protected @Inject PacketManager packetManager;
     protected @Inject SeedManager seedManager;
@@ -46,12 +51,14 @@ public class EntryManager {
     protected @Inject YellowFormingBlockType yellowFormingBlockType;
     protected @Inject GreenFormingBlockType greenFormingBlockType;
     protected @Inject Provider<Capability<GardenerCapability>> gardenerCapability;
+    protected @Inject DecayManager decayManager;
 
     private Set<FormingBlockType> formingBlockTypes;
+    private Map<UUID, Integer> levitationQueue = new HashMap<>();
     private int index = 0;
 
     @Inject
-    protected EntryManager(Set<FormingBlockType> formingBlockTypes) {
+    protected FleetingManager(Set<FormingBlockType> formingBlockTypes) {
         this.formingBlockTypes = formingBlockTypes.stream().filter(FormingBlockType::canGrow).collect(Collectors.toSet());
     }
 
@@ -167,10 +174,9 @@ public class EntryManager {
     public void updateJumpStatus(ServerPlayerEntity player, boolean jumping) {
         if (getStage(player) == FleetingStage.DARK) {
             if (jumping) {
-                useSeed(player, () -> {
-                    player.addPotionEffect(new EffectInstance(Effects.LEVITATION, 200, 1, true, false));
-                });
+                levitationQueue.put(player.getUniqueID(), 18);
             } else {
+                levitationQueue.remove(player.getUniqueID());
                 player.removePotionEffect(Effects.LEVITATION);
             }
         }
@@ -178,7 +184,13 @@ public class EntryManager {
 
     public void createDarkness(ServerPlayerEntity player) {
         setStage(player, FleetingStage.DARK);
-        World world = player.getServerWorld();
+        ServerWorld world = player.getServerWorld();
+        world.getEntities()
+                .filter(entity -> entity.getPosition().distanceSq(player.getPosition()) < 1000 * 1000)
+                .filter(entity -> entity instanceof PickupEntity)
+                .map(entity -> (PickupEntity) entity)
+                .filter(p -> p.getVariant() == 2)
+                .forEach(Entity::remove);
         BlockPos playerPosition = player.getPosition();
         packetManager.getChannel().send(PacketDistributor.PLAYER.with(() -> player), packetManager.getPlayClientEffectPacketFactory().create(ClientEffectType.DARKNESS));
         world.setBlockState(playerPosition, darknessEdgeBlock.getDefaultState());
@@ -200,6 +212,21 @@ public class EntryManager {
         player.getCapability(gardenerCapability.get()).ifPresent(c -> packetManager.getChannel().send(PacketDistributor.PLAYER.with(() -> player), packetManager.getUpdateOverlayPacketFactory().create(c)));
     }
 
+    public void tickPlayer(ServerPlayerEntity player) {
+        UUID uuid = player.getUniqueID();
+        if (levitationQueue.containsKey(uuid)) {
+            int ticks = levitationQueue.get(uuid) - 1;
+            if (ticks > 0) {
+                levitationQueue.put(uuid, ticks);
+                return;
+            }
+            levitationQueue.remove(player.getUniqueID());
+            useSeed(player, () -> {
+                player.addPotionEffect(new EffectInstance(Effects.LEVITATION, 200, 1, true, false));
+            });
+        }
+    }
+
     // TODO set the initial decay according to level
     private void setupSpawnpoint(World world, BlockPos pos) {
         for (int y = pos.getY() - 8; y < pos.getY(); y++) {
@@ -210,10 +237,11 @@ public class EntryManager {
             }
         }
         BlockPos door = new BlockPos(pos.getX(), pos.getY() - 8, pos.getZ());
-        world.setBlockState(door, specialDecayEdgeBlock.getDefaultState().with(SpecialDecayBlock.TYPE, SpecialDecayType.DOOR));
+        decayManager.createSpecialDecay(world, door, SpecialDecayType.DOOR);
 
         // MAJOR TODO
-        for (int i = 0; i < 20; i++) {
+        /*
+        for (int i = 0; i < 5; i++) {
             int[] position = new int[3];
             for (int p = 0; p < position.length; p++) {
                 int rnd = ThreadLocalRandom.current().nextInt(30) + 10;
@@ -222,9 +250,21 @@ public class EntryManager {
                 }
                 position[p] = rnd;
             }
-            BlockPos key = pos.add(position[0], position[1], position[2]);
-            world.setBlockState(key, specialDecayEdgeBlock.getDefaultState().with(SpecialDecayBlock.TYPE, SpecialDecayType.KEY));
+            createKey(world, pos.add(position[0], position[1], position[2]));
         }
+
+         */
+    }
+
+    private void createKey(World world, BlockPos key) {
+        for (int x = -3; x < 3; x++) {
+            for (int y = -3; y < 3; y++) {
+                for (int z = -3; z < 3; z++) {
+                    world.setBlockState(key.add(x, y, z), decayBlock.getDefaultState());
+                }
+            }
+        }
+        decayManager.createSpecialDecay(world, key, SpecialDecayType.KEY);
     }
 
     // TODO FIX
@@ -252,6 +292,6 @@ public class EntryManager {
         x *= SPREAD_DISTANCE;
         y *= SPREAD_DISTANCE;
         index++;
-        return new BlockPos(x, 64, y);
+        return new BlockPos(x, SPAWN_HEIGHT, y);
     }
 }

@@ -1,11 +1,12 @@
 package co.q64.stars.type.forming;
 
 import co.q64.stars.block.OrangeFormedBlock;
-import co.q64.stars.item.BlueSeedItem;
 import co.q64.stars.item.YellowSeedItem;
+import co.q64.stars.qualifier.SoundQualifiers.Dark;
 import co.q64.stars.type.FormingBlockType;
 import lombok.Getter;
 import net.minecraft.util.Direction;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -14,6 +15,7 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Singleton
 public class OrangeFormingBlockType implements FormingBlockType {
@@ -25,6 +27,7 @@ public class OrangeFormingBlockType implements FormingBlockType {
 
     protected @Getter @Inject OrangeFormedBlock formedBlock;
     protected @Getter @Inject Provider<YellowSeedItem> itemProvider;
+    protected @Getter @Inject @Dark Set<SoundEvent> sounds;
 
     protected @Inject OrangeFormingBlockType() {}
 

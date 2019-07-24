@@ -10,12 +10,14 @@ import co.q64.stars.block.DecayEdgeBlock;
 import co.q64.stars.block.DecayingBlock;
 import co.q64.stars.block.DoorBlock;
 import co.q64.stars.block.FormedBlock;
+import co.q64.stars.block.FormingBlock;
+import co.q64.stars.block.GreenFruitBlock;
 import co.q64.stars.block.SpecialAirBlock;
 import co.q64.stars.block.SpecialDecayBlock;
 import co.q64.stars.block.SpecialDecayEdgeBlock;
 import co.q64.stars.entity.PickupEntity;
-import co.q64.stars.tile.SpecialDecayEdgeTile.SpecialDecayType;
 import co.q64.stars.tile.type.DarknessEdgeTileType;
+import co.q64.stars.util.DecayManager.SpecialDecayType;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
@@ -46,12 +48,14 @@ public class DarknessEdgeTile extends TileEntity implements ITickableTileEntity 
             for (Direction direction : DIRECTIONS) {
                 BlockPos target = getPos().offset(direction);
                 Block block = world.getBlockState(target).getBlock();
-                if (block == Blocks.AIR) {
+                if (block == Blocks.AIR || block instanceof FormingBlock) {
                     world.setBlockState(target, darknessBlock.getDefaultState());
-                } else if (block instanceof SpecialDecayEdgeBlock || block instanceof SpecialDecayBlock) {
+                } else if (block instanceof SpecialDecayEdgeBlock || block instanceof SpecialDecayBlock || block instanceof GreenFruitBlock) {
                     SpecialDecayType type = SpecialDecayType.HEART;
                     if (block instanceof SpecialDecayBlock) {
                         type = world.getBlockState(target).get(SpecialDecayBlock.TYPE);
+                    } else if (block instanceof GreenFruitBlock) {
+                        type = SpecialDecayType.HEART;
                     } else {
                         SpecialDecayEdgeTile tile = (SpecialDecayEdgeTile) world.getTileEntity(target);
                         if (tile != null) {

@@ -1,0 +1,254 @@
+{
+  "grow_pink_1": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_pink_1",
+    "sounds": [
+      "stars:grow_pink_1"
+    ]
+  },
+  "grow_pink_2": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_pink_2",
+    "sounds": [
+      "stars:grow_pink_2"
+    ]
+  },
+  "grow_pink_3": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_pink_3",
+    "sounds": [
+      "stars:grow_pink_3"
+    ]
+  },
+  "grow_pink_4": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_pink_4",
+    "sounds": [
+      "stars:grow_pink_4"
+    ]
+  },
+  "grow_yellow_1": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_yellow_1",
+    "sounds": [
+      "stars:grow_yellow_1"
+    ]
+  },
+  "grow_yellow_2": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_yellow_2",
+    "sounds": [
+      "stars:grow_yellow_2"
+    ]
+  },
+  "grow_yellow_3": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_yellow_3",
+    "sounds": [
+      "stars:grow_yellow_3"
+    ]
+  },
+  "grow_yellow_4": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_yellow_4",
+    "sounds": [
+      "stars:grow_yellow_4"
+    ]
+  },
+  "grow_green_1": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_green_1",
+    "sounds": [
+      "stars:grow_green_1"
+    ]
+  },
+  "grow_green_2": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_green_2",
+    "sounds": [
+      "stars:grow_green_2"
+    ]
+  },
+  "grow_green_3": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_green_3",
+    "sounds": [
+      "stars:grow_green_3"
+    ]
+  },
+  "grow_green_4": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_green_4",
+    "sounds": [
+      "stars:grow_green_4"
+    ]
+  },
+  "grow_red_1": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_red_1",
+    "sounds": [
+      "stars:grow_red_1"
+    ]
+  },
+  "grow_red_2": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_red_2",
+    "sounds": [
+      "stars:grow_red_2"
+    ]
+  },
+  "grow_red_3": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_red_3",
+    "sounds": [
+      "stars:grow_red_3"
+    ]
+  },
+  "grow_red_4": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_red_4",
+    "sounds": [
+      "stars:grow_red_4"
+    ]
+  },
+  "grow_blue_1": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_blue_1",
+    "sounds": [
+      "stars:grow_blue_1"
+    ]
+  },
+  "grow_blue_2": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_blue_2",
+    "sounds": [
+      "stars:grow_blue_2"
+    ]
+  },
+  "grow_blue_3": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_blue_3",
+    "sounds": [
+      "stars:grow_blue_3"
+    ]
+  },
+  "grow_blue_4": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_blue_4",
+    "sounds": [
+      "stars:grow_blue_4"
+    ]
+  },
+  "grow_cyan_1": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_cyan_1",
+    "sounds": [
+      "stars:grow_cyan_1"
+    ]
+  },
+  "grow_cyan_2": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_cyan_2",
+    "sounds": [
+      "stars:grow_cyan_2"
+    ]
+  },
+  "grow_cyan_3": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_cyan_3",
+    "sounds": [
+      "stars:grow_cyan_3"
+    ]
+  },
+  "grow_cyan_4": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_cyan_4",
+    "sounds": [
+      "stars:grow_cyan_4"
+    ]
+  },
+  "grow_brown_1": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_brown_1",
+    "sounds": [
+      "stars:grow_brown_1"
+    ]
+  },
+  "grow_brown_2": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_brown_2",
+    "sounds": [
+      "stars:grow_brown_2"
+    ]
+  },
+  "grow_brown_3": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_brown_3",
+    "sounds": [
+      "stars:grow_brown_3"
+    ]
+  },
+  "grow_brown_4": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_brown_4",
+    "sounds": [
+      "stars:grow_brown_4"
+    ]
+  },
+  "grow_purple_1": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_purple_1",
+    "sounds": [
+      "stars:grow_purple_1"
+    ]
+  },
+  "grow_purple_2": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_purple_2",
+    "sounds": [
+      "stars:grow_purple_2"
+    ]
+  },
+  "grow_purple_3": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_purple_3",
+    "sounds": [
+      "stars:grow_purple_3"
+    ]
+  },
+  "grow_purple_4": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_purple_4",
+    "sounds": [
+      "stars:grow_purple_4"
+    ]
+  },
+  "dark_1": {
+    "category": "master",
+    "subtitle": "stars.subtitle.dark_1",
+    "sounds": [
+      "stars:dark_1"
+    ]
+  },
+  "dark_2": {
+    "category": "master",
+    "subtitle": "stars.subtitle.dark_2",
+    "sounds": [
+      "stars:dark_2"
+    ]
+  },
+  "dark_3": {
+    "category": "master",
+    "subtitle": "stars.subtitle.dark_3",
+    "sounds": [
+      "stars:dark_3"
+    ]
+  },
+  "dark_4": {
+    "category": "master",
+    "subtitle": "stars.subtitle.dark_4",
+    "sounds": [
+      "stars:dark_4"
+    ]
+  }
+}

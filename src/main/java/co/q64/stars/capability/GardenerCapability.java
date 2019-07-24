@@ -2,8 +2,10 @@ package co.q64.stars.capability;
 
 import co.q64.stars.type.FleetingStage;
 import co.q64.stars.type.FormingBlockType;
+import net.minecraft.util.SoundEvent;
 
 import java.util.Deque;
+import java.util.Set;
 
 public interface GardenerCapability {
     public int getSeeds();
@@ -26,6 +28,10 @@ public interface GardenerCapability {
 
     public void setTotalSeeds(int totalSeeds);
 
+    public long getLastPlayed(SoundEvent event);
+
+    public void setLastPlayed(SoundEvent event, long time);
+
     public FleetingStage getFleetingStage();
 
     public void setFleetingStage(FleetingStage fleetingStage);
@@ -35,4 +41,6 @@ public interface GardenerCapability {
     public void setLastSeed(FormingBlockType formingBlockType);
 
     public Deque<FormingBlockType> getNextSeeds();
+
+    public Set<SoundEvent> getLastSounds();
 }

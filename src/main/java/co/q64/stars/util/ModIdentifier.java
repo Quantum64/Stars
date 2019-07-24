@@ -1,6 +1,6 @@
 package co.q64.stars.util;
 
-import co.q64.stars.binders.ConstantBinders.ModId;
+import co.q64.stars.qualifier.ConstantQualifiers.ModId;
 import com.google.auto.factory.AutoFactory;
 import com.google.auto.factory.Provided;
 import net.minecraft.util.ResourceLocation;

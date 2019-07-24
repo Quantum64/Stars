@@ -1,11 +1,12 @@
 package co.q64.stars.type.forming;
 
 import co.q64.stars.block.PinkFormedBlock;
-import co.q64.stars.item.BlueSeedItem;
 import co.q64.stars.item.PinkSeedItem;
+import co.q64.stars.qualifier.SoundQualifiers.Pink;
 import co.q64.stars.type.FormingBlockType;
 import lombok.Getter;
 import net.minecraft.util.Direction;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -14,6 +15,7 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Singleton
 public class PinkFormingBlockType implements FormingBlockType {
@@ -25,6 +27,7 @@ public class PinkFormingBlockType implements FormingBlockType {
 
     protected @Getter @Inject PinkFormedBlock formedBlock;
     protected @Getter @Inject Provider<PinkSeedItem> itemProvider;
+    protected @Getter @Inject @Pink Set<SoundEvent> sounds;
 
     protected @Inject PinkFormingBlockType() {}
 

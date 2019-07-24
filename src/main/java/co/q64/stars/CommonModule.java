@@ -1,9 +1,5 @@
 package co.q64.stars;
 
-import co.q64.stars.binders.ConstantBinders.Author;
-import co.q64.stars.binders.ConstantBinders.ModId;
-import co.q64.stars.binders.ConstantBinders.Name;
-import co.q64.stars.binders.ConstantBinders.Version;
 import co.q64.stars.block.AirDecayBlock;
 import co.q64.stars.block.AirDecayEdgeBlock;
 import co.q64.stars.block.BaseBlock;
@@ -32,6 +28,9 @@ import co.q64.stars.block.SpecialDecayEdgeBlock;
 import co.q64.stars.block.YellowFormedBlock;
 import co.q64.stars.capability.GardenerCapability;
 import co.q64.stars.capability.gardener.GardenerCapabilityImpl;
+import co.q64.stars.dimension.fleeting.FleetingBiome;
+import co.q64.stars.dimension.fleeting.feature.DecayBlobFeature;
+import co.q64.stars.dimension.fleeting.placement.DecayBlobPlacement;
 import co.q64.stars.entity.PickupEntity;
 import co.q64.stars.entity.PickupEntityFactory;
 import co.q64.stars.item.BaseItem;
@@ -45,12 +44,26 @@ import co.q64.stars.item.PinkSeedItem;
 import co.q64.stars.item.PurpleSeedItem;
 import co.q64.stars.item.RedSeedItem;
 import co.q64.stars.item.SeedPouchItem;
+import co.q64.stars.item.StarItem;
 import co.q64.stars.item.YellowSeedItem;
 import co.q64.stars.listener.InitializationListener;
 import co.q64.stars.listener.Listener;
 import co.q64.stars.listener.PlayerListener;
 import co.q64.stars.listener.RegistryListener;
 import co.q64.stars.listener.WorldUnloadListener;
+import co.q64.stars.qualifier.ConstantQualifiers.Author;
+import co.q64.stars.qualifier.ConstantQualifiers.ModId;
+import co.q64.stars.qualifier.ConstantQualifiers.Name;
+import co.q64.stars.qualifier.ConstantQualifiers.Version;
+import co.q64.stars.qualifier.SoundQualifiers.Blue;
+import co.q64.stars.qualifier.SoundQualifiers.Brown;
+import co.q64.stars.qualifier.SoundQualifiers.Cyan;
+import co.q64.stars.qualifier.SoundQualifiers.Dark;
+import co.q64.stars.qualifier.SoundQualifiers.Green;
+import co.q64.stars.qualifier.SoundQualifiers.Pink;
+import co.q64.stars.qualifier.SoundQualifiers.Purple;
+import co.q64.stars.qualifier.SoundQualifiers.Red;
+import co.q64.stars.qualifier.SoundQualifiers.Yellow;
 import co.q64.stars.tile.type.AirDecayEdgeTileType;
 import co.q64.stars.tile.type.DarknessEdgeTileType;
 import co.q64.stars.tile.type.DecayEdgeTileType;
@@ -79,12 +92,17 @@ import dagger.multibindings.IntoSet;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.placement.Placement;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.inject.Singleton;
+import java.util.Set;
 
 @Module
 public interface CommonModule {
@@ -139,6 +157,7 @@ public interface CommonModule {
     @Binds @IntoSet BaseItem bindSeedPouchItem(SeedPouchItem seedPouchItem);
     @Binds @IntoSet BaseItem bindHeartItem(HeartItem heartItem);
     @Binds @IntoSet BaseItem bindKeyItem(KeyItem keyItem);
+    @Binds @IntoSet BaseItem bindStarItem(StarItem starItem);
 
     @Binds @IntoSet Listener bindRegistryListener(RegistryListener serverStartListener);
     @Binds @IntoSet Listener bindInitializationListener(InitializationListener initializationListener);
@@ -157,6 +176,20 @@ public interface CommonModule {
 
     @Binds @IntoSet EntityType<?> bindPickupEntityType(EntityType<PickupEntity> pickupEntityEntityType);
 
+    @Binds @IntoSet Set<SoundEvent> bindPinkSoundEvents(@Pink Set<SoundEvent> pinkSoundEvents);
+    @Binds @IntoSet Set<SoundEvent> bindRedSoundEvents(@Red Set<SoundEvent> redSoundEvents);
+    @Binds @IntoSet Set<SoundEvent> bindGreenSoundEvents(@Green Set<SoundEvent> greenSoundEvents);
+    @Binds @IntoSet Set<SoundEvent> bindBlueSoundEvents(@Blue Set<SoundEvent> blueSoundEvents);
+    @Binds @IntoSet Set<SoundEvent> bindPurpleSoundEvents(@Purple Set<SoundEvent> purpleSoundEvents);
+    @Binds @IntoSet Set<SoundEvent> bindBrownSoundEvents(@Brown Set<SoundEvent> brownSoundEvents);
+    @Binds @IntoSet Set<SoundEvent> bindYellowSoundEvents(@Yellow Set<SoundEvent> yellowSoundEvents);
+    @Binds @IntoSet Set<SoundEvent> bindCyanSoundEvents(@Cyan Set<SoundEvent> cyanSoundEvents);
+    @Binds @IntoSet Set<SoundEvent> bindDarkSoundEvents(@Dark Set<SoundEvent> darkSoundEvents);
+
+    @Binds @IntoSet Biome bindFleetingBiome(FleetingBiome fleetingBiome);
+    @Binds @IntoSet Feature<?> bindDecayBlobFeature(DecayBlobFeature decayBlobFeature);
+    @Binds @IntoSet Placement<?> bindDecayBlobPlacement(DecayBlobPlacement decayBlobPlacement);
+
     static @Provides Capability<GardenerCapability> provideGardenerCapability(UnfortunateForgeBlackMagic blackMagic) { return blackMagic.getGardenerCapability(); }
 
     static @Provides @Singleton FMLJavaModLoadingContext provideFMLModLoadingContext() { return FMLJavaModLoadingContext.get(); }
@@ -167,12 +200,57 @@ public interface CommonModule {
     static @Provides @Version String provideAuthor() { return ModInformation.VERSION; }
     static @Provides @Author String provideVersion() { return ModInformation.AUTHOR; }
 
-    // @formatter:on
-
     static @Provides @Singleton EntityType<PickupEntity> providePickupEntityType(PickupEntityFactory pickupEntityFactory, Identifiers identifiers) {
         EntityType<PickupEntity> result = EntityType.Builder.<PickupEntity>create((type, world) -> pickupEntityFactory.create(world), EntityClassification.MISC)
                 .disableSerialization().size(0.5f, 0.5f).setCustomClientFactory((packet, world) -> pickupEntityFactory.create(world)).build("pickup");
         result.setRegistryName(identifiers.get("pickup"));
         return result;
     }
+
+    static @Provides @IntoSet @Singleton @Pink SoundEvent providePinkSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_pink_1")); }
+    static @Provides @IntoSet @Singleton @Pink SoundEvent providePinkSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_pink_2")); }
+    static @Provides @IntoSet @Singleton @Pink SoundEvent providePinkSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_pink_3")); }
+    static @Provides @IntoSet @Singleton @Pink SoundEvent providePinkSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_pink_4")); }
+    
+    static @Provides @IntoSet @Singleton @Red SoundEvent provideRedSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_red_1")); }
+    static @Provides @IntoSet @Singleton @Red SoundEvent provideRedSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_red_2")); }
+    static @Provides @IntoSet @Singleton @Red SoundEvent provideRedSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_red_3")); }
+    static @Provides @IntoSet @Singleton @Red SoundEvent provideRedSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_red_4")); }
+    
+    static @Provides @IntoSet @Singleton @Blue SoundEvent provideBlueSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_blue_1")); }
+    static @Provides @IntoSet @Singleton @Blue SoundEvent provideBlueSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_blue_2")); }
+    static @Provides @IntoSet @Singleton @Blue SoundEvent provideBlueSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_blue_3")); }
+    static @Provides @IntoSet @Singleton @Blue SoundEvent provideBlueSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_blue_4")); }
+    
+    static @Provides @IntoSet @Singleton @Cyan SoundEvent provideCyanSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_cyan_1")); }
+    static @Provides @IntoSet @Singleton @Cyan SoundEvent provideCyanSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_cyan_2")); }
+    static @Provides @IntoSet @Singleton @Cyan SoundEvent provideCyanSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_cyan_3")); }
+    static @Provides @IntoSet @Singleton @Cyan SoundEvent provideCyanSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_cyan_4")); }
+    
+    static @Provides @IntoSet @Singleton @Green SoundEvent provideGreenSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_green_1")); }
+    static @Provides @IntoSet @Singleton @Green SoundEvent provideGreenSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_green_2")); }
+    static @Provides @IntoSet @Singleton @Green SoundEvent provideGreenSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_green_3")); }
+    static @Provides @IntoSet @Singleton @Green SoundEvent provideGreenSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_green_4")); }
+    
+    static @Provides @IntoSet @Singleton @Purple SoundEvent providePurpleSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_purple_1")); }
+    static @Provides @IntoSet @Singleton @Purple SoundEvent providePurpleSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_purple_2")); }
+    static @Provides @IntoSet @Singleton @Purple SoundEvent providePurpleSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_purple_3")); }
+    static @Provides @IntoSet @Singleton @Purple SoundEvent providePurpleSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_purple_4")); }
+    
+    static @Provides @IntoSet @Singleton @Yellow SoundEvent provideYellowSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_yellow_1")); }
+    static @Provides @IntoSet @Singleton @Yellow SoundEvent provideYellowSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_yellow_2")); }
+    static @Provides @IntoSet @Singleton @Yellow SoundEvent provideYellowSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_yellow_3")); }
+    static @Provides @IntoSet @Singleton @Yellow SoundEvent provideYellowSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_yellow_4")); }
+    
+    static @Provides @IntoSet @Singleton @Brown SoundEvent provideBrownSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_brown_1")); }
+    static @Provides @IntoSet @Singleton @Brown SoundEvent provideBrownSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_brown_2")); }
+    static @Provides @IntoSet @Singleton @Brown SoundEvent provideBrownSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_brown_3")); }
+    static @Provides @IntoSet @Singleton @Brown SoundEvent provideBrownSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_brown_4")); }
+    
+    static @Provides @IntoSet @Singleton @Dark SoundEvent provideDarkSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("dark_1")); }
+    static @Provides @IntoSet @Singleton @Dark SoundEvent provideDarkSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("dark_2")); }
+    static @Provides @IntoSet @Singleton @Dark SoundEvent provideDarkSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("dark_3")); }
+    static @Provides @IntoSet @Singleton @Dark SoundEvent provideDarkSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("dark_4")); }
+
+    // @formatter:on
 }

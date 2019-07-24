@@ -1,9 +1,10 @@
 package co.q64.stars.entity;
 
-import co.q64.stars.util.EntryManager;
+import co.q64.stars.util.FleetingManager;
 import com.google.auto.factory.AutoFactory;
 import com.google.auto.factory.Provided;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,15 +19,16 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 @AutoFactory
 public class PickupEntity extends Entity {
-    public static final int VARIANT_HEART = 0, VARIANT_KEY = 1;
+    public static final int VARIANT_HEART = 0, VARIANT_KEY = 1, VARIANT_STAR = 2;
 
     private static final DataParameter<Integer> VARIANT = EntityDataManager.createKey(PickupEntity.class, DataSerializers.VARINT);
-    private EntryManager entryManager;
+    private FleetingManager fleetingManager;
+    private @Getter @Setter long locationId;
     private @Getter int age;
 
-    protected PickupEntity(@Provided EntityType<PickupEntity> type, World world, @Provided EntryManager entryManager) {
+    protected PickupEntity(@Provided EntityType<PickupEntity> type, World world, @Provided FleetingManager fleetingManager) {
         super(type, world);
-        this.entryManager = entryManager;
+        this.fleetingManager = fleetingManager;
     }
 
     protected boolean canTriggerWalking() {
@@ -47,15 +49,19 @@ public class PickupEntity extends Entity {
             if (player.getBoundingBox().intersects(getBoundingBox())) {
                 switch (getVariant()) {
                     case 0:
-                        entryManager.addSeed((ServerPlayerEntity) player);
+                        fleetingManager.addSeed((ServerPlayerEntity) player);
                         break;
                     case 1:
-                        entryManager.addKey((ServerPlayerEntity) player);
+                        fleetingManager.addKey((ServerPlayerEntity) player);
                         break;
                 }
                 remove();
             }
         }
+    }
+
+    public boolean isGlowing() {
+        return true;
     }
 
     public int getVariant() {
@@ -74,9 +80,13 @@ public class PickupEntity extends Entity {
         if (tag.contains("variant")) {
             setVariant(tag.getInt("variant"));
         }
+        if (tag.contains("locationId")) {
+            setLocationId(tag.getLong("locationId"));
+        }
     }
 
     protected void writeAdditional(CompoundNBT tag) {
         tag.putInt("variant", getVariant());
+        tag.putLong("locationId", getLocationId());
     }
 }

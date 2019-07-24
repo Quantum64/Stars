@@ -1,7 +1,7 @@
 package co.q64.stars.command;
 
 import co.q64.stars.dimension.Dimensions;
-import co.q64.stars.util.EntryManager;
+import co.q64.stars.util.FleetingManager;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
@@ -14,7 +14,7 @@ import javax.inject.Singleton;
 @Singleton
 public class TestEnterCommand {
     protected @Inject Dimensions dimensions;
-    protected @Inject EntryManager spawnpointManager;
+    protected @Inject FleetingManager spawnpointManager;
 
     protected @Inject TestEnterCommand() {}
 

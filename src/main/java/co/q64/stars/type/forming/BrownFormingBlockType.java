@@ -3,10 +3,12 @@ package co.q64.stars.type.forming;
 import co.q64.stars.block.BrownFormedBlock;
 import co.q64.stars.block.FormingBlock;
 import co.q64.stars.item.BrownSeedItem;
+import co.q64.stars.qualifier.SoundQualifiers.Brown;
 import co.q64.stars.type.FormingBlockType;
 import lombok.Getter;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.Direction;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -14,8 +16,9 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Singleton
 public class BrownFormingBlockType implements FormingBlockType {
@@ -29,11 +32,12 @@ public class BrownFormingBlockType implements FormingBlockType {
 
     protected @Getter @Inject BrownFormedBlock formedBlock;
     protected @Getter @Inject Provider<BrownSeedItem> itemProvider;
+    protected @Getter @Inject @Brown Set<SoundEvent> sounds;
 
     protected @Inject BrownFormingBlockType() {}
 
     public int getIterations(long seed) {
-        return 8;
+        return 100;
     }
 
     public Direction getInitialDirection(World world, BlockPos position) {
@@ -52,39 +56,38 @@ public class BrownFormingBlockType implements FormingBlockType {
     }
 
     public List<Direction> getNextDirections(World world, BlockPos position, Direction last, int iterations) {
+        /*
         if (iterations == 0) {
             if (!hasBlock(world, position, Direction.DOWN)) {
                 return Arrays.asList(Direction.EAST, Direction.WEST, Direction.NORTH, Direction.SOUTH, Direction.DOWN);
             }
         }
+         */
         List<Direction> result = new ArrayList<>();
-        for (Direction direction : DIRECTIONS) {
-            if (direction == Direction.UP || direction == direction.DOWN) {
-                continue;
-            }
-            boolean canPlace = false;
-            for (Direction d : DIRECTIONS) {
-                if (d == Direction.UP || d == direction.DOWN) {
+        BlockState state = world.getBlockState(position.offset(Direction.DOWN));
+        if (!(state.getBlock() instanceof BrownFormedBlock || state.getBlock() instanceof FormingBlock || state.isAir(world, position.offset(Direction.DOWN)))) {
+            for (Direction direction : DIRECTIONS) {
+                if (direction == Direction.UP || direction == Direction.DOWN) {
                     continue;
                 }
-                BlockPos target = position.offset(direction).offset(d).offset(Direction.DOWN);
-                BlockState state = world.getBlockState(target);
-                if (state.getBlock() instanceof BrownFormedBlock || state.getBlock() instanceof FormingBlock || state.isAir(world, target)) {
-                    continue;
+                if (!hasBlock(world, position, direction)) {
+                    result.add(direction);
                 }
-                canPlace = true;
-            }
-            if (!hasBlock(world, position, direction) && canPlace) {
-                result.add(direction);
             }
         }
         if (!hasBlock(world, position, Direction.DOWN)) {
             result.add(Direction.DOWN);
         }
-        return result;
+        for (int y = 1; y < 7; y++) {
+            if (!(world.getBlockState(position.offset(Direction.UP, y)).getBlock() instanceof BrownFormedBlock)) {
+                return result;
+            }
+
+        }
+        return Collections.emptyList();
     }
 
     public int getDecayTime(long seed) {
-        return 250 + (int) seed % 50;
+        return 1200 + (int) seed % 300;
     }
 }

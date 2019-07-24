@@ -6,10 +6,15 @@ import co.q64.stars.block.DecayBlock;
 import co.q64.stars.block.DecayEdgeBlock;
 import co.q64.stars.block.SpecialDecayBlock;
 import co.q64.stars.block.SpecialDecayEdgeBlock;
+import co.q64.stars.entity.PickupEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.EntityType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
 import javax.inject.Inject;
@@ -23,6 +28,7 @@ public class DecayManager {
     protected @Inject AirDecayEdgeBlock airDecayEdgeBlock;
     protected @Inject DecayEdgeBlock decayEdgeBlock;
     protected @Inject SpecialDecayEdgeBlock specialDecayEdgeBlock;
+    protected @Inject EntityType<PickupEntity> pickupEntityType;
 
     protected @Inject DecayManager() {}
 
@@ -43,5 +49,21 @@ public class DecayManager {
     public boolean isDecayBlock(ServerWorld world, BlockPos pos) {
         Block block = world.getBlockState(pos).getBlock();
         return block == decayBlock || block instanceof DecayEdgeBlock || block instanceof SpecialDecayBlock || block instanceof SpecialDecayEdgeBlock;
+    }
+
+    public void createSpecialDecay(World world, BlockPos pos, SpecialDecayType type) {
+        createSpecialDecay(world, pos, type, true);
+    }
+
+    public void createSpecialDecay(IWorld world, BlockPos pos, SpecialDecayType type, boolean notify) {
+        world.setBlockState(pos, specialDecayEdgeBlock.getDefaultState().with(SpecialDecayBlock.TYPE, type), notify ? 3 : 2);
+    }
+
+    public static enum SpecialDecayType implements IStringSerializable {
+        HEART, DOOR, CHALLENGE_DOOR, KEY;
+
+        public String getName() {
+            return name().toLowerCase();
+        }
     }
 }

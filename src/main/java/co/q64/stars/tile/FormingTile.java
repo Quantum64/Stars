@@ -10,10 +10,12 @@ import co.q64.stars.block.RedPrimedBlock;
 import co.q64.stars.tile.type.FormingTileType;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.FormingBlockTypes;
+import co.q64.stars.type.forming.BrownFormingBlockType;
 import co.q64.stars.type.forming.GreenFormingBlockType;
 import co.q64.stars.type.forming.RedFormingBlockType;
 import co.q64.stars.type.forming.YellowFormingBlockType;
 import co.q64.stars.util.DecayManager;
+import co.q64.stars.util.Sounds;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -44,6 +46,8 @@ public class FormingTile extends SyncTileEntity implements ITickableTileEntity {
     protected @Inject GreenFormingBlockType greenFormingBlockType;
     protected @Inject GreenFruitBlock greenFruitBlock;
     protected @Inject DecayManager decayManager;
+    protected @Inject BrownFormingBlockType brownFormingBlockType;
+    protected @Inject Sounds sounds;
 
     private @Setter @Getter boolean calculated = false;
     private @Setter @Getter boolean first = true;
@@ -71,6 +75,9 @@ public class FormingTile extends SyncTileEntity implements ITickableTileEntity {
         this.buildTime = formType.getBuildTime();
         if (formType.getBuildTimeOffset() > 0) {
             buildTime += ThreadLocalRandom.current().nextInt(formType.getBuildTimeOffset() * 2) - formType.getBuildTimeOffset();
+        }
+        if (formType == brownFormingBlockType && direction == Direction.DOWN) {
+            buildTime = 250;
         }
         this.formTicks = buildTime / 50; // 50 ms per tick
         if (first) {
@@ -115,6 +122,7 @@ public class FormingTile extends SyncTileEntity implements ITickableTileEntity {
             }
             if (ticks == formTicks) {
                 ((ServerWorld) world).spawnParticle(ParticleTypes.CLOUD, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5, 20, 0.4, 0.4, 0.4, 0.01);
+                sounds.playSound((ServerWorld) world, pos, formType.getSounds(), 1f);
                 if (formType == greenFormingBlockType && ThreadLocalRandom.current().nextInt(FRUIT_CHANCE) == 0) {
                     world.setBlockState(getPos(), greenFruitBlock.getDefaultState());
                 } else {
@@ -136,17 +144,15 @@ public class FormingTile extends SyncTileEntity implements ITickableTileEntity {
                     redFormingBlockType.explode((ServerWorld) world, primed, false);
                 } else {
                     // Move nearby
-                    if (direction == Direction.UP) {
-                        for (ServerPlayerEntity player : ((ServerWorld) world).getPlayers()) {
-                            if (player.posX > getPos().getX() - 0.3 && player.posX < getPos().getX() + 1.3
-                                    && player.posZ > getPos().getZ() - 0.3 && player.posZ < getPos().getZ() + 1.3
-                                    && player.posY > getPos().getY() - 0.01 && player.posY < getPos().getY() + 1.01) {
-                                if (world.getBlockState(getPos().offset(Direction.UP)).getBlock() instanceof FormedBlock) {
-                                    world.setBlockState(getPos(), decayEdgeBlock.getDefaultState());
-                                    player.teleport((ServerWorld) world, getPos().getX() + 0.5, getPos().getY() + 0.1, getPos().getZ() + 0.5, player.rotationYaw, player.rotationPitch);
-                                } else {
-                                    player.connection.setPlayerLocation(player.posX, player.posY + 1, player.posZ, player.rotationYaw, player.rotationPitch, Arrays.asList(Flags.X, Flags.Y, Flags.Z, Flags.X_ROT, Flags.Y_ROT).stream().collect(Collectors.toSet()));
-                                }
+                    for (ServerPlayerEntity player : ((ServerWorld) world).getPlayers()) {
+                        if (player.posX > getPos().getX() - 0.3 && player.posX < getPos().getX() + 1.3
+                                && player.posZ > getPos().getZ() - 0.3 && player.posZ < getPos().getZ() + 1.3
+                                && player.posY > getPos().getY() - 0.01 && player.posY < getPos().getY() + 0.5) {
+                            if (world.getBlockState(getPos().offset(Direction.UP)).getBlock() instanceof FormedBlock) {
+                                world.setBlockState(getPos(), decayEdgeBlock.getDefaultState());
+                                player.teleport((ServerWorld) world, getPos().getX() + 0.5, getPos().getY() + 0.1, getPos().getZ() + 0.5, player.rotationYaw, player.rotationPitch);
+                            } else {
+                                player.connection.setPlayerLocation(player.posX, player.posY + 1, player.posZ, player.rotationYaw, player.rotationPitch, Arrays.asList(Flags.X, Flags.Y, Flags.Z, Flags.X_ROT, Flags.Y_ROT).stream().collect(Collectors.toSet()));
                             }
                         }
                     }

@@ -3,9 +3,12 @@ package co.q64.stars.type.forming;
 import co.q64.stars.block.YellowFormedBlock;
 import co.q64.stars.item.BlueSeedItem;
 import co.q64.stars.item.YellowSeedItem;
+import co.q64.stars.qualifier.SoundQualifiers.Purple;
+import co.q64.stars.qualifier.SoundQualifiers.Yellow;
 import co.q64.stars.type.FormingBlockType;
 import lombok.Getter;
 import net.minecraft.util.Direction;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -14,6 +17,7 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Singleton
 public class YellowFormingBlockType implements FormingBlockType {
@@ -25,11 +29,12 @@ public class YellowFormingBlockType implements FormingBlockType {
 
     protected @Getter @Inject YellowFormedBlock formedBlock;
     protected @Getter @Inject Provider<YellowSeedItem> itemProvider;
+    protected @Getter @Inject @Yellow Set<SoundEvent> sounds;
 
     protected @Inject YellowFormingBlockType() {}
 
     public int getIterations(long seed) {
-        return (int) (5 + (seed % 4));
+        return (int) (8 + (seed % 3));
     }
 
     public Direction getInitialDirection(World world, BlockPos position) {

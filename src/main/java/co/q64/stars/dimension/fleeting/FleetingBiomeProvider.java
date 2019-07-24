@@ -1,4 +1,4 @@
-package co.q64.stars.dimension;
+package co.q64.stars.dimension.fleeting;
 
 import co.q64.stars.util.Identifiers;
 import lombok.Getter;
@@ -10,10 +10,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class EmptyBiomeProvider {
+public class FleetingBiomeProvider {
     protected @Getter BiomeProvider provider;
 
-    protected @Inject EmptyBiomeProvider(Identifiers identifiers, EmptyBiome biome) {
+    protected @Inject FleetingBiomeProvider(Identifiers identifiers, FleetingBiome biome) {
         provider = BiomeProviderType.FIXED.create(new SingleBiomeProviderSettings().setBiome(biome));
     }
 }

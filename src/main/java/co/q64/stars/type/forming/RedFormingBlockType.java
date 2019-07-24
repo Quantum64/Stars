@@ -4,22 +4,25 @@ import co.q64.stars.block.DecayEdgeBlock;
 import co.q64.stars.block.RedFormedBlock;
 import co.q64.stars.block.RedPrimedBlock;
 import co.q64.stars.item.RedSeedItem;
+import co.q64.stars.qualifier.SoundQualifiers.Red;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.util.DecayManager;
-import co.q64.stars.util.EntryManager;
+import co.q64.stars.util.FleetingManager;
 import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Singleton
 public class RedFormingBlockType implements FormingBlockType {
@@ -29,12 +32,13 @@ public class RedFormingBlockType implements FormingBlockType {
     private final @Getter int buildTimeOffset = 0;
     private final @Getter float r = 255, g = 0, b = 0;
 
-    protected @Inject Provider<EntryManager> entryManager;
+    protected @Inject Provider<FleetingManager> entryManager;
     protected @Inject DecayEdgeBlock decayBlock;
     protected @Inject RedFormedBlock redBlock;
     protected @Inject DecayManager decayManager;
     protected @Getter @Inject RedPrimedBlock formedBlock;
     protected @Getter @Inject Provider<RedSeedItem> itemProvider;
+    protected @Getter @Inject @Red Set<SoundEvent> sounds;
 
     protected @Inject RedFormingBlockType() {}
 

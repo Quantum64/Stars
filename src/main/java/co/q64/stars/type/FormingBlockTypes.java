@@ -3,7 +3,9 @@ package co.q64.stars.type;
 import co.q64.stars.block.RedFormedBlock;
 import co.q64.stars.type.forming.RedFormingBlockType;
 import co.q64.stars.type.forming.YellowFormingBlockType;
+import co.q64.stars.util.Identifiers;
 import net.minecraft.block.Block;
+import net.minecraft.util.SoundEvent;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -19,6 +21,7 @@ public class FormingBlockTypes {
     protected @Inject YellowFormingBlockType yellowFormingBlockType;
     protected @Inject RedFormingBlockType redFormingBlockType;
     protected @Inject RedFormedBlock redFormedBlock;
+    protected @Inject Identifiers identifiers;
 
     @Inject
     protected FormingBlockTypes(Set<FormingBlockType> types) {

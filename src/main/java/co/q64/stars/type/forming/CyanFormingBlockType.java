@@ -3,9 +3,12 @@ package co.q64.stars.type.forming;
 import co.q64.stars.block.CyanFormedBlock;
 import co.q64.stars.item.BlueSeedItem;
 import co.q64.stars.item.CyanSeedItem;
+import co.q64.stars.qualifier.SoundQualifiers.Cyan;
+import co.q64.stars.qualifier.SoundQualifiers.Purple;
 import co.q64.stars.type.FormingBlockType;
 import lombok.Getter;
 import net.minecraft.util.Direction;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -14,6 +17,7 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Singleton
 public class CyanFormingBlockType implements FormingBlockType {
@@ -25,6 +29,7 @@ public class CyanFormingBlockType implements FormingBlockType {
 
     protected @Getter @Inject CyanFormedBlock formedBlock;
     protected @Getter @Inject Provider<CyanSeedItem> itemProvider;
+    protected @Getter @Inject @Cyan Set<SoundEvent> sounds;
 
     protected @Inject CyanFormingBlockType() {}
 

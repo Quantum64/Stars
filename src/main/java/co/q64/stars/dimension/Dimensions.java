@@ -1,6 +1,6 @@
 package co.q64.stars.dimension;
 
-import co.q64.stars.binders.ConstantBinders.ModId;
+import co.q64.stars.qualifier.ConstantQualifiers.ModId;
 import lombok.Getter;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -16,7 +16,7 @@ import java.util.function.BiFunction;
 @Singleton
 public class Dimensions {
     protected @Inject @ModId String modId;
-    protected @Inject FleetingDimensionFactory dimensionFactory;
+    protected @Inject co.q64.stars.dimension.fleeting.FleetingDimensionFactory dimensionFactory;
 
     private @Getter DimensionType fleetingDimensionType;
 

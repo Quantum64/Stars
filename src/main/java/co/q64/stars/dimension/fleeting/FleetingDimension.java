@@ -1,4 +1,4 @@
-package co.q64.stars.dimension;
+package co.q64.stars.dimension.fleeting;
 
 import com.google.auto.factory.AutoFactory;
 import com.google.auto.factory.Provided;
@@ -17,16 +17,16 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class FleetingDimension extends Dimension {
     private static final Vec3d fogColor = new Vec3d(1, 1, 1);
 
-    private EmptyChunkGeneratorFactory generatorFactory;
+    private co.q64.stars.dimension.fleeting.FleetingChunkGeneratorFactory generatorFactory;
     private World world;
-    private EmptyBiome emptyBiome;
+    private FleetingBiome fleetingBiome;
 
     protected FleetingDimension(World world, DimensionType type,
-                                @Provided EmptyChunkGeneratorFactory generatorFactory,
-                                @Provided EmptyBiome emptyBiome) {
+                                @Provided co.q64.stars.dimension.fleeting.FleetingChunkGeneratorFactory generatorFactory,
+                                @Provided FleetingBiome fleetingBiome) {
         super(world, type);
         this.world = world;
-        this.emptyBiome = emptyBiome;
+        this.fleetingBiome = fleetingBiome;
         this.generatorFactory = generatorFactory;
     }
 
@@ -80,6 +80,6 @@ public class FleetingDimension extends Dimension {
     }
 
     public Biome getBiome(BlockPos pos) {
-        return emptyBiome;
+        return fleetingBiome;
     }
 }

@@ -1,11 +1,12 @@
 package co.q64.stars.type.forming;
 
 import co.q64.stars.block.GreenFormedBlock;
-import co.q64.stars.item.BlueSeedItem;
 import co.q64.stars.item.GreenSeedItem;
+import co.q64.stars.qualifier.SoundQualifiers.Green;
 import co.q64.stars.type.FormingBlockType;
 import lombok.Getter;
 import net.minecraft.util.Direction;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -16,22 +17,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Singleton
 public class GreenFormingBlockType implements FormingBlockType {
     private final @Getter int id = 7;
     private final @Getter String name = "green";
-    private final @Getter int buildTime = 500;
+    private final @Getter int buildTime = 250;
     private final @Getter int buildTimeOffset = 0;
     private final @Getter float r = 48, g = 255, b = 0;
 
     protected @Getter @Inject GreenFormedBlock formedBlock;
     protected @Getter @Inject Provider<GreenSeedItem> itemProvider;
+    protected @Getter @Inject @Green Set<SoundEvent> sounds;
 
     protected @Inject GreenFormingBlockType() {}
 
     public int getIterations(long seed) {
-        return (int) (5 + (seed % 4));
+        return (int) (10 + (seed % 8));
     }
 
     public Direction getInitialDirection(World world, BlockPos position) {

@@ -1,6 +1,6 @@
 package co.q64.stars.util;
 
-import co.q64.stars.binders.ConstantBinders.Name;
+import co.q64.stars.qualifier.ConstantQualifiers.Name;
 import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;

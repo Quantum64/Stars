@@ -2,7 +2,7 @@ package co.q64.stars.client.listener;
 
 import co.q64.stars.client.render.ExtraWorldRender;
 import co.q64.stars.client.render.PlayerOverlayRender;
-import co.q64.stars.dimension.FleetingDimension;
+import co.q64.stars.dimension.fleeting.FleetingDimension;
 import co.q64.stars.listener.Listener;
 import co.q64.stars.net.PacketManager;
 import net.minecraft.client.Minecraft;
@@ -12,6 +12,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -23,6 +24,7 @@ public class ClientPlayerListener implements Listener {
     protected @Inject ExtraWorldRender extraWorldRender;
 
     private Boolean autoJump;
+    private Integer renderDistance;
     private boolean pressingJump;
 
     protected @Inject ClientPlayerListener() {}
@@ -33,14 +35,27 @@ public class ClientPlayerListener implements Listener {
             if (event.getWorld().getDimension() instanceof FleetingDimension) {
                 ForgeIngameGui.renderVignette = false;
                 autoJump = Minecraft.getInstance().gameSettings.autoJump;
+                renderDistance = Minecraft.getInstance().gameSettings.renderDistanceChunks;
                 Minecraft.getInstance().gameSettings.autoJump = false;
+                Minecraft.getInstance().gameSettings.renderDistanceChunks = 2;
             } else {
                 ForgeIngameGui.renderVignette = true;
                 if (autoJump != null) {
                     Minecraft.getInstance().gameSettings.autoJump = autoJump;
                     autoJump = null;
                 }
+                if (renderDistance != null) {
+                    Minecraft.getInstance().gameSettings.renderDistanceChunks = renderDistance;
+                    renderDistance = null;
+                }
             }
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerTick(PlayerTickEvent event) {
+        if (event.player.world.getDimension() instanceof FleetingDimension) {
+            //Minecraft.getInstance().gameSettings.renderDistanceChunks = 2; // No cheating
         }
     }
 

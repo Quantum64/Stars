@@ -1,8 +1,8 @@
-package co.q64.stars.binders;
+package co.q64.stars.qualifier;
 
 import javax.inject.Qualifier;
 
-public interface ConstantBinders {
+public interface ConstantQualifiers {
     // @formatter:off
     public static @Qualifier @interface ModId {}
     public static @Qualifier @interface Name {}

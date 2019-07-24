@@ -1,4 +1,4 @@
-package co.q64.stars.dimension;
+package co.q64.stars.dimension.fleeting;
 
 import com.google.auto.factory.AutoFactory;
 import com.google.auto.factory.Provided;
@@ -9,8 +9,8 @@ import net.minecraft.world.gen.GenerationSettings;
 import net.minecraft.world.gen.Heightmap.Type;
 
 @AutoFactory
-public class EmptyChunkGenerator extends ChunkGenerator<GenerationSettings> {
-    protected EmptyChunkGenerator(IWorld world, @Provided EmptyBiomeProvider biomeProvider) {
+public class FleetingChunkGenerator extends ChunkGenerator<GenerationSettings> {
+    protected FleetingChunkGenerator(IWorld world, @Provided FleetingBiomeProvider biomeProvider) {
         super(world, biomeProvider.getProvider(), new GenerationSettings());
     }
 

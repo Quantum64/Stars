@@ -1,6 +1,6 @@
 package co.q64.stars.listener;
 
-import co.q64.stars.binders.ConstantBinders.ModId;
+import co.q64.stars.qualifier.ConstantQualifiers.ModId;
 import co.q64.stars.util.Logger;
 
 import javax.inject.Inject;

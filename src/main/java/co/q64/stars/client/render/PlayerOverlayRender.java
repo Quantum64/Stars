@@ -73,7 +73,7 @@ public class PlayerOverlayRender {
     private void stageChange(FleetingStage stage) {
         switch (stage) {
             case LIGHT:
-                String keyName = Minecraft.getInstance().gameSettings.keyBindSneak.getLocalizedName();
+                String keyName = Minecraft.getInstance().gameSettings.keyBindSneak.getLocalizedName().toLowerCase();
                 if (keyName.contains(" ")) {
                     keyName = keyName.split(" ")[1];
                 }

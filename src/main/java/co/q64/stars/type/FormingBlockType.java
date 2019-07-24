@@ -5,11 +5,13 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.Direction;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.inject.Provider;
 import java.util.List;
+import java.util.Set;
 
 public interface FormingBlockType {
     public static final Direction[] horizontal = new Direction[]{Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
@@ -33,6 +35,8 @@ public interface FormingBlockType {
     public int getDecayTime(long seed);
 
     public int getIterations(long seed);
+
+    public Set<SoundEvent> getSounds();
 
     public Provider<? extends Item> getItemProvider();
 
