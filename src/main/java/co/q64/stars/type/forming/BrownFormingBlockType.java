@@ -26,8 +26,8 @@ public class BrownFormingBlockType implements FormingBlockType {
 
     private final @Getter int id = 6;
     private final @Getter String name = "brown";
-    private final @Getter int buildTime = 700;
-    private final @Getter int buildTimeOffset = 150;
+    private final @Getter int buildTime = 2300;
+    private final @Getter int buildTimeOffset = 300;
     private final @Getter float r = 173, g = 85, b = 0;
 
     protected @Getter @Inject BrownFormedBlock formedBlock;
@@ -46,10 +46,8 @@ public class BrownFormingBlockType implements FormingBlockType {
             if (direction == Direction.UP || direction == direction.DOWN) {
                 continue;
             }
-            if (hasBlock(world, position, direction)) {
-                if (!hasBlock(world, position, direction.getOpposite())) {
-                    result = direction.getOpposite();
-                }
+            if (!hasBlock(world, position, direction)) {
+                result = direction;
             }
         }
         return result;
@@ -88,6 +86,6 @@ public class BrownFormingBlockType implements FormingBlockType {
     }
 
     public int getDecayTime(long seed) {
-        return 1200 + (int) seed % 300;
+        return 150 + (int) (seed % 10);
     }
 }

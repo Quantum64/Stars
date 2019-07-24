@@ -34,7 +34,7 @@ public class GreenFormingBlockType implements FormingBlockType {
     protected @Inject GreenFormingBlockType() {}
 
     public int getIterations(long seed) {
-        return (int) (10 + (seed % 8));
+        return (int) (8 + (seed % 6));
     }
 
     public Direction getInitialDirection(World world, BlockPos position) {

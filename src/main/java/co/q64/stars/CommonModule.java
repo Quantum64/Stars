@@ -59,7 +59,10 @@ import co.q64.stars.qualifier.SoundQualifiers.Blue;
 import co.q64.stars.qualifier.SoundQualifiers.Brown;
 import co.q64.stars.qualifier.SoundQualifiers.Cyan;
 import co.q64.stars.qualifier.SoundQualifiers.Dark;
+import co.q64.stars.qualifier.SoundQualifiers.Explode;
+import co.q64.stars.qualifier.SoundQualifiers.ExplodeDark;
 import co.q64.stars.qualifier.SoundQualifiers.Green;
+import co.q64.stars.qualifier.SoundQualifiers.Misc;
 import co.q64.stars.qualifier.SoundQualifiers.Pink;
 import co.q64.stars.qualifier.SoundQualifiers.Purple;
 import co.q64.stars.qualifier.SoundQualifiers.Red;
@@ -184,7 +187,9 @@ public interface CommonModule {
     @Binds @IntoSet Set<SoundEvent> bindBrownSoundEvents(@Brown Set<SoundEvent> brownSoundEvents);
     @Binds @IntoSet Set<SoundEvent> bindYellowSoundEvents(@Yellow Set<SoundEvent> yellowSoundEvents);
     @Binds @IntoSet Set<SoundEvent> bindCyanSoundEvents(@Cyan Set<SoundEvent> cyanSoundEvents);
+    @Binds @IntoSet Set<SoundEvent> bindExplodeSoundEvents(@Explode Set<SoundEvent> explodeSoundEvents);
     @Binds @IntoSet Set<SoundEvent> bindDarkSoundEvents(@Dark Set<SoundEvent> darkSoundEvents);
+    @Binds @IntoSet Set<SoundEvent> bindMiscSoundEvents(@Misc Set<SoundEvent> miscSoundEvents);
 
     @Binds @IntoSet Biome bindFleetingBiome(FleetingBiome fleetingBiome);
     @Binds @IntoSet Feature<?> bindDecayBlobFeature(DecayBlobFeature decayBlobFeature);
@@ -247,10 +252,20 @@ public interface CommonModule {
     static @Provides @IntoSet @Singleton @Brown SoundEvent provideBrownSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_brown_3")); }
     static @Provides @IntoSet @Singleton @Brown SoundEvent provideBrownSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_brown_4")); }
     
+    static @Provides @IntoSet @Singleton @Explode SoundEvent provideExplodeSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("explode_1")); }
+    static @Provides @IntoSet @Singleton @Explode SoundEvent provideExplodeSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("explode_2")); }
+    static @Provides @IntoSet @Singleton @Explode SoundEvent provideExplodeSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("explode_3")); }
+    static @Provides @IntoSet @Singleton @Explode SoundEvent provideExplodeSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("explode_4")); }
+    
     static @Provides @IntoSet @Singleton @Dark SoundEvent provideDarkSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("dark_1")); }
     static @Provides @IntoSet @Singleton @Dark SoundEvent provideDarkSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("dark_2")); }
     static @Provides @IntoSet @Singleton @Dark SoundEvent provideDarkSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("dark_3")); }
     static @Provides @IntoSet @Singleton @Dark SoundEvent provideDarkSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("dark_4")); }
+
+    static @Provides @Singleton @ExplodeDark SoundEvent provideExplodeDarkSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("explode_dark")); }
+
+
+    @Binds @IntoSet @Misc SoundEvent bindExplodeDarkSound(@ExplodeDark SoundEvent event);
 
     // @formatter:on
 }

@@ -223,6 +223,41 @@
       "stars:grow_purple_4"
     ]
   },
+  "explode_1": {
+    "category": "master",
+    "subtitle": "stars.subtitle.explode_1",
+    "sounds": [
+      "stars:explode_1"
+    ]
+  },
+  "explode_2": {
+    "category": "master",
+    "subtitle": "stars.subtitle.explode_2",
+    "sounds": [
+      "stars:explode_2"
+    ]
+  },
+  "explode_3": {
+    "category": "master",
+    "subtitle": "stars.subtitle.explode_3",
+    "sounds": [
+      "stars:explode_3"
+    ]
+  },
+  "explode_4": {
+    "category": "master",
+    "subtitle": "stars.subtitle.explode_4",
+    "sounds": [
+      "stars:explode_4"
+    ]
+  },
+  "explode_dark": {
+    "category": "master",
+    "subtitle": "stars.subtitle.explode_dark",
+    "sounds": [
+      "stars:explode_dark"
+    ]
+  },
   "dark_1": {
     "category": "master",
     "subtitle": "stars.subtitle.dark_1",
