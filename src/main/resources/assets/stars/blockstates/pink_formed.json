@@ -1,5 +1,10 @@
 {
   "variants": {
-    "": { "model": "stars:block/pink_formed" }
+    "": [
+	  { "model": "stars:block/pink_formed_1" },
+	  { "model": "stars:block/pink_formed_2" },
+	  { "model": "stars:block/pink_formed_3" },
+	  { "model": "stars:block/pink_formed_4" }
+	]
   }
 }

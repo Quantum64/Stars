@@ -2,6 +2,7 @@ package co.q64.stars.listener;
 
 import co.q64.stars.block.BaseBlock;
 import co.q64.stars.block.BlueFormedBlock;
+import co.q64.stars.block.BrownFormedBlock;
 import co.q64.stars.block.DarkAirBlock;
 import co.q64.stars.block.FormingBlock;
 import co.q64.stars.block.PinkFormedBlock;
@@ -120,7 +121,9 @@ public class PlayerListener implements Listener {
                 Block block = entity.getEntityWorld().getBlockState(entity.getPosition().offset(Direction.DOWN)).getBlock();
                 player.removePotionEffect(Effects.JUMP_BOOST);
                 if (fleetingManager.shouldApplyJump(player)) {
-                    if (block instanceof BlueFormedBlock) {
+                    if (block instanceof BrownFormedBlock) {
+                        player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, -2, true, false));
+                    } else if (block instanceof BlueFormedBlock) {
                         player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, 9, true, false));
                     } else {
                         player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, 3, true, false));

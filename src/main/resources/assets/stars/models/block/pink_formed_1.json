@@ -1,6 +1,6 @@
 {
     "parent": "block/cube_all",
     "textures": {
-        "all": "stars:block/pink_formed"
+        "all": "stars:block/pink_formed_1"
     }
 }

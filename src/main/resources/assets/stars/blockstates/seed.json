@@ -1,5 +1,5 @@
 {
   "variants": {
-    "": {"model": "stars:block/forming" }
+    "": {"model": "stars:block/empty" }
   }
 }

@@ -1,6 +1,7 @@
 package co.q64.stars.client.render;
 
 import co.q64.stars.capability.GardenerCapability;
+import co.q64.stars.item.KeyItem;
 import co.q64.stars.type.FleetingStage;
 import co.q64.stars.type.FormingBlockType;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -26,13 +27,18 @@ public class PlayerOverlayRender {
     private static final long ENTRY_EFFECT_TIME = 10000, DARKNESS_EFFECT_TIME = 1000, LOST_EFFECT_TIME = 15000;
 
     protected @Inject ExtraWorldRender extraWorldRender;
+    protected @Inject GuiDynamicRender guiDynamicRender;
 
     private long entryEffectTime, darknessEffectTime;
+    private ItemStack keyStack;
     private Map<FormingBlockType, ItemStack> seedItemCache = new HashMap<>();
     private FleetingStage lastStage = FleetingStage.NONE;
     private GardenerCapability gardenerCapability;
 
-    protected @Inject PlayerOverlayRender() {}
+    @Inject
+    protected PlayerOverlayRender(KeyItem keyItem) {
+        this.keyStack = new ItemStack(keyItem);
+    }
 
     public void renderOverlay() {
         long now = System.currentTimeMillis();
@@ -48,20 +54,42 @@ public class PlayerOverlayRender {
         if (gardenerCapability == null) {
             return;
         }
+        Minecraft mc = Minecraft.getInstance();
+        int windowWidth = mc.mainWindow.getScaledWidth(), windowHeight = mc.mainWindow.getScaledHeight();
+        int centerX = windowWidth / 2;
         int color = gardenerCapability.getFleetingStage() == FleetingStage.DARK ? 0xFFFFFF : 0x000000;
-        String text = "Seeds: " + gardenerCapability.getSeeds() + ", Keys: " + gardenerCapability.getKeys();
-        Minecraft.getInstance().fontRenderer.drawString(text, 10, 10, color);
-        Minecraft.getInstance().fontRenderer.drawString("Next seeds:", 10, 20, color);
-        int x = 10;
-        int y = 40;
+
+        int width = (18 * 3) + 6;
+        int height = 4 + 18;
+        int startX = centerX - (width / 2);
+        int x = startX;
+        guiDynamicRender.drawGuiPanel(x, 0, width, height);
+        int y = 2;
+        x += 2;
         RenderHelper.enableGUIStandardItemLighting();
-        for (FormingBlockType type : gardenerCapability.getNextSeeds()) {
-            ItemStack is = seedItemCache.computeIfAbsent(type, t -> new ItemStack(t.getItemProvider().get()));
-            Minecraft.getInstance().getItemRenderer().renderItemAndEffectIntoGUI(is, x, y);
-            y += 20;
+        for (int i = 0; i < 3; i++) {
+            guiDynamicRender.drawItemSlot(x, y);
+            if (gardenerCapability.getFleetingStage() == FleetingStage.LIGHT) {
+                if (gardenerCapability.getNextSeeds().size() > 2 - i) {
+                    FormingBlockType type = gardenerCapability.getNextSeeds().stream().skip(2 - i).findFirst().get();
+                    ItemStack is = seedItemCache.computeIfAbsent(type, t -> new ItemStack(t.getItemProvider().get()));
+                    Minecraft.getInstance().getItemRenderer().renderItemAndEffectIntoGUI(is, x + 1, y + 1);
+                }
+            } else {
+                if (gardenerCapability.getKeys() > i) {
+                    Minecraft.getInstance().getItemRenderer().renderItemAndEffectIntoGUI(keyStack, x + 1, y + 1);
+                }
+            }
+            x = x + 18 + 1;
         }
         RenderHelper.disableStandardItemLighting();
         Minecraft.getInstance().getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
+        String number = String.valueOf(gardenerCapability.getSeeds());
+        float scale = 2.4f;
+        GlStateManager.pushMatrix();
+        GlStateManager.scalef(scale, scale, scale);
+        mc.fontRenderer.drawString(number, (startX / scale) - mc.fontRenderer.getStringWidth(number) - 1, 1, color);
+        GlStateManager.popMatrix();
     }
 
     public void playEntryEffect() {

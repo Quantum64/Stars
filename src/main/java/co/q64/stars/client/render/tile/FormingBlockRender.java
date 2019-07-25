@@ -16,7 +16,7 @@ import java.nio.FloatBuffer;
 
 @Singleton
 public class FormingBlockRender extends TileEntityRenderer<FormingTile> {
-    private static final float width = 0.125f;
+    private static final float width = 0.0625f;
     private FloatBuffer verticalFlip = FloatBuffer.allocate(16);
 
     protected @Inject FormingBlockRender() {
@@ -159,14 +159,14 @@ public class FormingBlockRender extends TileEntityRenderer<FormingTile> {
         builder.pos(0, width, progress).endVertex();
         builder.pos(0, 0, progress).endVertex();
 
-        builder.pos(1, 0, 0).endVertex();
-        builder.pos(1 - width, 0, 0).endVertex();
-        builder.pos(1 - width, 0, progress).endVertex();
-        builder.pos(1, 0, progress).endVertex();
-        builder.pos(1, 0, 0).endVertex();
-        builder.pos(1, width, 0).endVertex();
-        builder.pos(1, width, progress).endVertex();
-        builder.pos(1, 0, progress).endVertex();
+        builder.pos(1, 0, 1).endVertex();
+        builder.pos(1 - width, 0, 1).endVertex();
+        builder.pos(1 - width, 0, 1 - progress).endVertex();
+        builder.pos(1, 0, 1 - progress).endVertex();
+        builder.pos(1, 0, 1).endVertex();
+        builder.pos(1, width, 1).endVertex();
+        builder.pos(1, width, 1 - progress).endVertex();
+        builder.pos(1, 0, 1 - progress).endVertex();
 
         builder.pos(0, 0, 1).endVertex();
         builder.pos(0, width, 1).endVertex();
@@ -197,14 +197,14 @@ public class FormingBlockRender extends TileEntityRenderer<FormingTile> {
         builder.pos(0, 1 - width, progress).endVertex();
         builder.pos(0, 1, progress).endVertex();
 
-        builder.pos(1, 1, 0).endVertex();
-        builder.pos(1 - width, 1, 0).endVertex();
-        builder.pos(1 - width, 1, progress).endVertex();
-        builder.pos(1, 1, progress).endVertex();
-        builder.pos(1, 1, 0).endVertex();
-        builder.pos(1, 1 - width, 0).endVertex();
-        builder.pos(1, 1 - width, progress).endVertex();
-        builder.pos(1, 1, progress).endVertex();
+        builder.pos(1, 1, 1).endVertex();
+        builder.pos(1 - width, 1, 1).endVertex();
+        builder.pos(1 - width, 1, 1 - progress).endVertex();
+        builder.pos(1, 1, 1 - progress).endVertex();
+        builder.pos(1, 1, 1).endVertex();
+        builder.pos(1, 1 - width, 1).endVertex();
+        builder.pos(1, 1 - width, 1 - progress).endVertex();
+        builder.pos(1, 1, 1 - progress).endVertex();
 
         builder.pos(0, 1, 1).endVertex();
         builder.pos(0, 1 - width, 1).endVertex();
