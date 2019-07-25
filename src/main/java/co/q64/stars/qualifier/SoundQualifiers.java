@@ -14,7 +14,10 @@ public interface SoundQualifiers {
     public static @Qualifier @interface Pink {}
     public static @Qualifier @interface Dark {}
     public static @Qualifier @interface Explode {}
+    public static @Qualifier @interface Seed {}
     public static @Qualifier @interface ExplodeDark {}
+    public static @Qualifier @interface Door {}
+    public static @Qualifier @interface Ticking {}
 
     public static @Qualifier @interface Misc {}
     // @formatter:on

@@ -1,6 +1,6 @@
 package co.q64.stars.net.packets;
 
-import co.q64.stars.util.FleetingManager;
+import co.q64.stars.net.ServerNetHandler;
 import com.google.auto.factory.AutoFactory;
 import com.google.auto.factory.Provided;
 import net.minecraft.network.PacketBuffer;
@@ -10,16 +10,16 @@ import java.util.function.Supplier;
 
 @AutoFactory
 public class UpdateJumpPacket {
-    private FleetingManager fleetingManager;
+    private ServerNetHandler serverNetHandler;
     private boolean jumping;
 
-    protected UpdateJumpPacket(@Provided FleetingManager fleetingManager, PacketBuffer buffer) {
-        this.fleetingManager = fleetingManager;
+    protected UpdateJumpPacket(@Provided ServerNetHandler serverNetHandler, PacketBuffer buffer) {
+        this.serverNetHandler = serverNetHandler;
         this.jumping = buffer.readBoolean();
     }
 
-    protected UpdateJumpPacket(@Provided FleetingManager fleetingManager, boolean jumping) {
-        this.fleetingManager = fleetingManager;
+    protected UpdateJumpPacket(@Provided ServerNetHandler serverNetHandler, boolean jumping) {
+        this.serverNetHandler = serverNetHandler;
         this.jumping = jumping;
     }
 
@@ -29,7 +29,7 @@ public class UpdateJumpPacket {
 
     public void handle(Supplier<Context> context) {
         context.get().enqueueWork(() -> {
-            fleetingManager.updateJumpStatus(context.get().getSender(), jumping);
+            serverNetHandler.updateJumpStatus(context.get().getSender(), jumping);
         });
         context.get().setPacketHandled(true);
     }

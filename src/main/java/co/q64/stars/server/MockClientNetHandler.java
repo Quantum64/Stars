@@ -1,7 +1,7 @@
 package co.q64.stars.server;
 
 import co.q64.stars.capability.GardenerCapability;
-import co.q64.stars.util.ClientNetHandler;
+import co.q64.stars.net.ClientNetHandler;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

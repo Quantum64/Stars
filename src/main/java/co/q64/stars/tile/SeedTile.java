@@ -1,16 +1,20 @@
 package co.q64.stars.tile;
 
 import co.q64.stars.block.FormingBlock;
+import co.q64.stars.block.RedFormedBlock;
+import co.q64.stars.qualifier.SoundQualifiers.Ticking;
 import co.q64.stars.tile.type.SeedTileType;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.FormingBlockTypes;
 import co.q64.stars.type.forming.RedFormingBlockType;
+import co.q64.stars.util.Sounds;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 
@@ -20,6 +24,9 @@ public class SeedTile extends SyncTileEntity implements ITickableTileEntity {
     protected @Inject FormingBlockTypes types;
     protected @Inject FormingBlock formingBlock;
     protected @Inject RedFormingBlockType redFormingBlockType;
+    protected @Inject RedFormedBlock redFormedBlock;
+    protected @Inject Sounds sounds;
+    protected @Inject @Ticking SoundEvent tickingSound;
 
     private Direction direction;
     private @Getter @Setter int growTicks = getInitialGrowTicks();
@@ -80,6 +87,11 @@ public class SeedTile extends SyncTileEntity implements ITickableTileEntity {
             if (!hasSeed()) {
                 return;
             }
+            if (ticks == 0) {
+                if (isPrimed()) {
+                    sounds.playSound((ServerWorld) world, pos, tickingSound, 1f);
+                }
+            }
             if (ticks == growTicks) {
                 if (isPrimed()) {
                     redFormingBlockType.explode((ServerWorld) world, pos, false);
@@ -107,7 +119,11 @@ public class SeedTile extends SyncTileEntity implements ITickableTileEntity {
                     return;
                 }
                 if (world.getBlockState(pos.offset(direction)).getBlock() != formingBlock) {
-                    world.setBlockState(pos, formingBlockType.getFormedBlock().getDefaultState());
+                    if (formingBlockType instanceof RedFormingBlockType) {
+                        world.setBlockState(pos, redFormedBlock.getDefaultState());
+                    } else {
+                        world.setBlockState(pos, formingBlockType.getFormedBlock().getDefaultState());
+                    }
                 }
             }
             ticks++;

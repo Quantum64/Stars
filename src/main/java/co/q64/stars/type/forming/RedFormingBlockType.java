@@ -7,6 +7,7 @@ import co.q64.stars.item.RedSeedItem;
 import co.q64.stars.qualifier.SoundQualifiers.Explode;
 import co.q64.stars.qualifier.SoundQualifiers.ExplodeDark;
 import co.q64.stars.qualifier.SoundQualifiers.Red;
+import co.q64.stars.qualifier.SoundQualifiers.Ticking;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.util.DecayManager;
 import co.q64.stars.util.FleetingManager;
@@ -14,7 +15,9 @@ import co.q64.stars.util.Sounds;
 import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.play.server.SStopSoundPacket;
 import net.minecraft.util.Direction;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -29,6 +32,8 @@ import java.util.Set;
 
 @Singleton
 public class RedFormingBlockType implements FormingBlockType {
+    private static final Direction[] DIRECTIONS = Direction.values();
+
     private final @Getter int id = 5;
     private final @Getter String name = "red";
     private final @Getter int buildTime = 3000;
@@ -45,6 +50,7 @@ public class RedFormingBlockType implements FormingBlockType {
     protected @Inject DecayManager decayManager;
     protected @Inject @Explode Set<SoundEvent> explodeSounds;
     protected @Inject @ExplodeDark SoundEvent explodeDarkSound;
+    protected @Inject @Ticking SoundEvent tickingSound;
     protected @Inject Sounds soundManager;
 
     protected @Inject RedFormingBlockType() {}
@@ -85,11 +91,17 @@ public class RedFormingBlockType implements FormingBlockType {
                     BlockPos target = pos.add(x, y, z);
                     if (!decayManager.isDecayBlock(world, target)) {
                         world.setBlockState(target, block.getDefaultState());
+                        for (Direction direction : DIRECTIONS) {
+                            decayManager.activateDecay(world, target.offset(direction));
+                        }
                     }
                 }
             }
         }
         for (ServerPlayerEntity player : world.getPlayers()) {
+            if (player.getPosition().distanceSq(pos) < 200 * 200) {
+                player.connection.sendPacket(new SStopSoundPacket(tickingSound.getName(), SoundCategory.MASTER));
+            }
             if (player.getPosition().distanceSq(pos) < 2.9 * 2.9) {
                 entryManager.get().createDarkness(player);
             }

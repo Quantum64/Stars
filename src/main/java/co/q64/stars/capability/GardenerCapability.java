@@ -32,6 +32,10 @@ public interface GardenerCapability {
 
     public void setLastPlayed(SoundEvent event, long time);
 
+    public long getLastJumped();
+
+    public void setLastJumped(long time);
+
     public FleetingStage getFleetingStage();
 
     public void setFleetingStage(FleetingStage fleetingStage);

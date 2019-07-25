@@ -78,7 +78,7 @@ dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft 'net.minecraftforge:forge:1.14.4-28.0.11'
+    minecraft 'net.minecraftforge:forge:1.14.4-28.0.14'
 
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
@@ -132,12 +132,10 @@ shadowJar {
     dependencies {
         include dependency('javax.inject:javax.inject')
         include dependency('com.google.dagger:dagger')
-        include dependency('ar.com.hjg:pngj:2.1.0')
     }
 
     relocate('javax.inject', 'co.q64.library.javax.inject')
     relocate('dagger', 'co.q64.library.dagger')
-    relocate('ar.com.hjg:pngj:2.1.0', 'co.q64.library.pngj')
 }
 
 jar.dependsOn 'shadowJar'

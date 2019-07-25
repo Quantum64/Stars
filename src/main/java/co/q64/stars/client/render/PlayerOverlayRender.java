@@ -5,6 +5,7 @@ import co.q64.stars.type.FleetingStage;
 import co.q64.stars.type.FormingBlockType;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -60,6 +61,7 @@ public class PlayerOverlayRender {
             y += 20;
         }
         RenderHelper.disableStandardItemLighting();
+        Minecraft.getInstance().getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
     }
 
     public void playEntryEffect() {

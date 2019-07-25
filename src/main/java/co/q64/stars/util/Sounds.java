@@ -76,6 +76,6 @@ public class Sounds {
 
     @Inject
     protected void limitDarkSounds(@Dark Set<SoundEvent> sounds) {
-        sounds.forEach(sound -> playLimit.put(sound, 250L));
+        sounds.forEach(sound -> playLimit.put(sound, 500L));
     }
 }

@@ -1,6 +1,6 @@
 package co.q64.stars.net.packets;
 
-import co.q64.stars.util.FleetingManager;
+import co.q64.stars.net.ServerNetHandler;
 import com.google.auto.factory.AutoFactory;
 import com.google.auto.factory.Provided;
 import net.minecraft.network.PacketBuffer;
@@ -10,21 +10,21 @@ import java.util.function.Supplier;
 
 @AutoFactory
 public class PlantSeedPacket {
-    private FleetingManager fleetingManager;
+    private ServerNetHandler serverNetHandler;
 
-    protected PlantSeedPacket(@Provided FleetingManager fleetingManager, PacketBuffer buffer) {
-        this.fleetingManager = fleetingManager;
+    protected PlantSeedPacket(@Provided ServerNetHandler serverNetHandler, PacketBuffer buffer) {
+        this.serverNetHandler = serverNetHandler;
     }
 
-    protected PlantSeedPacket(@Provided FleetingManager fleetingManager) {
-        this.fleetingManager = fleetingManager;
+    protected PlantSeedPacket(@Provided ServerNetHandler serverNetHandler) {
+        this.serverNetHandler = serverNetHandler;
     }
 
     public void encode(PacketBuffer buffer) {}
 
     public void handle(Supplier<Context> context) {
         context.get().enqueueWork(() -> {
-            fleetingManager.grow(context.get().getSender());
+            serverNetHandler.grow(context.get().getSender());
         });
         context.get().setPacketHandled(true);
     }

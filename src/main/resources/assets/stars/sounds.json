@@ -258,6 +258,13 @@
       "stars:explode_dark"
     ]
   },
+  "ticking": {
+    "category": "master",
+    "subtitle": "stars.subtitle.ticking",
+    "sounds": [
+      "stars:ticking"
+    ]
+  },
   "dark_1": {
     "category": "master",
     "subtitle": "stars.subtitle.dark_1",
@@ -284,6 +291,41 @@
     "subtitle": "stars.subtitle.dark_4",
     "sounds": [
       "stars:dark_4"
+    ]
+  },
+  "seed_1": {
+    "category": "master",
+    "subtitle": "stars.subtitle.seed_1",
+    "sounds": [
+      "stars:seed_1"
+    ]
+  },
+  "seed_2": {
+    "category": "master",
+    "subtitle": "stars.subtitle.seed_2",
+    "sounds": [
+      "stars:seed_2"
+    ]
+  },
+  "seed_3": {
+    "category": "master",
+    "subtitle": "stars.subtitle.seed_3",
+    "sounds": [
+      "stars:seed_3"
+    ]
+  },
+  "seed_4": {
+    "category": "master",
+    "subtitle": "stars.subtitle.seed_4",
+    "sounds": [
+      "stars:seed_4"
+    ]
+  },
+  "door": {
+    "category": "master",
+    "subtitle": "stars.subtitle.door",
+    "sounds": [
+      "stars:door"
     ]
   }
 }

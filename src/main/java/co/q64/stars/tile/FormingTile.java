@@ -28,7 +28,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -160,7 +162,18 @@ public class FormingTile extends SyncTileEntity implements ITickableTileEntity {
                     decayManager.activateDecay((ServerWorld) world, pos);
 
                     if (iterationsRemaining > 0) {
-                        for (Direction next : formType.getNextDirections(world, pos, direction, iterationsRemaining - 1)) {
+                        List<Direction> directions = formType.getNextDirections(world, pos, direction, iterationsRemaining - 1);
+                        if (formType instanceof BrownFormingBlockType && direction == Direction.DOWN && directions.isEmpty()) {
+                            directions = new ArrayList<>();
+                            iterationsRemaining = 1;
+                            for (Direction d : DIRECTIONS) {
+                                if (d == Direction.UP) {
+                                    continue;
+                                }
+                                directions.add(d);
+                            }
+                        }
+                        for (Direction next : directions) {
                             BlockPos placed = getPos().add(next.getXOffset(), next.getYOffset(), next.getZOffset());
                             world.setBlockState(placed, formingBlock.getDefaultState());
                             Optional.ofNullable((FormingTile) world.getTileEntity(placed)).ifPresent(spawned -> {

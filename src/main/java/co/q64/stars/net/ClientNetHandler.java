@@ -1,4 +1,4 @@
-package co.q64.stars.util;
+package co.q64.stars.net;
 
 import co.q64.stars.capability.GardenerCapability;
 

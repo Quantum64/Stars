@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Singleton
 public class GreenFormingBlockType implements FormingBlockType {
@@ -58,7 +59,8 @@ public class GreenFormingBlockType implements FormingBlockType {
     public List<Direction> getNextDirections(World world, BlockPos position, Direction last, int iterations) {
         List<Direction> test = new ArrayList<>(Arrays.asList(Direction.values()));
         while (!test.isEmpty()) {
-            int index = Math.toIntExact(Math.abs(position.toLong() ^ 0x2837018275937103L) % test.size());
+            //int index = Math.toIntExact(Math.abs(position.toLong() ^ 0x2837018275937103L) % test.size());
+            int index = ThreadLocalRandom.current().nextInt(test.size());
             Direction selected = test.get(index);
             if (hasBlock(world, position, selected)) {
                 test.remove(index);

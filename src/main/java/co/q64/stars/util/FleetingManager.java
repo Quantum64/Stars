@@ -2,23 +2,28 @@ package co.q64.stars.util;
 
 import co.q64.stars.block.DarknessEdgeBlock;
 import co.q64.stars.block.DecayBlock;
+import co.q64.stars.block.DoorBlock;
 import co.q64.stars.block.OrangeFormedBlock;
 import co.q64.stars.capability.GardenerCapability;
 import co.q64.stars.dimension.Dimensions;
 import co.q64.stars.entity.PickupEntity;
 import co.q64.stars.net.PacketManager;
 import co.q64.stars.net.packets.PlayClientEffectPacket.ClientEffectType;
+import co.q64.stars.qualifier.SoundQualifiers.Door;
 import co.q64.stars.type.FleetingStage;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.forming.GreenFormingBlockType;
 import co.q64.stars.type.forming.PinkFormingBlockType;
 import co.q64.stars.type.forming.YellowFormingBlockType;
 import co.q64.stars.util.DecayManager.SpecialDecayType;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.Direction;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -52,6 +57,8 @@ public class FleetingManager {
     protected @Inject GreenFormingBlockType greenFormingBlockType;
     protected @Inject Provider<Capability<GardenerCapability>> gardenerCapability;
     protected @Inject DecayManager decayManager;
+    protected @Inject Sounds sounds;
+    protected @Inject @Door SoundEvent doorSound;
 
     private Set<FormingBlockType> formingBlockTypes;
     private Map<UUID, Integer> levitationQueue = new HashMap<>();
@@ -145,6 +152,10 @@ public class FleetingManager {
         });
     }
 
+    public boolean shouldApplyJump(ServerPlayerEntity player) {
+        return player.getCapability(gardenerCapability.get()).map(GardenerCapability::getLastJumped).orElse(0L) < System.currentTimeMillis() - 1000;
+    }
+
     public int getKeys(ServerPlayerEntity player) {
         return player.getCapability(gardenerCapability.get()).map(GardenerCapability::getKeys).orElse(0);
     }
@@ -158,6 +169,7 @@ public class FleetingManager {
 
     public void addSeed(ServerPlayerEntity player) {
         setSeeds(player, getSeeds(player) + 1);
+        updateSeeds(player);
     }
 
     public void addKey(ServerPlayerEntity player) {
@@ -204,6 +216,18 @@ public class FleetingManager {
                     c.getNextSeeds().poll();
                     updateSeeds(player);
                 }
+            } else if (c.getFleetingStage() == FleetingStage.DARK) {
+                c.setLastJumped(System.currentTimeMillis());
+                if (c.getKeys() > 0) {
+                    BlockPos target = player.getPosition().offset(Direction.DOWN);
+                    Block block = player.getServerWorld().getBlockState(target).getBlock();
+                    if (block instanceof DoorBlock) {
+                        player.getServerWorld().setBlockState(target, Blocks.AIR.getDefaultState());
+                        player.teleport(player.getServerWorld(), target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
+                        player.setMotion(0, 0, 0);
+                        sounds.playSound(player.getServerWorld(), target, doorSound, 1f);
+                    }
+                }
             }
         });
     }
@@ -238,22 +262,6 @@ public class FleetingManager {
         }
         BlockPos door = new BlockPos(pos.getX(), pos.getY() - 8, pos.getZ());
         decayManager.createSpecialDecay(world, door, SpecialDecayType.DOOR);
-
-        // MAJOR TODO
-        /*
-        for (int i = 0; i < 5; i++) {
-            int[] position = new int[3];
-            for (int p = 0; p < position.length; p++) {
-                int rnd = ThreadLocalRandom.current().nextInt(30) + 10;
-                if (p != 1) {
-                    rnd = ThreadLocalRandom.current().nextBoolean() ? rnd : rnd * -1;
-                }
-                position[p] = rnd;
-            }
-            createKey(world, pos.add(position[0], position[1], position[2]));
-        }
-
-         */
     }
 
     private void createKey(World world, BlockPos key) {
@@ -269,6 +277,7 @@ public class FleetingManager {
 
     // TODO FIX
     private BlockPos getNext() {
+        /*
         double sidelen = Math.floor(Math.sqrt(index));
         double layer = Math.floor((sidelen + 1) / 2.0);
         double offset = offset = index - sidelen * sidelen;
@@ -288,6 +297,35 @@ public class FleetingManager {
             case 3:
                 x = offset2;
                 y = -layer;
+        }
+        x *= SPREAD_DISTANCE;
+        y *= SPREAD_DISTANCE;
+        index++;
+        return new BlockPos(x, SPAWN_HEIGHT, y);
+         */
+        double k = Math.ceil((Math.sqrt(index) - 1) / 2);
+        double t = 2 * k + 1;
+        double m = t * t;
+        t = t - 1;
+        double x, y;
+        if (index >= m - t) {
+            x = k - (m - index);
+            y = -k;
+        } else {
+            m = m - t;
+            if (index >= m - t) {
+                x = -k;
+                y = -k + (m - index);
+            } else {
+                m = m - t;
+                if (index >= m - t) {
+                    x = -k + (m - index);
+                    y = k;
+                } else {
+                    x = k;
+                    y = k - (m - index - t);
+                }
+            }
         }
         x *= SPREAD_DISTANCE;
         y *= SPREAD_DISTANCE;

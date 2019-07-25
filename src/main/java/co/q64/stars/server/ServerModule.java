@@ -1,6 +1,6 @@
 package co.q64.stars.server;
 
-import co.q64.stars.util.ClientNetHandler;
+import co.q64.stars.net.ClientNetHandler;
 import dagger.Binds;
 import dagger.Module;
 

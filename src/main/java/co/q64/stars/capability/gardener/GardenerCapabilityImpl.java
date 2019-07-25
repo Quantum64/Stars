@@ -18,6 +18,7 @@ import java.util.Set;
 
 public class GardenerCapabilityImpl implements GardenerCapability {
     private @Setter @Getter int seeds = 0, keys = 0, seedVisibility = 3, seedsSincePink = 0, totalSeeds = 0;
+    private @Setter @Getter long lastJumped;
     private @Setter @Getter FleetingStage fleetingStage = FleetingStage.NONE;
     private @Setter @Getter FormingBlockType lastSeed;
     private @Getter Deque<FormingBlockType> nextSeeds = new ArrayDeque<>();

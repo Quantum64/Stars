@@ -20,7 +20,7 @@ public class FleetingBiome extends Biome {
     protected @Inject FleetingBiome(Identifiers identifiers) {
         super((new Biome.Builder())
                 .surfaceBuilder(SurfaceBuilder.NOPE, SurfaceBuilder.AIR_CONFIG)
-                .precipitation(Biome.RainType.NONE).category(Category.THEEND)
+                .precipitation(Biome.RainType.NONE).category(Category.DESERT)
                 .depth(0.1F).scale(0.2F)
                 .temperature(0.5F)
                 .downfall(0.5F)

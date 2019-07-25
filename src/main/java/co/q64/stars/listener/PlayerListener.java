@@ -4,13 +4,20 @@ import co.q64.stars.block.BaseBlock;
 import co.q64.stars.block.BlueFormedBlock;
 import co.q64.stars.block.DarkAirBlock;
 import co.q64.stars.block.FormingBlock;
+import co.q64.stars.block.PinkFormedBlock;
+import co.q64.stars.block.RedPrimedBlock;
+import co.q64.stars.block.SeedBlock;
 import co.q64.stars.capability.gardener.GardenerCapabilityProvider;
 import co.q64.stars.dimension.fleeting.FleetingDimension;
+import co.q64.stars.qualifier.SoundQualifiers.Seed;
 import co.q64.stars.tile.FormingTile;
+import co.q64.stars.tile.SeedTile;
 import co.q64.stars.type.FleetingStage;
+import co.q64.stars.type.forming.RedFormingBlockType;
 import co.q64.stars.util.DecayManager;
 import co.q64.stars.util.FleetingManager;
 import co.q64.stars.util.Identifiers;
+import co.q64.stars.util.Sounds;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -22,6 +29,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.Direction;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
@@ -42,6 +50,8 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.lang.reflect.Field;
+import java.util.Optional;
+import java.util.Set;
 
 @Singleton
 public class PlayerListener implements Listener {
@@ -52,7 +62,11 @@ public class PlayerListener implements Listener {
     protected @Inject DarkAirBlock darkAirBlock;
     protected @Inject DecayManager decayManager;
     protected @Inject Identifiers identifiers;
+    protected @Inject SeedBlock seedBlock;
+    protected @Inject RedFormingBlockType redFormingBlockType;
     protected @Inject Provider<GardenerCapabilityProvider> gardenerCapabilityProvider;
+    protected @Inject Sounds sounds;
+    protected @Inject @Seed Set<SoundEvent> seedSounds;
 
     private EntitySize size = new EntitySize(0.6f, 0.85f, false);
     private AttributeModifier reach = new AttributeModifier("stars_reach", -3.6, Operation.ADDITION);
@@ -105,12 +119,13 @@ public class PlayerListener implements Listener {
                 FleetingStage stage = fleetingManager.getStage(player);
                 Block block = entity.getEntityWorld().getBlockState(entity.getPosition().offset(Direction.DOWN)).getBlock();
                 player.removePotionEffect(Effects.JUMP_BOOST);
-                if (block instanceof BlueFormedBlock) {
-                    player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, 9, true, false));
-                } else {
-                    player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, 3, true, false));
+                if (fleetingManager.shouldApplyJump(player)) {
+                    if (block instanceof BlueFormedBlock) {
+                        player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, 9, true, false));
+                    } else {
+                        player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, 3, true, false));
+                    }
                 }
-
                 if (decayManager.isDecayBlock((ServerWorld) world, player.getPosition())) {
                     double x = player.posX, y = player.posY, z = player.posZ;
                     double offsetX = x - Math.floor(x);
@@ -175,19 +190,41 @@ public class PlayerListener implements Listener {
     public void onBlockBreak(BreakEvent event) {
         IWorld world = event.getWorld();
         if (world.getDimension() instanceof FleetingDimension) {
-            world.setBlockState(event.getPos(), darkAirBlock.getDefaultState(), 3);
-            event.setCanceled(true);
-            if (!world.isRemote()) {
-                for (Direction direction : DIRECTIONS) {
-                    if (world.getBlockState(event.getPos().offset(direction)).getBlock() instanceof FormingBlock) {
-                        FormingTile tile = (FormingTile) world.getTileEntity(event.getPos().offset(direction));
-                        if (tile != null) {
-                            if (tile.getDirection() == direction) {
-                                world.setBlockState(event.getPos().offset(direction), Blocks.AIR.getDefaultState(), 3);
+            if (world.getBlockState(event.getPos()).getBlock() instanceof RedPrimedBlock) {
+                world.setBlockState(event.getPos(), seedBlock.getDefaultState(), 3);
+                Optional.ofNullable((SeedTile) world.getTileEntity(event.getPos())).ifPresent(tile -> {
+                    tile.setPrimed(true);
+                    tile.setFormingBlockType(redFormingBlockType);
+                    tile.setSeedType(redFormingBlockType);
+                    tile.setCalculated(true);
+                });
+                event.setCanceled(true);
+                return;
+            } else if (world.getBlockState(event.getPos()).getBlock() instanceof SeedBlock) {
+                SeedTile tile = (SeedTile) world.getTileEntity(event.getPos());
+                if (tile.isPrimed()) {
+                    event.setCanceled(true);
+                    return;
+                }
+            } else {
+                if (!world.isRemote()) {
+                    if (world.getBlockState(event.getPos()).getBlock() instanceof PinkFormedBlock) {
+                        sounds.playSound((ServerWorld) world, event.getPos(), seedSounds, 1f);
+                        fleetingManager.addSeed((ServerPlayerEntity) event.getPlayer());
+                    }
+                    for (Direction direction : DIRECTIONS) {
+                        if (world.getBlockState(event.getPos().offset(direction)).getBlock() instanceof FormingBlock) {
+                            FormingTile tile = (FormingTile) world.getTileEntity(event.getPos().offset(direction));
+                            if (tile != null) {
+                                if (tile.getDirection() == direction) {
+                                    world.setBlockState(event.getPos().offset(direction), Blocks.AIR.getDefaultState(), 3);
+                                }
                             }
                         }
                     }
                 }
+                world.setBlockState(event.getPos(), darkAirBlock.getDefaultState(), 3);
+                event.setCanceled(true);
             }
         }
     }

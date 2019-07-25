@@ -1,7 +1,7 @@
 package co.q64.stars.net.packets;
 
 import co.q64.stars.capability.GardenerCapability;
-import co.q64.stars.util.ClientNetHandler;
+import co.q64.stars.net.ClientNetHandler;
 import com.google.auto.factory.AutoFactory;
 import com.google.auto.factory.Provided;
 import net.minecraft.nbt.CompoundNBT;
