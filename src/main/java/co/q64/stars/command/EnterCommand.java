@@ -4,6 +4,7 @@ import co.q64.stars.dimension.Dimensions;
 import co.q64.stars.util.FleetingManager;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -12,25 +13,21 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class TestEnterCommand {
+public class EnterCommand {
     protected @Inject Dimensions dimensions;
     protected @Inject FleetingManager spawnpointManager;
 
-    protected @Inject TestEnterCommand() {}
+    protected @Inject EnterCommand() {}
 
     public ArgumentBuilder<CommandSource, ?> register() {
-        return Commands.literal("testenter")
+        return Commands.literal("enter")
                 .requires(cs -> cs.hasPermissionLevel(0))
                 .executes(this::execute);
     }
 
-    private int execute(CommandContext<CommandSource> context) {
-        try {
-            ServerPlayerEntity player = context.getSource().asPlayer();
-            spawnpointManager.enterFleeting(player);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private int execute(CommandContext<CommandSource> context) throws CommandSyntaxException {
+        ServerPlayerEntity player = context.getSource().asPlayer();
+        spawnpointManager.enter(player);
         return 0;
     }
 }

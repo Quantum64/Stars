@@ -2,6 +2,7 @@ package co.q64.stars.block;
 
 import co.q64.stars.tile.DecayingTile;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -18,7 +19,7 @@ public class DecayingBlock extends BaseBlock {
     protected @Inject Provider<DecayingTile> tileFactory;
 
     protected @Inject DecayingBlock() {
-        super("decaying", Properties.create(Material.GLASS).hardnessAndResistance(0f, 0f));
+        super("decaying", Properties.create(Material.EARTH).sound(SoundType.GROUND).hardnessAndResistance(0f, 0f));
     }
 
     @OnlyIn(Dist.CLIENT)

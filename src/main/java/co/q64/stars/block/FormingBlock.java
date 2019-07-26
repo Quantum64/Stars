@@ -2,6 +2,7 @@ package co.q64.stars.block;
 
 import co.q64.stars.tile.FormingTile;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -22,7 +23,7 @@ public class FormingBlock extends BaseBlock {
     protected @Inject Provider<FormingTile> tileFactory;
 
     protected @Inject FormingBlock() {
-        super("forming", Properties.create(Material.GLASS).hardnessAndResistance(0f, 0f));
+        super("forming", Properties.create(Material.EARTH).sound(SoundType.GROUND).hardnessAndResistance(0f, 0f));
         //setDefaultState(getStateContainer().getBaseState().with(BlockStates.TYPE, 0));
     }
 

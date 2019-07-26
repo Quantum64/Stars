@@ -1,8 +1,11 @@
 package co.q64.stars.listener;
 
 import co.q64.stars.capability.GardenerCapability;
+import co.q64.stars.capability.HubCapability;
 import co.q64.stars.capability.gardener.GardenerCapabilityFactory;
 import co.q64.stars.capability.gardener.GardenerCapabilityStorage;
+import co.q64.stars.capability.hub.HubCapabilityFactory;
+import co.q64.stars.capability.hub.HubCapabilityStorage;
 import co.q64.stars.command.StarsCommand;
 import co.q64.stars.dimension.Dimensions;
 import co.q64.stars.net.PacketManager;
@@ -26,6 +29,8 @@ public class InitializationListener implements Listener {
     protected @Inject StarsCommand command;
     protected @Inject GardenerCapabilityStorage gardenerCapabilityStorage;
     protected @Inject GardenerCapabilityFactory gardenerCapabilityFactory;
+    protected @Inject HubCapabilityStorage hubCapabilityStorage;
+    protected @Inject HubCapabilityFactory hubCapabilityFactory;
 
     protected @Inject InitializationListener() {}
 
@@ -33,6 +38,7 @@ public class InitializationListener implements Listener {
     public void onInitialize(FMLCommonSetupEvent event) {
         packetManager.register();
         CapabilityManager.INSTANCE.register(GardenerCapability.class, gardenerCapabilityStorage, gardenerCapabilityFactory);
+        CapabilityManager.INSTANCE.register(HubCapability.class, hubCapabilityStorage, hubCapabilityFactory);
     }
 
     @SubscribeEvent

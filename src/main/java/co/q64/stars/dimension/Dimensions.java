@@ -1,6 +1,6 @@
 package co.q64.stars.dimension;
 
-import co.q64.stars.qualifier.ConstantQualifiers.ModId;
+import co.q64.stars.util.Identifiers;
 import lombok.Getter;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -15,19 +15,25 @@ import java.util.function.BiFunction;
 
 @Singleton
 public class Dimensions {
-    protected @Inject @ModId String modId;
-    protected @Inject co.q64.stars.dimension.fleeting.FleetingDimensionFactory dimensionFactory;
+    protected @Inject Identifiers identifiers;
+    protected @Inject co.q64.stars.dimension.fleeting.FleetingDimensionFactory fleetingDimensionFactory;
+    protected @Inject co.q64.stars.dimension.hub.HubDimensionFactory hubDimensionFactory;
 
     private @Getter DimensionType fleetingDimensionType;
+    private @Getter DimensionType hubDimensionType;
 
     protected @Inject Dimensions() {}
 
     public void register() {
-        ResourceLocation dimensionId = new ResourceLocation(modId, "fleeting");
-        this.fleetingDimensionType = DimensionManager.registerDimension(dimensionId, new ModDimension() {
+        this.fleetingDimensionType = register(identifiers.get("fleeting"), fleetingDimensionFactory::create);
+        this.hubDimensionType = register(identifiers.get("hub"), hubDimensionFactory::create);
+    }
+
+    private DimensionType register(ResourceLocation id, BiFunction<World, DimensionType, ? extends Dimension> factory) {
+        return DimensionManager.registerDimension(id, new ModDimension() {
             public BiFunction<World, DimensionType, ? extends Dimension> getFactory() {
-                return dimensionFactory::create;
+                return factory;
             }
-        }.setRegistryName(dimensionId), null, false);
+        }.setRegistryName(id), null, false);
     }
 }

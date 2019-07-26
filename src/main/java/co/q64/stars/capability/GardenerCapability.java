@@ -36,6 +36,10 @@ public interface GardenerCapability {
 
     public void setLastJumped(long time);
 
+    public int getHubIndex();
+
+    public void setHubIndex(int index);
+
     public FleetingStage getFleetingStage();
 
     public void setFleetingStage(FleetingStage fleetingStage);

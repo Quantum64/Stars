@@ -1,6 +1,7 @@
 package co.q64.stars.util;
 
 import co.q64.stars.capability.GardenerCapability;
+import co.q64.stars.capability.HubCapability;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 
@@ -9,13 +10,19 @@ import javax.inject.Singleton;
 
 @Singleton
 public class UnfortunateForgeBlackMagic {
-    @Deprecated
     @CapabilityInject(GardenerCapability.class)
-    public static Capability<GardenerCapability> gardenerCapability;
+    private static Capability<GardenerCapability> gardenerCapability;
+
+    @CapabilityInject(HubCapability.class)
+    private static Capability<HubCapability> hubCapability;
 
     protected @Inject UnfortunateForgeBlackMagic() {}
 
     public Capability<GardenerCapability> getGardenerCapability() {
         return gardenerCapability;
+    }
+
+    public Capability<HubCapability> getHubCapability() {
+        return hubCapability;
     }
 }

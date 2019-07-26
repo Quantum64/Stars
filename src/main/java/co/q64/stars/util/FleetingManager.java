@@ -2,28 +2,19 @@ package co.q64.stars.util;
 
 import co.q64.stars.block.DarknessEdgeBlock;
 import co.q64.stars.block.DecayBlock;
-import co.q64.stars.block.DoorBlock;
 import co.q64.stars.block.OrangeFormedBlock;
 import co.q64.stars.capability.GardenerCapability;
 import co.q64.stars.dimension.Dimensions;
 import co.q64.stars.entity.PickupEntity;
 import co.q64.stars.net.PacketManager;
 import co.q64.stars.net.packets.PlayClientEffectPacket.ClientEffectType;
-import co.q64.stars.qualifier.SoundQualifiers.Door;
 import co.q64.stars.type.FleetingStage;
 import co.q64.stars.type.FormingBlockType;
-import co.q64.stars.type.forming.GreenFormingBlockType;
-import co.q64.stars.type.forming.PinkFormingBlockType;
-import co.q64.stars.type.forming.YellowFormingBlockType;
 import co.q64.stars.util.DecayManager.SpecialDecayType;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.util.Direction;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -38,27 +29,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Singleton
 public class FleetingManager {
-    public static final int SPREAD_DISTANCE = 2000;
-    public static final int SPAWN_HEIGHT = 100;
 
     protected @Inject Dimensions dimensions;
     protected @Inject OrangeFormedBlock orangeFormedBlock;
     protected @Inject DecayBlock decayBlock;
     protected @Inject DarknessEdgeBlock darknessEdgeBlock;
     protected @Inject PacketManager packetManager;
-    protected @Inject SeedManager seedManager;
-    protected @Inject PinkFormingBlockType pinkFormingBlockType;
-    protected @Inject YellowFormingBlockType yellowFormingBlockType;
-    protected @Inject GreenFormingBlockType greenFormingBlockType;
     protected @Inject Provider<Capability<GardenerCapability>> gardenerCapability;
     protected @Inject DecayManager decayManager;
-    protected @Inject Sounds sounds;
-    protected @Inject @Door SoundEvent doorSound;
+    protected @Inject SpawnpointManager spawnpointManager;
+    protected @Inject PlayerManager playerManager;
 
     private Set<FormingBlockType> formingBlockTypes;
     private Map<UUID, Integer> levitationQueue = new HashMap<>();
@@ -69,23 +53,24 @@ public class FleetingManager {
         this.formingBlockTypes = formingBlockTypes.stream().filter(FormingBlockType::canGrow).collect(Collectors.toSet());
     }
 
-    public void enterFleeting(ServerPlayerEntity player) {
-        enterFleeting(player, false);
+    public void enter(ServerPlayerEntity player) {
+        enter(player, false);
     }
 
-    public void enterFleeting(ServerPlayerEntity player, boolean showEffect) {
+    public void enter(ServerPlayerEntity player, boolean showEffect) {
         if (showEffect) {
             packetManager.getChannel().send(PacketDistributor.PLAYER.with(() -> player), packetManager.getPlayClientEffectPacketFactory().create(ClientEffectType.ENTRY));
         }
-        BlockPos spawnpoint = getNext();
+        BlockPos spawnpoint = spawnpointManager.getSpawnpoint(index);
+        index++;
         ServerWorld world = DimensionManager.getWorld(player.getServer(), dimensions.getFleetingDimensionType(), false, true);
         setupSpawnpoint(world, spawnpoint);
         player.setMotion(0, 0, 0);
         player.teleport(world, spawnpoint.getX() + 0.5, spawnpoint.getY(), spawnpoint.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
         setStage(player, FleetingStage.LIGHT);
-        setSeeds(player, 13); // TODO
+        playerManager.setSeeds(player, 13);
         setKeys(player, 0);
-        updateSeeds(player);
+        playerManager.updateSeeds(player);
     }
 
     public void clearStage(ServerPlayerEntity player) {
@@ -102,58 +87,7 @@ public class FleetingManager {
             c.setTotalSeeds(0);
             c.getNextSeeds().clear();
         });
-        syncCapability(player);
-    }
-
-    public int getSeeds(ServerPlayerEntity player) {
-        return player.getCapability(gardenerCapability.get()).map(GardenerCapability::getSeeds).orElse(0);
-    }
-
-    public void setSeeds(ServerPlayerEntity player, final int lock) {
-        player.getCapability(gardenerCapability.get()).ifPresent(c -> {
-            int seeds = lock;
-            c.setSeeds(seeds);
-        });
-        syncCapability(player);
-    }
-
-    public void updateSeeds(ServerPlayerEntity player) {
-        player.getCapability(gardenerCapability.get()).ifPresent(c -> {
-            int seeds = getSeeds(player);
-            if (c.getFleetingStage() == FleetingStage.LIGHT) { // TODO hub
-                while (c.getNextSeeds().size() < c.getSeedVisibility() && seeds > 0) {
-                    FormingBlockType offering = pinkFormingBlockType;
-                    if (c.getSeedsSincePink() < 5 + ThreadLocalRandom.current().nextInt(2)) {
-                        for (int i = 0; i < 50; i++) {
-                            offering = formingBlockTypes.stream().skip(ThreadLocalRandom.current().nextInt(formingBlockTypes.size())).findFirst().orElseThrow(() -> new RuntimeException("It is impossible for this exception to be thrown."));
-                            if (offering != c.getLastSeed()) {
-                                break;
-                            }
-                        }
-                    }
-                    if (c.getFleetingStage() == FleetingStage.LIGHT) {
-                        if (c.getTotalSeeds() == 0) {
-                            offering = pinkFormingBlockType;
-                        } else if (c.getTotalSeeds() == 1) {
-                            offering = yellowFormingBlockType;
-                        } else if (c.getTotalSeeds() == 2) {
-                            offering = greenFormingBlockType;
-                            c.setSeedsSincePink(0);
-                        }
-                    }
-                    c.setSeedsSincePink(offering == pinkFormingBlockType ? 0 : c.getSeedsSincePink() + 1);
-                    c.setLastSeed(offering);
-                    c.getNextSeeds().offer(offering);
-                    c.setTotalSeeds(c.getTotalSeeds() + 1);
-                    seeds--;
-                }
-            }
-            setSeeds(player, seeds);
-        });
-    }
-
-    public boolean shouldApplyJump(ServerPlayerEntity player) {
-        return player.getCapability(gardenerCapability.get()).map(GardenerCapability::getLastJumped).orElse(0L) < System.currentTimeMillis() - 1000;
+        playerManager.syncCapability(player);
     }
 
     public int getKeys(ServerPlayerEntity player) {
@@ -164,23 +98,11 @@ public class FleetingManager {
         player.getCapability(gardenerCapability.get()).ifPresent(c -> {
             c.setKeys(seeds);
         });
-        syncCapability(player);
-    }
-
-    public void addSeed(ServerPlayerEntity player) {
-        setSeeds(player, getSeeds(player) + 1);
-        updateSeeds(player);
+        playerManager.syncCapability(player);
     }
 
     public void addKey(ServerPlayerEntity player) {
         setKeys(player, getKeys(player) + 1);
-    }
-
-    public void useSeed(ServerPlayerEntity player, Runnable action) {
-        if (getSeeds(player) > 0) {
-            setSeeds(player, getSeeds(player) - 1);
-            action.run();
-        }
     }
 
     public void updateJumpStatus(ServerPlayerEntity player, boolean jumping) {
@@ -209,33 +131,6 @@ public class FleetingManager {
         player.teleport((ServerWorld) world, playerPosition.getX() + 0.5, playerPosition.getY() + 0.1, playerPosition.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
     }
 
-    public void grow(ServerPlayerEntity player) {
-        player.getCapability(gardenerCapability.get()).ifPresent(c -> {
-            if (c.getFleetingStage() == FleetingStage.LIGHT && !c.getNextSeeds().isEmpty()) {
-                if (seedManager.tryGrow(player.getServerWorld(), player.getPosition().offset(Direction.DOWN), c.getNextSeeds().peek())) {
-                    c.getNextSeeds().poll();
-                    updateSeeds(player);
-                }
-            } else if (c.getFleetingStage() == FleetingStage.DARK) {
-                c.setLastJumped(System.currentTimeMillis());
-                if (c.getKeys() > 0) {
-                    BlockPos target = player.getPosition().offset(Direction.DOWN);
-                    Block block = player.getServerWorld().getBlockState(target).getBlock();
-                    if (block instanceof DoorBlock) {
-                        player.getServerWorld().setBlockState(target, Blocks.AIR.getDefaultState());
-                        player.teleport(player.getServerWorld(), target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
-                        player.setMotion(0, 0, 0);
-                        sounds.playSound(player.getServerWorld(), target, doorSound, 1f);
-                    }
-                }
-            }
-        });
-    }
-
-    private void syncCapability(ServerPlayerEntity player) {
-        player.getCapability(gardenerCapability.get()).ifPresent(c -> packetManager.getChannel().send(PacketDistributor.PLAYER.with(() -> player), packetManager.getUpdateOverlayPacketFactory().create(c)));
-    }
-
     public void tickPlayer(ServerPlayerEntity player) {
         UUID uuid = player.getUniqueID();
         if (levitationQueue.containsKey(uuid)) {
@@ -245,7 +140,7 @@ public class FleetingManager {
                 return;
             }
             levitationQueue.remove(player.getUniqueID());
-            useSeed(player, () -> {
+            playerManager.useSeed(player, () -> {
                 player.addPotionEffect(new EffectInstance(Effects.LEVITATION, 200, 1, true, false));
             });
         }
@@ -273,63 +168,5 @@ public class FleetingManager {
             }
         }
         decayManager.createSpecialDecay(world, key, SpecialDecayType.KEY);
-    }
-
-    // TODO FIX
-    private BlockPos getNext() {
-        /*
-        double sidelen = Math.floor(Math.sqrt(index));
-        double layer = Math.floor((sidelen + 1) / 2.0);
-        double offset = offset = index - sidelen * sidelen;
-        int segment = (int) (Math.floor(offset / (sidelen + 1)) + 0.5);
-        double offset2 = offset - 4 * segment + 1 - layer;
-        double x = 0, y = 0;
-        switch (segment) {
-            case 0:
-                x = layer;
-                y = offset2;
-            case 1:
-                x = -offset2;
-                y = layer;
-            case 2:
-                x = -layer;
-                y = -offset2;
-            case 3:
-                x = offset2;
-                y = -layer;
-        }
-        x *= SPREAD_DISTANCE;
-        y *= SPREAD_DISTANCE;
-        index++;
-        return new BlockPos(x, SPAWN_HEIGHT, y);
-         */
-        double k = Math.ceil((Math.sqrt(index) - 1) / 2);
-        double t = 2 * k + 1;
-        double m = t * t;
-        t = t - 1;
-        double x, y;
-        if (index >= m - t) {
-            x = k - (m - index);
-            y = -k;
-        } else {
-            m = m - t;
-            if (index >= m - t) {
-                x = -k;
-                y = -k + (m - index);
-            } else {
-                m = m - t;
-                if (index >= m - t) {
-                    x = -k + (m - index);
-                    y = k;
-                } else {
-                    x = k;
-                    y = k - (m - index - t);
-                }
-            }
-        }
-        x *= SPREAD_DISTANCE;
-        y *= SPREAD_DISTANCE;
-        index++;
-        return new BlockPos(x, SPAWN_HEIGHT, y);
     }
 }

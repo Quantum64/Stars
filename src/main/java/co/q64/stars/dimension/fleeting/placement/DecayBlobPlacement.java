@@ -2,6 +2,7 @@ package co.q64.stars.dimension.fleeting.placement;
 
 import co.q64.stars.util.FleetingManager;
 import co.q64.stars.util.Identifiers;
+import co.q64.stars.util.SpawnpointManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.placement.NoPlacementConfig;
 import net.minecraft.world.gen.placement.SimplePlacement;
@@ -23,34 +24,31 @@ public class DecayBlobPlacement extends SimplePlacement<NoPlacementConfig> {
 
     public Stream<BlockPos> getPositions(Random random, NoPlacementConfig config, BlockPos pos) {
         BlockPos nearestIsland = new BlockPos(
-                FleetingManager.SPREAD_DISTANCE * (Math.round(pos.getX() / Double.valueOf(FleetingManager.SPREAD_DISTANCE))),
-                FleetingManager.SPAWN_HEIGHT,
-                FleetingManager.SPREAD_DISTANCE * (Math.round(pos.getZ() / Double.valueOf(FleetingManager.SPREAD_DISTANCE)))
+                SpawnpointManager.SPREAD_DISTANCE * (Math.round(pos.getX() / Double.valueOf(SpawnpointManager.SPREAD_DISTANCE))),
+                pos.getY(),
+                SpawnpointManager.SPREAD_DISTANCE * (Math.round(pos.getZ() / Double.valueOf(SpawnpointManager.SPREAD_DISTANCE)))
         );
-        if (pos.distanceSq(nearestIsland) < MIN_SPAWN_DIST * MIN_SPAWN_DIST ||
-                pos.distanceSq(nearestIsland.add(0, -FleetingManager.SPAWN_HEIGHT / 2, 0)) < MIN_SPAWN_DIST * MIN_SPAWN_DIST) {
-            return Stream.empty();
-        }
+        boolean high = pos.distanceSq(nearestIsland) < MIN_SPAWN_DIST * MIN_SPAWN_DIST;
         int dist = (int) Math.sqrt(pos.distanceSq(nearestIsland)) - MIN_SPAWN_DIST;
-        int chance = 33 - (dist / 3);
-        chance = chance < 1 ? 1 : chance;
+        //int chance = 20 - (dist);
+        //chance = chance < 1 ? 1 : chance;
 
         Stream<BlockPos> stream = Stream.empty();
-        for (int i = 0; i < 3; i++) {
-            if (random.nextInt(chance) == 0) {
-                stream = generate(stream, pos, random);
-            }
+        for (int i = 0; i < 10; i++) {
+            //if (random.nextInt(chance) == 0) {
+            stream = generate(stream, pos, random, high);
+            //}
         }
-        if (dist > 130) {
-            for (int i = 0; i < 5; i++) {
-                stream = generate(stream, pos, random);
+        if (dist > 40) {
+            for (int i = 0; i < 10; i++) {
+                stream = generate(stream, pos, random, high);
             }
         }
 
         return stream;
     }
 
-    private Stream<BlockPos> generate(Stream<BlockPos> stream, BlockPos pos, Random random) {
-        return Stream.concat(stream, Stream.of(pos.add(random.nextInt(16), 20 + random.nextInt(150), random.nextInt(16))));
+    private Stream<BlockPos> generate(Stream<BlockPos> stream, BlockPos pos, Random random, boolean high) {
+        return Stream.concat(stream, Stream.of(pos.add(random.nextInt(16), high ? (130 + random.nextInt(100)) : (20 + random.nextInt(180)), random.nextInt(16))));
     }
 }

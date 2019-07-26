@@ -6,6 +6,7 @@ import co.q64.stars.util.DecayManager;
 import co.q64.stars.util.DecayManager.SpecialDecayType;
 import co.q64.stars.util.FleetingManager;
 import co.q64.stars.util.Identifiers;
+import co.q64.stars.util.SpawnpointManager;
 import net.minecraft.block.Block;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -38,15 +39,28 @@ public class DecayBlobFeature extends Feature<NoFeatureConfig> {
 
     public boolean place(IWorld world, ChunkGenerator<? extends GenerationSettings> generator, Random rand, BlockPos pos, NoFeatureConfig config) {
         BlockPos nearestIsland = new BlockPos(
-                FleetingManager.SPREAD_DISTANCE * (Math.round(pos.getX() / Double.valueOf(FleetingManager.SPREAD_DISTANCE))),
-                FleetingManager.SPAWN_HEIGHT,
-                FleetingManager.SPREAD_DISTANCE * (Math.round(pos.getZ() / Double.valueOf(FleetingManager.SPREAD_DISTANCE)))
+                SpawnpointManager.SPREAD_DISTANCE * (Math.round(pos.getX() / Double.valueOf(SpawnpointManager.SPREAD_DISTANCE))),
+                pos.getY(),
+                SpawnpointManager.SPREAD_DISTANCE * (Math.round(pos.getZ() / Double.valueOf(SpawnpointManager.SPREAD_DISTANCE)))
         );
         int dist = (int) Math.sqrt(pos.distanceSq(nearestIsland));
-        dist *= 15;
-        dist = dist > 15000 ? 15000 : dist;
+        if (dist < 30) {
+            dist = rand.nextInt(dist + 1);
+            if (dist < 20) {
+                if (pos.getY() < 130) {
+                    return false;
+                }
+            }
+        } else {
+            dist = (dist * dist) / 4;
+            dist = dist > 5000 ? 5000 : dist;
+        }
 
-        decayManager.createSpecialDecay(world, pos, SpecialDecayType.KEY, false);
+        if (rand.nextInt(2) == 0) {
+            decayManager.createSpecialDecay(world, pos, SpecialDecayType.KEY, false);
+        } else {
+            world.setBlockState(pos, decayBlock.getDefaultState(), 2);
+        }
         List<BlockPos> placedBlocks = new ArrayList<>();
         placedBlocks.add(pos);
         for (int i = 0; i < dist; ++i) {

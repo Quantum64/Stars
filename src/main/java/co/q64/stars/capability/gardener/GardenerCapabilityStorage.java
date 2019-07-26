@@ -4,7 +4,8 @@ import co.q64.stars.capability.GardenerCapability;
 import co.q64.stars.type.FleetingStage;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.FormingBlockTypes;
-import net.minecraft.nbt.CompoundNBT;
+import co.q64.stars.util.nbt.ExtendedTag;
+import co.q64.stars.util.nbt.NBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
@@ -14,32 +15,32 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 @Singleton
 public class GardenerCapabilityStorage implements IStorage<GardenerCapability> {
     protected @Inject FormingBlockTypes formingBlockTypes;
+    protected @Inject NBT nbt;
 
     protected @Inject GardenerCapabilityStorage() {}
 
     public INBT writeNBT(Capability<GardenerCapability> capability, GardenerCapability instance, Direction side) {
-        CompoundNBT tag = new CompoundNBT();
+        ExtendedTag tag = nbt.create();
         tag.putInt("seeds", instance.getSeeds());
         tag.putInt("keys", instance.getKeys());
         tag.putString("fleetingStage", instance.getFleetingStage().name());
         tag.putIntArray("nextSeeds", instance.getNextSeeds().stream().mapToInt(FormingBlockType::getId).toArray());
         tag.putInt("seedVisibility", instance.getSeedVisibility());
-        return tag;
+        tag.putInt("hubIndex", instance.getHubIndex());
+        return tag.compound();
     }
 
-    public void readNBT(Capability<GardenerCapability> capability, GardenerCapability instance, Direction side, INBT nbt) {
-        CompoundNBT tag = (CompoundNBT) nbt;
+    public void readNBT(Capability<GardenerCapability> capability, GardenerCapability instance, Direction side, INBT inbt) {
+        ExtendedTag tag = nbt.extend(inbt);
         instance.setSeeds(tag.getInt("seeds"));
         instance.setKeys(tag.getInt("keys"));
-        Stream.of(tag.getString("fleetingStage")).filter(s -> !s.equals("")).map(FleetingStage::valueOf).forEach(instance::setFleetingStage);
+        tag.ifString("fleetingStage", value -> instance.setFleetingStage(FleetingStage.valueOf(value)));
         IntStream.of(tag.getIntArray("nextSeeds")).mapToObj(formingBlockTypes::get).collect(Collectors.toList()).forEach(type -> instance.getNextSeeds().offer(type));
-        if (tag.contains("seedVisibility")) {
-            instance.setSeedVisibility(tag.getInt("seedVisibility"));
-        }
+        tag.ifInt("seedVisibility", instance::setSeedVisibility);
+        tag.ifInt("hubIndex", instance::setHubIndex);
     }
 }

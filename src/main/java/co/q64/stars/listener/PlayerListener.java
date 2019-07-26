@@ -9,7 +9,10 @@ import co.q64.stars.block.PinkFormedBlock;
 import co.q64.stars.block.RedPrimedBlock;
 import co.q64.stars.block.SeedBlock;
 import co.q64.stars.capability.gardener.GardenerCapabilityProvider;
+import co.q64.stars.capability.hub.HubCapabilityProvider;
+import co.q64.stars.dimension.StarsDimension;
 import co.q64.stars.dimension.fleeting.FleetingDimension;
+import co.q64.stars.dimension.hub.HubDimension;
 import co.q64.stars.qualifier.SoundQualifiers.Seed;
 import co.q64.stars.tile.FormingTile;
 import co.q64.stars.tile.SeedTile;
@@ -18,6 +21,7 @@ import co.q64.stars.type.forming.RedFormingBlockType;
 import co.q64.stars.util.DecayManager;
 import co.q64.stars.util.FleetingManager;
 import co.q64.stars.util.Identifiers;
+import co.q64.stars.util.PlayerManager;
 import co.q64.stars.util.Sounds;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -59,6 +63,7 @@ public class PlayerListener implements Listener {
     private static final double TOLERANCE = 0.15;
     private static final Direction[] DIRECTIONS = Direction.values();
 
+    protected @Inject PlayerManager playerManager;
     protected @Inject FleetingManager fleetingManager;
     protected @Inject DarkAirBlock darkAirBlock;
     protected @Inject DecayManager decayManager;
@@ -66,6 +71,7 @@ public class PlayerListener implements Listener {
     protected @Inject SeedBlock seedBlock;
     protected @Inject RedFormingBlockType redFormingBlockType;
     protected @Inject Provider<GardenerCapabilityProvider> gardenerCapabilityProvider;
+    protected @Inject Provider<HubCapabilityProvider> hubCapabilityProvider;
     protected @Inject Sounds sounds;
     protected @Inject @Seed Set<SoundEvent> seedSounds;
 
@@ -86,26 +92,34 @@ public class PlayerListener implements Listener {
         sizeField.setAccessible(true);
     }
 
+    // TODO remove?
     @SubscribeEvent
     public void onPlayerLoad(PlayerEvent.LoadFromFile event) {
         if (event.getEntityPlayer().dimension == null) {
             // In unregistered dimension
-            // TODO
             event.getEntityPlayer().dimension = DimensionType.OVERWORLD;
         }
     }
 
     @SubscribeEvent
-    public void onCapabilityAttach(AttachCapabilitiesEvent<Entity> event) {
+    public void onCapabilityAttachEntity(AttachCapabilitiesEvent<Entity> event) {
         if (event.getObject() instanceof ServerPlayerEntity) {
             event.addCapability(identifiers.get("gardener"), gardenerCapabilityProvider.get());
         }
     }
 
     @SubscribeEvent
+    public void onCapabilityAttachWorld(AttachCapabilitiesEvent<World> event) {
+        if (event.getObject().getDimension() instanceof HubDimension) {
+            event.addCapability(identifiers.get("hub"), hubCapabilityProvider.get());
+        }
+    }
+
+
+    @SubscribeEvent
     public void onPlayerTick(PlayerTickEvent event) throws IllegalAccessException {
         PlayerEntity entity = event.player;
-        if (entity.getEntityWorld().getDimension() instanceof FleetingDimension) {
+        if (entity.getEntityWorld().getDimension() instanceof StarsDimension) {
             if (entity.getBoundingBox().getYSize() < size.height - 0.02 || entity.getBoundingBox().getYSize() > size.height + 0.02) {
                 sizeField.set(entity, size);
                 AxisAlignedBB aabb = entity.getBoundingBox();
@@ -114,13 +128,13 @@ public class PlayerListener implements Listener {
         }
         if (event.side == LogicalSide.SERVER) {
             World world = event.player.getEntityWorld();
-            if (world.getDimension() instanceof FleetingDimension) {
+            if (world.getDimension() instanceof StarsDimension) {
                 ServerPlayerEntity player = (ServerPlayerEntity) event.player;
                 fleetingManager.tickPlayer(player);
                 FleetingStage stage = fleetingManager.getStage(player);
                 Block block = entity.getEntityWorld().getBlockState(entity.getPosition().offset(Direction.DOWN)).getBlock();
                 player.removePotionEffect(Effects.JUMP_BOOST);
-                if (fleetingManager.shouldApplyJump(player)) {
+                if (playerManager.shouldApplyJump(player)) {
                     if (block instanceof BrownFormedBlock) {
                         player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, -2, true, false));
                     } else if (block instanceof BlueFormedBlock) {
@@ -183,7 +197,7 @@ public class PlayerListener implements Listener {
 
     @SubscribeEvent
     public void onEntityDamage(LivingDamageEvent event) {
-        if (event.getEntity().getEntityWorld().getDimension() instanceof FleetingDimension) {
+        if (event.getEntity().getEntityWorld().getDimension() instanceof StarsDimension) {
             event.setAmount(0);
             event.setCanceled(true);
         }
@@ -192,7 +206,7 @@ public class PlayerListener implements Listener {
     @SubscribeEvent
     public void onBlockBreak(BreakEvent event) {
         IWorld world = event.getWorld();
-        if (world.getDimension() instanceof FleetingDimension) {
+        if (world.getDimension() instanceof StarsDimension) {
             if (world.getBlockState(event.getPos()).getBlock() instanceof RedPrimedBlock) {
                 world.setBlockState(event.getPos(), seedBlock.getDefaultState(), 3);
                 Optional.ofNullable((SeedTile) world.getTileEntity(event.getPos())).ifPresent(tile -> {
@@ -213,7 +227,7 @@ public class PlayerListener implements Listener {
                 if (!world.isRemote()) {
                     if (world.getBlockState(event.getPos()).getBlock() instanceof PinkFormedBlock) {
                         sounds.playSound((ServerWorld) world, event.getPos(), seedSounds, 1f);
-                        fleetingManager.addSeed((ServerPlayerEntity) event.getPlayer());
+                        playerManager.addSeed((ServerPlayerEntity) event.getPlayer());
                     }
                     for (Direction direction : DIRECTIONS) {
                         if (world.getBlockState(event.getPos().offset(direction)).getBlock() instanceof FormingBlock) {
@@ -226,7 +240,11 @@ public class PlayerListener implements Listener {
                         }
                     }
                 }
-                world.setBlockState(event.getPos(), darkAirBlock.getDefaultState(), 3);
+                if (world.getDimension() instanceof FleetingDimension) {
+                    world.setBlockState(event.getPos(), darkAirBlock.getDefaultState(), 3);
+                } else {
+                    world.setBlockState(event.getPos(), Blocks.AIR.getDefaultState(), 3);
+                }
                 event.setCanceled(true);
             }
         }
@@ -234,7 +252,7 @@ public class PlayerListener implements Listener {
 
     @SubscribeEvent
     public void onBlockPlace(EntityPlaceEvent event) {
-        if (event.getWorld().getDimension() instanceof FleetingDimension) {
+        if (event.getWorld().getDimension() instanceof StarsDimension) {
             if (!(event.getPlacedBlock().getBlock() instanceof BaseBlock)) {
                 event.setCanceled(true);
             }
@@ -246,7 +264,7 @@ public class PlayerListener implements Listener {
         if (event.getEntity() instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) event.getEntity();
             player.getAttribute(PlayerEntity.REACH_DISTANCE).removeAllModifiers(); // TODO ?
-            if (event.getWorld().getDimension() instanceof FleetingDimension) {
+            if (event.getWorld().getDimension() instanceof StarsDimension) {
                 player.getAttribute(PlayerEntity.REACH_DISTANCE).applyModifier(reach);
             } else {
                 player.getAttribute(PlayerEntity.REACH_DISTANCE).removeModifier(reach);
@@ -258,7 +276,7 @@ public class PlayerListener implements Listener {
     public void onEyeHeight(EyeHeight event) throws IllegalAccessException {
         if (event.getEntity() instanceof PlayerEntity) {
             PlayerEntity entity = (PlayerEntity) event.getEntity();
-            if (event.getEntity().getEntityWorld().getDimension() instanceof FleetingDimension) {
+            if (event.getEntity().getEntityWorld().getDimension() instanceof StarsDimension) {
                 event.setNewHeight(0.5f);
             }
         }

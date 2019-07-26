@@ -16,6 +16,7 @@ import co.q64.stars.block.DoorBlock;
 import co.q64.stars.block.FormingBlock;
 import co.q64.stars.block.GreenFormedBlock;
 import co.q64.stars.block.GreenFruitBlock;
+import co.q64.stars.block.GreyFormedBlock;
 import co.q64.stars.block.OrangeFormedBlock;
 import co.q64.stars.block.PinkFormedBlock;
 import co.q64.stars.block.PurpleFormedBlock;
@@ -27,10 +28,13 @@ import co.q64.stars.block.SpecialDecayBlock;
 import co.q64.stars.block.SpecialDecayEdgeBlock;
 import co.q64.stars.block.YellowFormedBlock;
 import co.q64.stars.capability.GardenerCapability;
+import co.q64.stars.capability.HubCapability;
 import co.q64.stars.capability.gardener.GardenerCapabilityImpl;
+import co.q64.stars.capability.hub.HubCapabilityImpl;
 import co.q64.stars.dimension.fleeting.FleetingBiome;
 import co.q64.stars.dimension.fleeting.feature.DecayBlobFeature;
 import co.q64.stars.dimension.fleeting.placement.DecayBlobPlacement;
+import co.q64.stars.dimension.hub.HubBiome;
 import co.q64.stars.entity.PickupEntity;
 import co.q64.stars.entity.PickupEntityFactory;
 import co.q64.stars.item.BaseItem;
@@ -84,6 +88,7 @@ import co.q64.stars.type.forming.BlueFormingBlockType;
 import co.q64.stars.type.forming.BrownFormingBlockType;
 import co.q64.stars.type.forming.CyanFormingBlockType;
 import co.q64.stars.type.forming.GreenFormingBlockType;
+import co.q64.stars.type.forming.GreyFormingBlockType;
 import co.q64.stars.type.forming.OrangeFormingBlockType;
 import co.q64.stars.type.forming.PinkFormingBlockType;
 import co.q64.stars.type.forming.PurpleFormingBlockType;
@@ -115,6 +120,7 @@ public interface CommonModule {
     // @formatter:off
 
     @Binds GardenerCapability bindGardenerCapability(GardenerCapabilityImpl gardenerCapability);
+    @Binds HubCapability bindHubCapability(HubCapabilityImpl hubCapability);
 
     @Binds @IntoSet FormingBlockType bindYellowFormingBlockType(YellowFormingBlockType type);
     @Binds @IntoSet FormingBlockType bindPurpleFormingBlockType(PurpleFormingBlockType type);
@@ -125,6 +131,7 @@ public interface CommonModule {
     @Binds @IntoSet FormingBlockType bindGreenFormingBlockType(GreenFormingBlockType type);
     @Binds @IntoSet FormingBlockType bindBrownFormingBlockType(BrownFormingBlockType type);
     @Binds @IntoSet FormingBlockType bindOrangeFormingBlockType(OrangeFormingBlockType type);
+    @Binds @IntoSet FormingBlockType bindGreyFormingBlockType(GreyFormingBlockType type);
 
     @Binds @IntoSet BaseBlock bindFormingBlock(FormingBlock formingBlock);
     @Binds @IntoSet BaseBlock bindDecayBlock(DecayBlock decayBlock);
@@ -151,6 +158,7 @@ public interface CommonModule {
     @Binds @IntoSet BaseBlock bindPinkFormedBlock(PinkFormedBlock pinkFormedBlock);
     @Binds @IntoSet BaseBlock bindBrownFormedBlock(BrownFormedBlock brownFormedBlock);
     @Binds @IntoSet BaseBlock bindOrangeFormedBlock(OrangeFormedBlock orangeFormedBlock);
+    @Binds @IntoSet BaseBlock bindGreyFormedBlock(GreyFormedBlock orangeFormedBlock);
 
     @Binds @IntoSet BaseItem bindPinkSeedItem(PinkSeedItem pinkSeedItem);
     @Binds @IntoSet BaseItem bindBlueSeedItem(BlueSeedItem blueSeedItem);
@@ -196,10 +204,13 @@ public interface CommonModule {
     @Binds @IntoSet Set<SoundEvent> bindMiscSoundEvents(@Misc Set<SoundEvent> miscSoundEvents);
 
     @Binds @IntoSet Biome bindFleetingBiome(FleetingBiome fleetingBiome);
+    @Binds @IntoSet Biome bindHubBiome(HubBiome hubBiome);
+
     @Binds @IntoSet Feature<?> bindDecayBlobFeature(DecayBlobFeature decayBlobFeature);
     @Binds @IntoSet Placement<?> bindDecayBlobPlacement(DecayBlobPlacement decayBlobPlacement);
 
     static @Provides Capability<GardenerCapability> provideGardenerCapability(UnfortunateForgeBlackMagic blackMagic) { return blackMagic.getGardenerCapability(); }
+    static @Provides Capability<HubCapability> provideHubCapability(UnfortunateForgeBlackMagic blackMagic) { return blackMagic.getHubCapability(); }
 
     static @Provides @Singleton FMLJavaModLoadingContext provideFMLModLoadingContext() { return FMLJavaModLoadingContext.get(); }
     static @Provides @Singleton Logger provideLogger() { return LogManager.getLogger(); }
@@ -274,7 +285,6 @@ public interface CommonModule {
     static @Provides @Singleton @ExplodeDark SoundEvent provideExplodeDarkSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("explode_dark")); }
     static @Provides @Singleton @Door SoundEvent provideDoorSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("door")); }
     static @Provides @Singleton @Ticking SoundEvent provideTickingSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("ticking")); }
-
 
     @Binds @IntoSet @Misc SoundEvent bindExplodeDarkSound(@ExplodeDark SoundEvent event);
     @Binds @IntoSet @Misc SoundEvent bindDoorSound(@Door SoundEvent event);

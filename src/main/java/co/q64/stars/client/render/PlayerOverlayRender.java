@@ -20,7 +20,10 @@ import org.lwjgl.opengl.GL11;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Singleton
 public class PlayerOverlayRender {
@@ -34,10 +37,14 @@ public class PlayerOverlayRender {
     private Map<FormingBlockType, ItemStack> seedItemCache = new HashMap<>();
     private FleetingStage lastStage = FleetingStage.NONE;
     private GardenerCapability gardenerCapability;
+    private int lastNextSeeds, lastSeeds;
+    private int animationSlot, animationTicks, animationIndex;
+    private List<FormingBlockType> types;
 
     @Inject
-    protected PlayerOverlayRender(KeyItem keyItem) {
+    protected PlayerOverlayRender(KeyItem keyItem, Set<FormingBlockType> types) {
         this.keyStack = new ItemStack(keyItem);
+        this.types = types.stream().filter(FormingBlockType::canGrow).collect(Collectors.toList());
     }
 
     public void renderOverlay() {
@@ -66,12 +73,16 @@ public class PlayerOverlayRender {
         guiDynamicRender.drawGuiPanel(x, 0, width, height);
         int y = 2;
         x += 2;
-        RenderHelper.enableGUIStandardItemLighting();
         for (int i = 0; i < 3; i++) {
             guiDynamicRender.drawItemSlot(x, y);
+            RenderHelper.enableGUIStandardItemLighting();
             if (gardenerCapability.getFleetingStage() == FleetingStage.LIGHT) {
-                if (gardenerCapability.getNextSeeds().size() > 2 - i) {
+                if (i > animationSlot && gardenerCapability.getNextSeeds().size() > 2 - i) {
                     FormingBlockType type = gardenerCapability.getNextSeeds().stream().skip(2 - i).findFirst().get();
+                    ItemStack is = seedItemCache.computeIfAbsent(type, t -> new ItemStack(t.getItemProvider().get()));
+                    Minecraft.getInstance().getItemRenderer().renderItemAndEffectIntoGUI(is, x + 1, y + 1);
+                } else if (i == animationSlot && gardenerCapability.getNextSeeds().size() > 2 - i) {
+                    FormingBlockType type = types.stream().skip(animationIndex % types.size()).findFirst().get();
                     ItemStack is = seedItemCache.computeIfAbsent(type, t -> new ItemStack(t.getItemProvider().get()));
                     Minecraft.getInstance().getItemRenderer().renderItemAndEffectIntoGUI(is, x + 1, y + 1);
                 }
@@ -81,8 +92,8 @@ public class PlayerOverlayRender {
                 }
             }
             x = x + 18 + 1;
+            RenderHelper.disableStandardItemLighting();
         }
-        RenderHelper.disableStandardItemLighting();
         Minecraft.getInstance().getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
         String number = String.valueOf(gardenerCapability.getSeeds());
         float scale = 2.4f;
@@ -107,6 +118,9 @@ public class PlayerOverlayRender {
                 if (keyName.contains(" ")) {
                     keyName = keyName.split(" ")[1];
                 }
+                animationSlot = 2;
+                lastNextSeeds = 3;
+                lastSeeds = 0;
                 Minecraft.getInstance().ingameGUI.addChatMessage(ChatType.GAME_INFO, new StringTextComponent(TextFormatting.GRAY + "Touch " + TextFormatting.BOLD + keyName + TextFormatting.GRAY + " to grow."));
                 break;
             case DARK:
@@ -121,6 +135,24 @@ public class PlayerOverlayRender {
         if (gardenerCapability.getFleetingStage() != lastStage) {
             stageChange(gardenerCapability.getFleetingStage());
             lastStage = gardenerCapability.getFleetingStage();
+        } else {
+            int nextSeeds = gardenerCapability.getNextSeeds().size();
+            int seeds = gardenerCapability.getSeeds();
+            if (nextSeeds > lastNextSeeds) {
+                if (nextSeeds == 1) {
+                    animationSlot = 2;
+                } else if (nextSeeds == 2) {
+                    animationSlot = 1;
+                } else if (nextSeeds == 3) {
+                    animationSlot = 0;
+                }
+            } else {
+                if (seeds < lastSeeds) {
+                    animationSlot++;
+                }
+            }
+            lastNextSeeds = nextSeeds;
+            lastSeeds = seeds;
         }
     }
 
@@ -148,5 +180,29 @@ public class PlayerOverlayRender {
         GlStateManager.enableTexture();
         GlStateManager.disableBlend();
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+    }
+
+    private static final int TICKS_PER_ITEM = 3;
+    private static final int ITERATIONS_PER_ANIMATION = 20;
+
+    public void tick() {
+        if (animationTicks > 0) {
+            animationTicks--;
+            if (animationTicks == 0) {
+                animationIndex--;
+                if (animationIndex > 0) {
+                    animationTicks = Math.max(15 - (animationIndex / 2), 4);
+                } else {
+                    if (animationSlot >= 0) {
+                        animationSlot--;
+                    }
+                }
+            }
+        } else {
+            if (animationSlot >= 0) {
+                animationTicks = TICKS_PER_ITEM;
+                animationIndex = ITERATIONS_PER_ANIMATION;
+            }
+        }
     }
 }

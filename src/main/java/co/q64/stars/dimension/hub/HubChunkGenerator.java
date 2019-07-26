@@ -1,4 +1,4 @@
-package co.q64.stars.dimension.fleeting;
+package co.q64.stars.dimension.hub;
 
 import co.q64.stars.dimension.ChunkGeneratorFactory;
 import com.google.auto.factory.AutoFactory;
@@ -10,8 +10,8 @@ import net.minecraft.world.gen.GenerationSettings;
 import net.minecraft.world.gen.Heightmap.Type;
 
 @AutoFactory(implementing = ChunkGeneratorFactory.class)
-public class FleetingChunkGenerator extends ChunkGenerator<GenerationSettings> {
-    protected FleetingChunkGenerator(IWorld world, @Provided FleetingBiomeProvider biomeProvider) {
+public class HubChunkGenerator extends ChunkGenerator<GenerationSettings> {
+    protected HubChunkGenerator(IWorld world, @Provided HubBiomeProvider biomeProvider) {
         super(world, biomeProvider.getProvider(), new GenerationSettings());
     }
 

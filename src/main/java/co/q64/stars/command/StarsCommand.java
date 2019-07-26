@@ -10,13 +10,15 @@ import javax.inject.Singleton;
 @Singleton
 public class StarsCommand {
     protected @Inject TpxCommand tpxCommand;
-    protected @Inject TestEnterCommand testEnterCommand;
+    protected @Inject EnterCommand enterCommand;
+    protected @Inject HubCommand hubCommand;
 
     protected @Inject StarsCommand() {}
 
     public void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(LiteralArgumentBuilder.<CommandSource>literal("stars")
                 .then(tpxCommand.register())
-                .then(testEnterCommand.register()));
+                .then(enterCommand.register())
+                .then(hubCommand.register()));
     }
 }
