@@ -5,7 +5,7 @@ import co.q64.stars.capability.GardenerCapability;
 import co.q64.stars.capability.HubCapability;
 import co.q64.stars.dimension.Dimensions;
 import co.q64.stars.net.PacketManager;
-import co.q64.stars.net.packets.PlayClientEffectPacket.ClientEffectType;
+import co.q64.stars.net.packets.ClientFadePacket.FadeMode;
 import co.q64.stars.type.FleetingStage;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
@@ -34,9 +34,6 @@ public class HubManager {
     protected @Inject HubManager() {}
 
     public void enter(ServerPlayerEntity player, boolean showEffect) {
-        if (showEffect) {
-            packetManager.getChannel().send(PacketDistributor.PLAYER.with(() -> player), packetManager.getPlayClientEffectPacketFactory().create(ClientEffectType.ENTRY));
-        }
         ServerWorld world = getWorld(player.getServer());
         world.getCapability(hubCapability.get()).ifPresent(hub -> {
             player.getCapability(gardenerCapability.get()).ifPresent(gardener -> {

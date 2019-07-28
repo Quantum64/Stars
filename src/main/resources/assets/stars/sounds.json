@@ -327,5 +327,12 @@
     "sounds": [
       "stars:door"
     ]
+  },
+  "empty": {
+    "category": "master",
+    "subtitle": "stars.subtitle.empty",
+    "sounds": [
+      "stars:empty"
+    ]
   }
 }

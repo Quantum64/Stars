@@ -1,7 +1,9 @@
 package co.q64.stars.client.render;
 
 import co.q64.stars.capability.GardenerCapability;
+import co.q64.stars.dimension.StarsDimension;
 import co.q64.stars.item.KeyItem;
+import co.q64.stars.net.packets.ClientFadePacket.FadeMode;
 import co.q64.stars.type.FleetingStage;
 import co.q64.stars.type.FormingBlockType;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -11,6 +13,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.StringTextComponent;
@@ -27,19 +30,21 @@ import java.util.stream.Collectors;
 
 @Singleton
 public class PlayerOverlayRender {
-    private static final long ENTRY_EFFECT_TIME = 10000, DARKNESS_EFFECT_TIME = 1000, LOST_EFFECT_TIME = 15000;
+    private static final long LOST_EFFECT_TIME = 15000;
 
     protected @Inject ExtraWorldRender extraWorldRender;
     protected @Inject GuiDynamicRender guiDynamicRender;
 
-    private long entryEffectTime, darknessEffectTime;
+    private long fadeStart, fadeTime;
+    private FadeMode fadeMode = FadeMode.FADE_FROM_BLACK;
     private ItemStack keyStack;
     private Map<FormingBlockType, ItemStack> seedItemCache = new HashMap<>();
     private FleetingStage lastStage = FleetingStage.NONE;
     private GardenerCapability gardenerCapability;
-    private int lastNextSeeds, lastSeeds;
+    private int lastNextSeeds, lastSeeds, tick;
     private int animationSlot, animationTicks, animationIndex;
     private List<FormingBlockType> types;
+    private boolean planted = false;
 
     @Inject
     protected PlayerOverlayRender(KeyItem keyItem, Set<FormingBlockType> types) {
@@ -48,17 +53,41 @@ public class PlayerOverlayRender {
     }
 
     public void renderOverlay() {
+        renderHud();
+        renderFadeEffect();
+    }
+
+    private void renderFadeEffect() {
         long now = System.currentTimeMillis();
-        long entryEffectMs = entryEffectTime - now + ENTRY_EFFECT_TIME;
-        long darknessEffectMs = darknessEffectTime - now + DARKNESS_EFFECT_TIME;
-        if (darknessEffectMs > 0) {
-            double progress = (darknessEffectMs / Double.valueOf(DARKNESS_EFFECT_TIME));
+        long currentFadeTime = fadeStart - now + fadeTime;
+        if (currentFadeTime > 0 || fadeMode == FadeMode.FADE_TO_BLACK || fadeMode == FadeMode.FADE_TO_WHITE) {
+            float progress = (float) (currentFadeTime / Double.valueOf(fadeTime));
             if (progress > 1.0) {
-                progress = 1.0;
+                progress = 1.0f;
             }
-            drawScreenColorOverlay(0, 0, 0, (float) progress);
+            float r = 0, b = 0, g = 0, a = progress;
+            switch (fadeMode) {
+                case FADE_TO_WHITE:
+                    a = 1 - progress;
+                    // fall-through
+                case FADE_FROM_WHITE:
+                    r = 1;
+                    b = 1;
+                    g = 1;
+                    break;
+                case FADE_FROM_BLACK:
+                    // fall-through
+                case FADE_TO_BLACK:
+                    a = 1 - progress;
+                    break;
+            }
+            drawScreenColorOverlay(r, g, b, a * a);
         }
-        if (gardenerCapability == null) {
+    }
+
+    private void renderHud() {
+        PlayerEntity player = Minecraft.getInstance().player;
+        if (gardenerCapability == null || player == null || player.getEntityWorld() == null || !(player.getEntityWorld().getDimension() instanceof StarsDimension)) {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
@@ -103,29 +132,23 @@ public class PlayerOverlayRender {
         GlStateManager.popMatrix();
     }
 
-    public void playEntryEffect() {
-
-    }
-
-    public void playDarknessEffect() {
-
+    public void fade(FadeMode mode, long time) {
+        this.fadeMode = mode;
+        this.fadeStart = System.currentTimeMillis();
+        this.fadeTime = time;
     }
 
     private void stageChange(FleetingStage stage) {
         switch (stage) {
             case LIGHT:
-                String keyName = Minecraft.getInstance().gameSettings.keyBindSneak.getLocalizedName().toLowerCase();
-                if (keyName.contains(" ")) {
-                    keyName = keyName.split(" ")[1];
-                }
                 animationSlot = 2;
                 lastNextSeeds = 3;
                 lastSeeds = 0;
-                Minecraft.getInstance().ingameGUI.addChatMessage(ChatType.GAME_INFO, new StringTextComponent(TextFormatting.GRAY + "Touch " + TextFormatting.BOLD + keyName + TextFormatting.GRAY + " to grow."));
+                planted = false;
                 break;
             case DARK:
                 extraWorldRender.setAnimationStart(System.currentTimeMillis());
-                darknessEffectTime = System.currentTimeMillis();
+                fade(FadeMode.FADE_FROM_BLACK, 1000);
                 break;
         }
     }
@@ -149,6 +172,7 @@ public class PlayerOverlayRender {
             } else {
                 if (seeds < lastSeeds) {
                     animationSlot++;
+                    planted = true;
                 }
             }
             lastNextSeeds = nextSeeds;
@@ -186,6 +210,13 @@ public class PlayerOverlayRender {
     private static final int ITERATIONS_PER_ANIMATION = 20;
 
     public void tick() {
+        if (!planted && tick % 10 == 0) {
+            String keyName = Minecraft.getInstance().gameSettings.keyBindSneak.getLocalizedName().toLowerCase();
+            if (keyName.contains(" ")) {
+                keyName = keyName.split(" ")[1];
+            }
+            Minecraft.getInstance().ingameGUI.addChatMessage(ChatType.GAME_INFO, new StringTextComponent(TextFormatting.GRAY + "Touch " + TextFormatting.BOLD + keyName + TextFormatting.GRAY + " to grow."));
+        }
         if (animationTicks > 0) {
             animationTicks--;
             if (animationTicks == 0) {
@@ -204,5 +235,6 @@ public class PlayerOverlayRender {
                 animationIndex = ITERATIONS_PER_ANIMATION;
             }
         }
+        tick++;
     }
 }

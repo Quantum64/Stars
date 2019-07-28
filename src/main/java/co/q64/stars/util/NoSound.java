@@ -1,7 +1,8 @@
 package co.q64.stars.util;
 
+import co.q64.stars.qualifier.SoundQualifiers.Empty;
 import net.minecraft.block.SoundType;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.SoundEvent;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -10,7 +11,7 @@ import javax.inject.Singleton;
 public class NoSound extends SoundType {
 
     @Inject
-    protected NoSound() {
-        super(0f, 1f, SoundEvents.UI_BUTTON_CLICK, SoundEvents.UI_BUTTON_CLICK, SoundEvents.UI_BUTTON_CLICK, SoundEvents.UI_BUTTON_CLICK, SoundEvents.UI_BUTTON_CLICK);
+    protected NoSound(@Empty SoundEvent sound) {
+        super(0f, 1f, sound, sound, sound, sound, sound);
     }
 }

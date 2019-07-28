@@ -37,6 +37,7 @@ import co.q64.stars.dimension.fleeting.placement.DecayBlobPlacement;
 import co.q64.stars.dimension.hub.HubBiome;
 import co.q64.stars.entity.PickupEntity;
 import co.q64.stars.entity.PickupEntityFactory;
+import co.q64.stars.item.ArrowItem;
 import co.q64.stars.item.BaseItem;
 import co.q64.stars.item.BlueSeedItem;
 import co.q64.stars.item.BrownSeedItem;
@@ -64,6 +65,7 @@ import co.q64.stars.qualifier.SoundQualifiers.Brown;
 import co.q64.stars.qualifier.SoundQualifiers.Cyan;
 import co.q64.stars.qualifier.SoundQualifiers.Dark;
 import co.q64.stars.qualifier.SoundQualifiers.Door;
+import co.q64.stars.qualifier.SoundQualifiers.Empty;
 import co.q64.stars.qualifier.SoundQualifiers.Explode;
 import co.q64.stars.qualifier.SoundQualifiers.ExplodeDark;
 import co.q64.stars.qualifier.SoundQualifiers.Green;
@@ -172,6 +174,7 @@ public interface CommonModule {
     @Binds @IntoSet BaseItem bindHeartItem(HeartItem heartItem);
     @Binds @IntoSet BaseItem bindKeyItem(KeyItem keyItem);
     @Binds @IntoSet BaseItem bindStarItem(StarItem starItem);
+    @Binds @IntoSet BaseItem bindArrowItem(ArrowItem arrowItem);
 
     @Binds @IntoSet Listener bindRegistryListener(RegistryListener serverStartListener);
     @Binds @IntoSet Listener bindInitializationListener(InitializationListener initializationListener);
@@ -285,10 +288,12 @@ public interface CommonModule {
     static @Provides @Singleton @ExplodeDark SoundEvent provideExplodeDarkSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("explode_dark")); }
     static @Provides @Singleton @Door SoundEvent provideDoorSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("door")); }
     static @Provides @Singleton @Ticking SoundEvent provideTickingSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("ticking")); }
+    static @Provides @Singleton @Empty SoundEvent provideEmptySound(Identifiers identifiers) { return new SoundEvent(identifiers.get("empty")); }
 
     @Binds @IntoSet @Misc SoundEvent bindExplodeDarkSound(@ExplodeDark SoundEvent event);
     @Binds @IntoSet @Misc SoundEvent bindDoorSound(@Door SoundEvent event);
     @Binds @IntoSet @Misc SoundEvent bindTickingSound(@Ticking SoundEvent event);
+    @Binds @IntoSet @Misc SoundEvent bindEmptySound(@Empty SoundEvent event);
 
     // @formatter:on
 }

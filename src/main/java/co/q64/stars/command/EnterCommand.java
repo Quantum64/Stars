@@ -2,6 +2,7 @@ package co.q64.stars.command;
 
 import co.q64.stars.dimension.Dimensions;
 import co.q64.stars.util.FleetingManager;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -22,12 +23,17 @@ public class EnterCommand {
     public ArgumentBuilder<CommandSource, ?> register() {
         return Commands.literal("enter")
                 .requires(cs -> cs.hasPermissionLevel(0))
+                .then(Commands.argument("effect", BoolArgumentType.bool()).executes(this::execute))
                 .executes(this::execute);
     }
 
     private int execute(CommandContext<CommandSource> context) throws CommandSyntaxException {
+        boolean effect = false;
+        try {
+            effect = BoolArgumentType.getBool(context, "effect");
+        } catch (IllegalArgumentException e) {}
         ServerPlayerEntity player = context.getSource().asPlayer();
-        spawnpointManager.enter(player);
+        spawnpointManager.enter(player, effect);
         return 0;
     }
 }

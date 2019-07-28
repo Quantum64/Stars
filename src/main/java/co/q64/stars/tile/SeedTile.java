@@ -36,8 +36,6 @@ public class SeedTile extends SyncTileEntity implements ITickableTileEntity {
     private @Getter @Setter boolean primed = false;
     private @Getter @Setter boolean fruit = false;
 
-    private int ticks = 0;
-
     @Inject
     protected SeedTile(SeedTileType type) {
         super(type);
@@ -87,12 +85,12 @@ public class SeedTile extends SyncTileEntity implements ITickableTileEntity {
             if (!hasSeed()) {
                 return;
             }
-            if (ticks == 0) {
+            if (growTicks == getInitialGrowTicks()) {
                 if (isPrimed()) {
                     sounds.playSound((ServerWorld) world, pos, tickingSound, 1f);
                 }
             }
-            if (ticks == growTicks) {
+            if (growTicks == 0) {
                 if (isPrimed()) {
                     redFormingBlockType.explode((ServerWorld) world, pos, false);
                 } else {
@@ -114,7 +112,7 @@ public class SeedTile extends SyncTileEntity implements ITickableTileEntity {
                     }
                 }
             }
-            if (ticks > growTicks) {
+            if (growTicks < 0) {
                 if (direction == null) {
                     return;
                 }
@@ -126,7 +124,7 @@ public class SeedTile extends SyncTileEntity implements ITickableTileEntity {
                     }
                 }
             }
-            ticks++;
+            growTicks--;
         }
     }
 }

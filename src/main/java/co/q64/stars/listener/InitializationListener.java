@@ -9,8 +9,11 @@ import co.q64.stars.capability.hub.HubCapabilityStorage;
 import co.q64.stars.command.StarsCommand;
 import co.q64.stars.dimension.Dimensions;
 import co.q64.stars.net.PacketManager;
+import co.q64.stars.util.Scheduler;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
@@ -31,6 +34,7 @@ public class InitializationListener implements Listener {
     protected @Inject GardenerCapabilityFactory gardenerCapabilityFactory;
     protected @Inject HubCapabilityStorage hubCapabilityStorage;
     protected @Inject HubCapabilityFactory hubCapabilityFactory;
+    protected @Inject Scheduler scheduler;
 
     protected @Inject InitializationListener() {}
 
@@ -63,5 +67,12 @@ public class InitializationListener implements Listener {
     @SubscribeEvent
     public void onServerStart(FMLServerStartingEvent event) {
         command.register(event.getCommandDispatcher());
+    }
+
+    @SubscribeEvent
+    public void onServerTick(ServerTickEvent event) {
+        if (event.phase == Phase.START) {
+            scheduler.tick();
+        }
     }
 }

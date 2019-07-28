@@ -9,6 +9,7 @@ import co.q64.stars.block.FormedBlock;
 import co.q64.stars.block.FormingBlock;
 import co.q64.stars.block.GreenFruitBlock;
 import co.q64.stars.block.RedPrimedBlock;
+import co.q64.stars.block.SeedBlock;
 import co.q64.stars.qualifier.SoundQualifiers.Dark;
 import co.q64.stars.tile.type.DecayEdgeTileType;
 import co.q64.stars.type.FormingBlockType;
@@ -83,6 +84,21 @@ public class DecayEdgeTile extends SyncTileEntity implements ITickableTileEntity
                         decayingTile.setFruit(block instanceof GreenFruitBlock);
                         decayingTile.setExpectedDecayTime(type.getDecayTime(target.toLong() ^ SALT) * 50);
                         decayingTile.setCalculated(true);
+                    });
+                    counts++;
+                } else if (block instanceof SeedBlock) {
+                    Optional.ofNullable((SeedTile) world.getTileEntity(target)).ifPresent(seedTile -> {
+                        world.setBlockState(target, decayingBlock.getDefaultState());
+                        Optional.ofNullable((DecayingTile) world.getTileEntity(target)).ifPresent(decayingTile -> {
+                            decayingTile.setFormingBlockType(seedTile.getFormingBlockType());
+                            decayingTile.setPrimed(seedTile.isPrimed());
+                            decayingTile.setFruit(seedTile.isFruit());
+                            decayingTile.setGrowTicks(seedTile.getGrowTicks());
+                            decayingTile.setSeedType(seedTile.getSeedType());
+                            decayingTile.setHasSeed(true);
+                            decayingTile.setExpectedDecayTime(seedTile.getFormingBlockType().getDecayTime(target.toLong() ^ SALT) * 50);
+                            decayingTile.setCalculated(true);
+                        });
                     });
                     counts++;
                 } else if (block instanceof DecayingBlock) {

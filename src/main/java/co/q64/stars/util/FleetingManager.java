@@ -7,7 +7,7 @@ import co.q64.stars.capability.GardenerCapability;
 import co.q64.stars.dimension.Dimensions;
 import co.q64.stars.entity.PickupEntity;
 import co.q64.stars.net.PacketManager;
-import co.q64.stars.net.packets.PlayClientEffectPacket.ClientEffectType;
+import co.q64.stars.net.packets.ClientFadePacket.FadeMode;
 import co.q64.stars.type.FleetingStage;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.util.DecayManager.SpecialDecayType;
@@ -43,6 +43,7 @@ public class FleetingManager {
     protected @Inject DecayManager decayManager;
     protected @Inject SpawnpointManager spawnpointManager;
     protected @Inject PlayerManager playerManager;
+    protected @Inject Scheduler scheduler;
 
     private Set<FormingBlockType> formingBlockTypes;
     private Map<UUID, Integer> levitationQueue = new HashMap<>();
@@ -59,18 +60,27 @@ public class FleetingManager {
 
     public void enter(ServerPlayerEntity player, boolean showEffect) {
         if (showEffect) {
-            packetManager.getChannel().send(PacketDistributor.PLAYER.with(() -> player), packetManager.getPlayClientEffectPacketFactory().create(ClientEffectType.ENTRY));
+            packetManager.getChannel().send(PacketDistributor.PLAYER.with(() -> player), packetManager.getClientFadePacketFactory().create(FadeMode.FADE_TO_WHITE, 3000));
+            player.addPotionEffect(new EffectInstance(Effects.LEVITATION, 60, 1, true, false));
         }
         BlockPos spawnpoint = spawnpointManager.getSpawnpoint(index);
         index++;
-        ServerWorld world = DimensionManager.getWorld(player.getServer(), dimensions.getFleetingDimensionType(), false, true);
-        setupSpawnpoint(world, spawnpoint);
-        player.setMotion(0, 0, 0);
-        player.teleport(world, spawnpoint.getX() + 0.5, spawnpoint.getY(), spawnpoint.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
-        setStage(player, FleetingStage.LIGHT);
-        playerManager.setSeeds(player, 13);
-        setKeys(player, 0);
-        playerManager.updateSeeds(player);
+        ServerWorld spawnWorld = DimensionManager.getWorld(player.getServer(), dimensions.getFleetingDimensionType(), false, true);
+        setupSpawnpoint(spawnWorld, spawnpoint);
+        Runnable task = () -> {
+            ServerWorld world = DimensionManager.getWorld(player.getServer(), dimensions.getFleetingDimensionType(), false, true);
+            player.setMotion(0, 0, 0);
+            player.teleport(world, spawnpoint.getX() + 0.5, showEffect ? spawnpoint.getY() + 10 : spawnpoint.getY(), spawnpoint.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
+            setStage(player, FleetingStage.LIGHT);
+            playerManager.setSeeds(player, 13);
+            setKeys(player, 0);
+            playerManager.updateSeeds(player);
+            if (showEffect) {
+                player.addPotionEffect(new EffectInstance(Effects.SLOW_FALLING, 60, 3, true, false));
+                packetManager.getChannel().send(PacketDistributor.PLAYER.with(() -> player), packetManager.getClientFadePacketFactory().create(FadeMode.FADE_FROM_WHITE, 3000));
+            }
+        };
+        scheduler.run(task, showEffect ? 60 : 0);
     }
 
     public void clearStage(ServerPlayerEntity player) {
@@ -126,7 +136,6 @@ public class FleetingManager {
                 .filter(p -> p.getVariant() == 2)
                 .forEach(Entity::remove);
         BlockPos playerPosition = player.getPosition();
-        packetManager.getChannel().send(PacketDistributor.PLAYER.with(() -> player), packetManager.getPlayClientEffectPacketFactory().create(ClientEffectType.DARKNESS));
         world.setBlockState(playerPosition, darknessEdgeBlock.getDefaultState());
         player.teleport((ServerWorld) world, playerPosition.getX() + 0.5, playerPosition.getY() + 0.1, playerPosition.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
     }

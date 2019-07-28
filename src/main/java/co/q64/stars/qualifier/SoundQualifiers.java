@@ -18,6 +18,7 @@ public interface SoundQualifiers {
     public static @Qualifier @interface ExplodeDark {}
     public static @Qualifier @interface Door {}
     public static @Qualifier @interface Ticking {}
+    public static @Qualifier @interface Empty {}
 
     public static @Qualifier @interface Misc {}
     // @formatter:on

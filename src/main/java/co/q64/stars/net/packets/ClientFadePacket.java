@@ -10,43 +10,40 @@ import net.minecraftforge.fml.network.NetworkEvent.Context;
 import java.util.function.Supplier;
 
 @AutoFactory
-public class PlayClientEffectPacket {
-    private ClientEffectType type;
+public class ClientFadePacket {
+    private FadeMode type;
+    private long time;
     private ClientNetHandler clientNetHandler;
 
-    protected PlayClientEffectPacket(@Provided ClientNetHandler clientNetHandler, PacketBuffer buffer) {
+    protected ClientFadePacket(@Provided ClientNetHandler clientNetHandler, PacketBuffer buffer) {
         CompoundNBT tag = buffer.readCompoundTag();
         this.clientNetHandler = clientNetHandler;
-        this.type = ClientEffectType.valueOf(tag.getString("type"));
+        this.type = FadeMode.valueOf(tag.getString("type"));
+        this.time = tag.getLong("time");
     }
 
-    protected PlayClientEffectPacket(@Provided ClientNetHandler clientNetHandler, ClientEffectType type) {
+    protected ClientFadePacket(@Provided ClientNetHandler clientNetHandler, FadeMode type, long time) {
         this.clientNetHandler = clientNetHandler;
         this.type = type;
+        this.time = time;
     }
 
     public void encode(PacketBuffer buffer) {
         CompoundNBT tag = new CompoundNBT();
         tag.putString("type", type.name());
+        tag.putLong("time", time);
         buffer.writeCompoundTag(tag);
     }
 
     public void handle(Supplier<Context> context) {
         context.get().enqueueWork(() -> {
-            switch (type) {
-                case ENTRY:
-                    clientNetHandler.playEntryEffect();
-                    break;
-                case DARKNESS:
-                    clientNetHandler.playDarknessEffect();
-                    break;
-            }
+            clientNetHandler.fade(type, time);
         });
         context.get().setPacketHandled(true);
     }
 
-    public static enum ClientEffectType {
-        ENTRY, DARKNESS
+    public static enum FadeMode {
+        FADE_TO_WHITE, FADE_FROM_WHITE, FADE_TO_BLACK, FADE_FROM_BLACK
     }
 }
 
