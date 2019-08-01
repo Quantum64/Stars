@@ -3,8 +3,11 @@ package co.q64.stars.client.listener;
 import co.q64.stars.client.render.ExtraWorldRender;
 import co.q64.stars.client.render.PlayerOverlayRender;
 import co.q64.stars.dimension.StarsDimension;
+import co.q64.stars.dimension.fleeting.FleetingDimension;
+import co.q64.stars.dimension.hub.HubDimension;
 import co.q64.stars.listener.Listener;
 import co.q64.stars.net.PacketManager;
+import co.q64.stars.type.FleetingStage;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.ForgeIngameGui;
 import net.minecraftforge.client.event.InputEvent.KeyInputEvent;
@@ -54,8 +57,12 @@ public class ClientPlayerListener implements Listener {
 
     @SubscribeEvent
     public void onPlayerTick(PlayerTickEvent event) {
+        if (event.player.world.getDimension() instanceof HubDimension || (event.player.world.getDimension() instanceof FleetingDimension && playerOverlayRender.getLastStage() == FleetingStage.LIGHT)) {
+            Minecraft.getInstance().gameSettings.renderDistanceChunks = 2; // No cheating
+        } else if ((event.player.world.getDimension() instanceof FleetingDimension)) {
+            Minecraft.getInstance().gameSettings.renderDistanceChunks = 6;
+        }
         if (event.player.world.getDimension() instanceof StarsDimension) {
-            //Minecraft.getInstance().gameSettings.renderDistanceChunks = 2; // No cheating
             playerOverlayRender.tick();
         }
     }

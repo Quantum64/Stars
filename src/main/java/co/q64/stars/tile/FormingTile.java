@@ -7,6 +7,7 @@ import co.q64.stars.block.FormedBlock;
 import co.q64.stars.block.FormingBlock;
 import co.q64.stars.block.GreenFruitBlock;
 import co.q64.stars.block.RedPrimedBlock;
+import co.q64.stars.dimension.fleeting.FleetingDimension;
 import co.q64.stars.tile.type.FormingTileType;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.FormingBlockTypes;
@@ -125,7 +126,7 @@ public class FormingTile extends SyncTileEntity implements ITickableTileEntity {
             if (ticks == formTicks) {
                 ((ServerWorld) world).spawnParticle(ParticleTypes.CLOUD, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5, 20, 0.4, 0.4, 0.4, 0.01);
                 sounds.playSound((ServerWorld) world, pos, formType.getSounds(), 1f);
-                if (formType == greenFormingBlockType && ThreadLocalRandom.current().nextInt(FRUIT_CHANCE) == 0) {
+                if (formType == greenFormingBlockType && world.getDimension() instanceof FleetingDimension && ThreadLocalRandom.current().nextInt(FRUIT_CHANCE) == 0) {
                     world.setBlockState(getPos(), greenFruitBlock.getDefaultState());
                 } else {
                     world.setBlockState(getPos(), formType.getFormedBlock().getDefaultState());

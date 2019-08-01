@@ -9,6 +9,7 @@ import co.q64.stars.capability.hub.HubCapabilityStorage;
 import co.q64.stars.command.StarsCommand;
 import co.q64.stars.dimension.Dimensions;
 import co.q64.stars.net.PacketManager;
+import co.q64.stars.util.PlayerManager;
 import co.q64.stars.util.Scheduler;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -35,6 +36,7 @@ public class InitializationListener implements Listener {
     protected @Inject HubCapabilityStorage hubCapabilityStorage;
     protected @Inject HubCapabilityFactory hubCapabilityFactory;
     protected @Inject Scheduler scheduler;
+    protected @Inject PlayerManager playerManager;
 
     protected @Inject InitializationListener() {}
 
@@ -73,6 +75,7 @@ public class InitializationListener implements Listener {
     public void onServerTick(ServerTickEvent event) {
         if (event.phase == Phase.START) {
             scheduler.tick();
+            playerManager.tick();
         }
     }
 }

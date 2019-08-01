@@ -5,6 +5,7 @@ import co.q64.stars.capability.GardenerCapability;
 import co.q64.stars.dimension.hub.HubDimension;
 import co.q64.stars.net.PacketManager;
 import co.q64.stars.qualifier.SoundQualifiers.Door;
+import co.q64.stars.qualifier.SoundQualifiers.Seed;
 import co.q64.stars.type.FleetingStage;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.forming.GreenFormingBlockType;
@@ -22,7 +23,9 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -36,7 +39,10 @@ public class PlayerManager {
     protected @Inject Provider<Capability<GardenerCapability>> gardenerCapability;
     protected @Inject Sounds sounds;
     protected @Inject @Door SoundEvent doorSound;
+    protected @Inject @Seed Set<SoundEvent> seedSounds;
+    protected @Inject Capabilities capabilities;
 
+    private Queue<ServerPlayerEntity> toSync = new ConcurrentLinkedQueue<>();
     private Set<FormingBlockType> formingBlockTypes;
     private Set<FormingBlockType> hubFormingBlocks;
 
@@ -47,7 +53,7 @@ public class PlayerManager {
     }
 
     public void setSeeds(ServerPlayerEntity player, final int lock) {
-        player.getCapability(gardenerCapability.get()).ifPresent(c -> {
+        capabilities.gardener(player, c -> {
             int seeds = lock;
             c.setSeeds(seeds);
         });
@@ -55,9 +61,9 @@ public class PlayerManager {
     }
 
     public void updateSeeds(ServerPlayerEntity player) {
-        player.getCapability(gardenerCapability.get()).ifPresent(c -> {
+        capabilities.gardener(player, c -> {
             int seeds = getSeeds(player);
-            boolean hub = player.getServerWorld().getDimension() instanceof HubDimension;
+            boolean hub = player.getServerWorld().getDimension() instanceof HubDimension || c.isEnteringHub();
             if (c.getFleetingStage() == FleetingStage.LIGHT || hub) {
                 Set<FormingBlockType> types = hub ? hubFormingBlocks : formingBlockTypes;
                 while (c.getNextSeeds().size() < c.getSeedVisibility() && seeds > 0) {
@@ -96,8 +102,8 @@ public class PlayerManager {
     }
 
     public void grow(ServerPlayerEntity player) {
-        player.getCapability(gardenerCapability.get()).ifPresent(c -> {
-            if (c.getFleetingStage() == FleetingStage.LIGHT && !c.getNextSeeds().isEmpty()) {
+        capabilities.gardener(player, c -> {
+            if (c.getFleetingStage() != FleetingStage.DARK && !c.getNextSeeds().isEmpty()) {
                 if (seedManager.tryGrow(player.getServerWorld(), player.getPosition().offset(Direction.DOWN), c.getNextSeeds().peek())) {
                     c.getNextSeeds().poll();
                     updateSeeds(player);
@@ -112,6 +118,9 @@ public class PlayerManager {
                         player.teleport(player.getServerWorld(), target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
                         player.setMotion(0, 0, 0);
                         sounds.playSound(player.getServerWorld(), target, doorSound, 1f);
+                        capabilities.gardener(player, gardener -> {
+                            gardener.setOpenDoor(true); // todo challenge door
+                        });
                     }
                 }
             }
@@ -130,8 +139,26 @@ public class PlayerManager {
         updateSeeds(player);
     }
 
+    public void pickupSeed(ServerPlayerEntity player) {
+        addSeed(player);
+        sounds.playSound(player.getServerWorld(), player.getPosition(), seedSounds, 1f);
+    }
+
     public void syncCapability(ServerPlayerEntity player) {
-        player.getCapability(gardenerCapability.get()).ifPresent(c -> packetManager.getChannel().send(PacketDistributor.PLAYER.with(() -> player), packetManager.getUpdateOverlayPacketFactory().create(c)));
+        if (toSync.contains(player)) {
+            return;
+        }
+        toSync.add(player);
+    }
+
+    public void tick() {
+        while (true) {
+            ServerPlayerEntity player = toSync.poll();
+            if (player == null) {
+                break;
+            }
+            capabilities.gardener(player, c -> packetManager.getChannel().send(PacketDistributor.PLAYER.with(() -> player), packetManager.getUpdateOverlayPacketFactory().create(c)));
+        }
     }
 
     @Inject

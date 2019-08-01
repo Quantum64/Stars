@@ -16,10 +16,11 @@ import co.q64.stars.dimension.hub.HubDimension;
 import co.q64.stars.qualifier.SoundQualifiers.Seed;
 import co.q64.stars.tile.FormingTile;
 import co.q64.stars.tile.SeedTile;
-import co.q64.stars.type.FleetingStage;
 import co.q64.stars.type.forming.RedFormingBlockType;
+import co.q64.stars.util.Capabilities;
 import co.q64.stars.util.DecayManager;
 import co.q64.stars.util.FleetingManager;
+import co.q64.stars.util.HubManager;
 import co.q64.stars.util.Identifiers;
 import co.q64.stars.util.PlayerManager;
 import co.q64.stars.util.Sounds;
@@ -74,6 +75,8 @@ public class PlayerListener implements Listener {
     protected @Inject Provider<HubCapabilityProvider> hubCapabilityProvider;
     protected @Inject Sounds sounds;
     protected @Inject @Seed Set<SoundEvent> seedSounds;
+    protected @Inject HubManager hubManager;
+    protected @Inject Capabilities capabilities;
 
     private EntitySize size = new EntitySize(0.6f, 0.85f, false);
     private AttributeModifier reach = new AttributeModifier("stars_reach", -3.6, Operation.ADDITION);
@@ -128,10 +131,16 @@ public class PlayerListener implements Listener {
         }
         if (event.side == LogicalSide.SERVER) {
             World world = event.player.getEntityWorld();
+            ServerPlayerEntity player = (ServerPlayerEntity) event.player;
             if (world.getDimension() instanceof StarsDimension) {
-                ServerPlayerEntity player = (ServerPlayerEntity) event.player;
-                fleetingManager.tickPlayer(player);
-                FleetingStage stage = fleetingManager.getStage(player);
+                if (player.posY < 20) {
+                    capabilities.gardener(player, gardener -> {
+                        if (!gardener.isEnteringHub()) {
+                            hubManager.fall(player);
+                        }
+                    });
+                    return;
+                }
                 Block block = entity.getEntityWorld().getBlockState(entity.getPosition().offset(Direction.DOWN)).getBlock();
                 player.removePotionEffect(Effects.JUMP_BOOST);
                 if (playerManager.shouldApplyJump(player)) {
@@ -143,6 +152,9 @@ public class PlayerListener implements Listener {
                         player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, 3, true, false));
                     }
                 }
+            }
+            if (world.getDimension() instanceof FleetingDimension) {
+                fleetingManager.tickPlayer(player);
                 if (decayManager.isDecayBlock((ServerWorld) world, player.getPosition())) {
                     double x = player.posX, y = player.posY, z = player.posZ;
                     double offsetX = x - Math.floor(x);
@@ -266,6 +278,9 @@ public class PlayerListener implements Listener {
             player.getAttribute(PlayerEntity.REACH_DISTANCE).removeAllModifiers(); // TODO ?
             if (event.getWorld().getDimension() instanceof StarsDimension) {
                 player.getAttribute(PlayerEntity.REACH_DISTANCE).applyModifier(reach);
+                if (!player.getEntityWorld().isRemote) {
+                    playerManager.syncCapability((ServerPlayerEntity) player);
+                }
             } else {
                 player.getAttribute(PlayerEntity.REACH_DISTANCE).removeModifier(reach);
             }

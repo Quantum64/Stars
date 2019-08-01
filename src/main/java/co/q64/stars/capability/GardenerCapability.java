@@ -44,6 +44,18 @@ public interface GardenerCapability {
 
     public void setFleetingStage(FleetingStage fleetingStage);
 
+    public boolean isOpenDoor();
+
+    public void setOpenDoor(boolean openedDoor);
+
+    public boolean isOpenChallengeDoor();
+
+    public void setOpenChallengeDoor(boolean openChallengeDoor);
+
+    public boolean isEnteringHub();
+
+    public void setEnteringHub(boolean enteringHub);
+
     public FormingBlockType getLastSeed();
 
     public void setLastSeed(FormingBlockType formingBlockType);

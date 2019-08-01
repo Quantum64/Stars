@@ -52,7 +52,7 @@ public class PickupEntity extends Entity {
             if (player.getBoundingBox().intersects(getBoundingBox())) {
                 switch (getVariant()) {
                     case 0:
-                        playerManager.addSeed((ServerPlayerEntity) player);
+                        playerManager.pickupSeed((ServerPlayerEntity) player);
                         break;
                     case 1:
                         fleetingManager.addKey((ServerPlayerEntity) player);

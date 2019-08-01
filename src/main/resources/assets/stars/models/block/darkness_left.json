@@ -1,0 +1,15 @@
+{
+    "parent": "block/block",
+    "textures": {
+		"all": "stars:block/darkness_left",
+        "particle": "stars:block/darkness_left"
+    },
+    "elements": [
+        {   "from": [0, 0, 0 ],
+            "to": [ 16, 16, 16 ],
+            "faces": {
+                "north": { "texture": "#all", "cullface": "north" }
+            }
+        }
+    ]
+}

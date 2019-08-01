@@ -16,9 +16,11 @@ import co.q64.stars.block.SpecialAirBlock;
 import co.q64.stars.block.SpecialDecayBlock;
 import co.q64.stars.block.SpecialDecayEdgeBlock;
 import co.q64.stars.entity.PickupEntity;
+import co.q64.stars.state.DarknessState;
 import co.q64.stars.tile.type.DarknessEdgeTileType;
 import co.q64.stars.util.DecayManager.SpecialDecayType;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.tileentity.ITickableTileEntity;
@@ -27,6 +29,8 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DarknessEdgeTile extends TileEntity implements ITickableTileEntity {
     private static final Direction[] DIRECTIONS = Direction.values();
@@ -49,7 +53,25 @@ public class DarknessEdgeTile extends TileEntity implements ITickableTileEntity 
                 BlockPos target = getPos().offset(direction);
                 Block block = world.getBlockState(target).getBlock();
                 if (block == Blocks.AIR || block instanceof FormingBlock) {
-                    world.setBlockState(target, darknessBlock.getDefaultState());
+                    /*
+                    List<Direction> connections = new ArrayList<>();
+                    for (Direction test : DIRECTIONS) {
+                        BlockState testState = world.getBlockState(target.offset(test));
+                        if (testState.getBlock() instanceof DarknessBlock) {
+                            connections.add(test);
+                            world.setBlockState(target.offset(test), testState.with(DarknessState.get(test.getOpposite()), true));
+                        }
+                    }
+
+                     */
+                    BlockState state = darknessBlock.getDefaultState();
+                    /*
+                    for (Direction connection : connections) {
+                        state = state.with(DarknessState.get(connection), true);
+                    }
+
+                     */
+                    world.setBlockState(target, state);
                 } else if (block instanceof SpecialDecayEdgeBlock || block instanceof SpecialDecayBlock || block instanceof GreenFruitBlock) {
                     SpecialDecayType type = SpecialDecayType.HEART;
                     if (block instanceof SpecialDecayBlock) {

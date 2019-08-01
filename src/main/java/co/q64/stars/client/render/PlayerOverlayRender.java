@@ -7,6 +7,7 @@ import co.q64.stars.net.packets.ClientFadePacket.FadeMode;
 import co.q64.stars.type.FleetingStage;
 import co.q64.stars.type.FormingBlockType;
 import com.mojang.blaze3d.platform.GlStateManager;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -39,7 +40,7 @@ public class PlayerOverlayRender {
     private FadeMode fadeMode = FadeMode.FADE_FROM_BLACK;
     private ItemStack keyStack;
     private Map<FormingBlockType, ItemStack> seedItemCache = new HashMap<>();
-    private FleetingStage lastStage = FleetingStage.NONE;
+    private @Getter FleetingStage lastStage = FleetingStage.NONE;
     private GardenerCapability gardenerCapability;
     private int lastNextSeeds, lastSeeds, tick;
     private int animationSlot, animationTicks, animationIndex;
@@ -69,17 +70,21 @@ public class PlayerOverlayRender {
             switch (fadeMode) {
                 case FADE_TO_WHITE:
                     a = 1 - progress;
-                    // fall-through
+                    r = 1;
+                    b = 1;
+                    g = 1;
+                    break;
                 case FADE_FROM_WHITE:
                     r = 1;
                     b = 1;
                     g = 1;
                     break;
-                case FADE_FROM_BLACK:
-                    // fall-through
                 case FADE_TO_BLACK:
                     a = 1 - progress;
                     break;
+                case FADE_FROM_BLACK:
+                    break;
+
             }
             drawScreenColorOverlay(r, g, b, a * a);
         }
@@ -105,7 +110,7 @@ public class PlayerOverlayRender {
         for (int i = 0; i < 3; i++) {
             guiDynamicRender.drawItemSlot(x, y);
             RenderHelper.enableGUIStandardItemLighting();
-            if (gardenerCapability.getFleetingStage() == FleetingStage.LIGHT) {
+            if (gardenerCapability.getFleetingStage() == FleetingStage.LIGHT || gardenerCapability.getFleetingStage() == FleetingStage.NONE) {
                 if (i > animationSlot && gardenerCapability.getNextSeeds().size() > 2 - i) {
                     FormingBlockType type = gardenerCapability.getNextSeeds().stream().skip(2 - i).findFirst().get();
                     ItemStack is = seedItemCache.computeIfAbsent(type, t -> new ItemStack(t.getItemProvider().get()));
@@ -140,6 +145,7 @@ public class PlayerOverlayRender {
 
     private void stageChange(FleetingStage stage) {
         switch (stage) {
+            case NONE:
             case LIGHT:
                 animationSlot = 2;
                 lastNextSeeds = 3;
@@ -158,26 +164,25 @@ public class PlayerOverlayRender {
         if (gardenerCapability.getFleetingStage() != lastStage) {
             stageChange(gardenerCapability.getFleetingStage());
             lastStage = gardenerCapability.getFleetingStage();
-        } else {
-            int nextSeeds = gardenerCapability.getNextSeeds().size();
-            int seeds = gardenerCapability.getSeeds();
-            if (nextSeeds > lastNextSeeds) {
-                if (nextSeeds == 1) {
-                    animationSlot = 2;
-                } else if (nextSeeds == 2) {
-                    animationSlot = 1;
-                } else if (nextSeeds == 3) {
-                    animationSlot = 0;
-                }
-            } else {
-                if (seeds < lastSeeds) {
-                    animationSlot++;
-                    planted = true;
-                }
-            }
-            lastNextSeeds = nextSeeds;
-            lastSeeds = seeds;
         }
+        int nextSeeds = gardenerCapability.getNextSeeds().size();
+        int seeds = gardenerCapability.getSeeds();
+        if (nextSeeds > lastNextSeeds) {
+            if (nextSeeds == 1) {
+                animationSlot = 2;
+            } else if (nextSeeds == 2) {
+                animationSlot = 1;
+            } else if (nextSeeds == 3) {
+                animationSlot = 0;
+            }
+        } else {
+            if (seeds < lastSeeds) {
+                animationSlot++;
+                planted = true;
+            }
+        }
+        lastNextSeeds = nextSeeds;
+        lastSeeds = seeds;
     }
 
     private void drawScreenColorOverlay(float r, float g, float b, float a) {

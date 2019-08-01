@@ -70,7 +70,7 @@ public class HubCommand {
 
     private int enter(CommandContext<CommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity player = context.getSource().asPlayer();
-        hubManager.enter(player, false);
+        hubManager.enter(player);
         return 0;
     }
 }

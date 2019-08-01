@@ -44,6 +44,7 @@ public class FleetingManager {
     protected @Inject SpawnpointManager spawnpointManager;
     protected @Inject PlayerManager playerManager;
     protected @Inject Scheduler scheduler;
+    protected @Inject Capabilities capabilities;
 
     private Set<FormingBlockType> formingBlockTypes;
     private Map<UUID, Integer> levitationQueue = new HashMap<>();
@@ -72,9 +73,17 @@ public class FleetingManager {
             player.setMotion(0, 0, 0);
             player.teleport(world, spawnpoint.getX() + 0.5, showEffect ? spawnpoint.getY() + 10 : spawnpoint.getY(), spawnpoint.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
             setStage(player, FleetingStage.LIGHT);
+            capabilities.gardener(player, c -> {
+                c.setTotalSeeds(0);
+                c.getNextSeeds().clear();
+                c.setOpenChallengeDoor(false);
+                c.setOpenDoor(false);
+                c.setEnteringHub(false);
+            });
             playerManager.setSeeds(player, 13);
             setKeys(player, 0);
             playerManager.updateSeeds(player);
+            playerManager.syncCapability(player);
             if (showEffect) {
                 player.addPotionEffect(new EffectInstance(Effects.SLOW_FALLING, 60, 3, true, false));
                 packetManager.getChannel().send(PacketDistributor.PLAYER.with(() -> player), packetManager.getClientFadePacketFactory().create(FadeMode.FADE_FROM_WHITE, 3000));
@@ -92,10 +101,8 @@ public class FleetingManager {
     }
 
     public void setStage(ServerPlayerEntity player, FleetingStage stage) {
-        player.getCapability(gardenerCapability.get()).ifPresent(c -> {
+        capabilities.gardener(player, c -> {
             c.setFleetingStage(stage);
-            c.setTotalSeeds(0);
-            c.getNextSeeds().clear();
         });
         playerManager.syncCapability(player);
     }
@@ -105,7 +112,7 @@ public class FleetingManager {
     }
 
     public void setKeys(ServerPlayerEntity player, int seeds) {
-        player.getCapability(gardenerCapability.get()).ifPresent(c -> {
+        capabilities.gardener(player, c -> {
             c.setKeys(seeds);
         });
         playerManager.syncCapability(player);

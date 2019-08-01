@@ -1,22 +1,196 @@
 {
     "variants": {
-        "": [
-            { "model": "stars:block/darkness" },
-            { "model": "stars:block/darkness", "x": 90 },
-            { "model": "stars:block/darkness", "x": 180 },
-            { "model": "stars:block/darkness", "x": 270 },
-            { "model": "stars:block/darkness", "y": 90 },
-            { "model": "stars:block/darkness", "y": 90, "x": 90 },
-            { "model": "stars:block/darkness", "y": 90, "x": 180 },
-            { "model": "stars:block/darkness", "y": 90, "x": 270 },
-            { "model": "stars:block/darkness", "y": 180 },
-            { "model": "stars:block/darkness", "y": 180, "x": 90 },
-            { "model": "stars:block/darkness", "y": 180, "x": 180 },
-            { "model": "stars:block/darkness", "y": 180, "x": 270 },
-            { "model": "stars:block/darkness", "y": 270 },
-            { "model": "stars:block/darkness", "y": 270, "x": 90 },
-            { "model": "stars:block/darkness", "y": 270, "x": 180 },
-            { "model": "stars:block/darkness", "y": 270, "x": 270 }
-        ]
+        "connected_north=false,connected_south=false,connected_east=false,connected_west=false,connected_up=false,connected_down=false": {
+            "model": "block/darkness/darkness_0"
+        },
+        "connected_north=true,connected_south=false,connected_east=false,connected_west=false,connected_up=false,connected_down=false": {
+            "model": "block/darkness/darkness_1"
+        },
+        "connected_north=false,connected_south=true,connected_east=false,connected_west=false,connected_up=false,connected_down=false": {
+            "model": "block/darkness/darkness_2"
+        },
+        "connected_north=false,connected_south=false,connected_east=true,connected_west=false,connected_up=false,connected_down=false": {
+            "model": "block/darkness/darkness_3"
+        },
+        "connected_north=false,connected_south=false,connected_east=false,connected_west=true,connected_up=false,connected_down=false": {
+            "model": "block/darkness/darkness_4"
+        },
+        "connected_north=false,connected_south=false,connected_east=false,connected_west=false,connected_up=true,connected_down=false": {
+            "model": "block/darkness/darkness_5"
+        },
+        "connected_north=false,connected_south=false,connected_east=false,connected_west=false,connected_up=false,connected_down=true": {
+            "model": "block/darkness/darkness_6"
+        },
+        "connected_north=true,connected_south=true,connected_east=false,connected_west=false,connected_up=false,connected_down=false": {
+            "model": "block/darkness/darkness_7"
+        },
+        "connected_north=true,connected_south=false,connected_east=true,connected_west=false,connected_up=false,connected_down=false": {
+            "model": "block/darkness/darkness_8"
+        },
+        "connected_north=false,connected_south=true,connected_east=true,connected_west=false,connected_up=false,connected_down=false": {
+            "model": "block/darkness/darkness_9"
+        },
+        "connected_north=true,connected_south=false,connected_east=false,connected_west=true,connected_up=false,connected_down=false": {
+            "model": "block/darkness/darkness_10"
+        },
+        "connected_north=false,connected_south=true,connected_east=false,connected_west=true,connected_up=false,connected_down=false": {
+            "model": "block/darkness/darkness_11"
+        },
+        "connected_north=false,connected_south=false,connected_east=true,connected_west=true,connected_up=false,connected_down=false": {
+            "model": "block/darkness/darkness_12"
+        },
+        "connected_north=true,connected_south=false,connected_east=false,connected_west=false,connected_up=true,connected_down=false": {
+            "model": "block/darkness/darkness_13"
+        },
+        "connected_north=false,connected_south=true,connected_east=false,connected_west=false,connected_up=true,connected_down=false": {
+            "model": "block/darkness/darkness_14"
+        },
+        "connected_north=false,connected_south=false,connected_east=true,connected_west=false,connected_up=true,connected_down=false": {
+            "model": "block/darkness/darkness_15"
+        },
+        "connected_north=false,connected_south=false,connected_east=false,connected_west=true,connected_up=true,connected_down=false": {
+            "model": "block/darkness/darkness_16"
+        },
+        "connected_north=true,connected_south=false,connected_east=false,connected_west=false,connected_up=false,connected_down=true": {
+            "model": "block/darkness/darkness_17"
+        },
+        "connected_north=false,connected_south=true,connected_east=false,connected_west=false,connected_up=false,connected_down=true": {
+            "model": "block/darkness/darkness_18"
+        },
+        "connected_north=false,connected_south=false,connected_east=true,connected_west=false,connected_up=false,connected_down=true": {
+            "model": "block/darkness/darkness_19"
+        },
+        "connected_north=false,connected_south=false,connected_east=false,connected_west=true,connected_up=false,connected_down=true": {
+            "model": "block/darkness/darkness_20"
+        },
+        "connected_north=false,connected_south=false,connected_east=false,connected_west=false,connected_up=true,connected_down=true": {
+            "model": "block/darkness/darkness_21"
+        },
+        "connected_north=true,connected_south=true,connected_east=true,connected_west=false,connected_up=false,connected_down=false": {
+            "model": "block/darkness/darkness_22"
+        },
+        "connected_north=true,connected_south=true,connected_east=false,connected_west=true,connected_up=false,connected_down=false": {
+            "model": "block/darkness/darkness_23"
+        },
+        "connected_north=true,connected_south=false,connected_east=true,connected_west=true,connected_up=false,connected_down=false": {
+            "model": "block/darkness/darkness_24"
+        },
+        "connected_north=false,connected_south=true,connected_east=true,connected_west=true,connected_up=false,connected_down=false": {
+            "model": "block/darkness/darkness_25"
+        },
+        "connected_north=true,connected_south=true,connected_east=false,connected_west=false,connected_up=true,connected_down=false": {
+            "model": "block/darkness/darkness_26"
+        },
+        "connected_north=true,connected_south=false,connected_east=true,connected_west=false,connected_up=true,connected_down=false": {
+            "model": "block/darkness/darkness_27"
+        },
+        "connected_north=false,connected_south=true,connected_east=true,connected_west=false,connected_up=true,connected_down=false": {
+            "model": "block/darkness/darkness_28"
+        },
+        "connected_north=true,connected_south=false,connected_east=false,connected_west=true,connected_up=true,connected_down=false": {
+            "model": "block/darkness/darkness_29"
+        },
+        "connected_north=false,connected_south=true,connected_east=false,connected_west=true,connected_up=true,connected_down=false": {
+            "model": "block/darkness/darkness_30"
+        },
+        "connected_north=false,connected_south=false,connected_east=true,connected_west=true,connected_up=true,connected_down=false": {
+            "model": "block/darkness/darkness_31"
+        },
+        "connected_north=true,connected_south=true,connected_east=false,connected_west=false,connected_up=false,connected_down=true": {
+            "model": "block/darkness/darkness_32"
+        },
+        "connected_north=true,connected_south=false,connected_east=true,connected_west=false,connected_up=false,connected_down=true": {
+            "model": "block/darkness/darkness_33"
+        },
+        "connected_north=false,connected_south=true,connected_east=true,connected_west=false,connected_up=false,connected_down=true": {
+            "model": "block/darkness/darkness_34"
+        },
+        "connected_north=true,connected_south=false,connected_east=false,connected_west=true,connected_up=false,connected_down=true": {
+            "model": "block/darkness/darkness_35"
+        },
+        "connected_north=false,connected_south=true,connected_east=false,connected_west=true,connected_up=false,connected_down=true": {
+            "model": "block/darkness/darkness_36"
+        },
+        "connected_north=false,connected_south=false,connected_east=true,connected_west=true,connected_up=false,connected_down=true": {
+            "model": "block/darkness/darkness_37"
+        },
+        "connected_north=true,connected_south=false,connected_east=false,connected_west=false,connected_up=true,connected_down=true": {
+            "model": "block/darkness/darkness_38"
+        },
+        "connected_north=false,connected_south=true,connected_east=false,connected_west=false,connected_up=true,connected_down=true": {
+            "model": "block/darkness/darkness_39"
+        },
+        "connected_north=false,connected_south=false,connected_east=true,connected_west=false,connected_up=true,connected_down=true": {
+            "model": "block/darkness/darkness_40"
+        },
+        "connected_north=false,connected_south=false,connected_east=false,connected_west=true,connected_up=true,connected_down=true": {
+            "model": "block/darkness/darkness_41"
+        },
+        "connected_north=true,connected_south=true,connected_east=true,connected_west=true,connected_up=false,connected_down=false": {
+            "model": "block/darkness/darkness_42"
+        },
+        "connected_north=true,connected_south=true,connected_east=true,connected_west=false,connected_up=true,connected_down=false": {
+            "model": "block/darkness/darkness_43"
+        },
+        "connected_north=true,connected_south=true,connected_east=false,connected_west=true,connected_up=true,connected_down=false": {
+            "model": "block/darkness/darkness_44"
+        },
+        "connected_north=true,connected_south=false,connected_east=true,connected_west=true,connected_up=true,connected_down=false": {
+            "model": "block/darkness/darkness_45"
+        },
+        "connected_north=false,connected_south=true,connected_east=true,connected_west=true,connected_up=true,connected_down=false": {
+            "model": "block/darkness/darkness_46"
+        },
+        "connected_north=true,connected_south=true,connected_east=true,connected_west=false,connected_up=false,connected_down=true": {
+            "model": "block/darkness/darkness_47"
+        },
+        "connected_north=true,connected_south=true,connected_east=false,connected_west=true,connected_up=false,connected_down=true": {
+            "model": "block/darkness/darkness_48"
+        },
+        "connected_north=true,connected_south=false,connected_east=true,connected_west=true,connected_up=false,connected_down=true": {
+            "model": "block/darkness/darkness_49"
+        },
+        "connected_north=false,connected_south=true,connected_east=true,connected_west=true,connected_up=false,connected_down=true": {
+            "model": "block/darkness/darkness_50"
+        },
+        "connected_north=true,connected_south=true,connected_east=false,connected_west=false,connected_up=true,connected_down=true": {
+            "model": "block/darkness/darkness_51"
+        },
+        "connected_north=true,connected_south=false,connected_east=true,connected_west=false,connected_up=true,connected_down=true": {
+            "model": "block/darkness/darkness_52"
+        },
+        "connected_north=false,connected_south=true,connected_east=true,connected_west=false,connected_up=true,connected_down=true": {
+            "model": "block/darkness/darkness_53"
+        },
+        "connected_north=true,connected_south=false,connected_east=false,connected_west=true,connected_up=true,connected_down=true": {
+            "model": "block/darkness/darkness_54"
+        },
+        "connected_north=false,connected_south=true,connected_east=false,connected_west=true,connected_up=true,connected_down=true": {
+            "model": "block/darkness/darkness_55"
+        },
+        "connected_north=false,connected_south=false,connected_east=true,connected_west=true,connected_up=true,connected_down=true": {
+            "model": "block/darkness/darkness_56"
+        },
+        "connected_north=true,connected_south=true,connected_east=true,connected_west=true,connected_up=true,connected_down=false": {
+            "model": "block/darkness/darkness_57"
+        },
+        "connected_north=true,connected_south=true,connected_east=true,connected_west=true,connected_up=false,connected_down=true": {
+            "model": "block/darkness/darkness_58"
+        },
+        "connected_north=true,connected_south=true,connected_east=true,connected_west=false,connected_up=true,connected_down=true": {
+            "model": "block/darkness/darkness_59"
+        },
+        "connected_north=true,connected_south=true,connected_east=false,connected_west=true,connected_up=true,connected_down=true": {
+            "model": "block/darkness/darkness_60"
+        },
+        "connected_north=true,connected_south=false,connected_east=true,connected_west=true,connected_up=true,connected_down=true": {
+            "model": "block/darkness/darkness_61"
+        },
+        "connected_north=false,connected_south=true,connected_east=true,connected_west=true,connected_up=true,connected_down=true": {
+            "model": "block/darkness/darkness_62"
+        },
+        "connected_north=true,connected_south=true,connected_east=true,connected_west=true,connected_up=true,connected_down=true": {
+            "model": "block/darkness/darkness_63"
+        }
     }
 }
