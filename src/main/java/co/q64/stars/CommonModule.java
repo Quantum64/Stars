@@ -5,6 +5,7 @@ import co.q64.stars.block.AirDecayEdgeBlock;
 import co.q64.stars.block.BaseBlock;
 import co.q64.stars.block.BlueFormedBlock;
 import co.q64.stars.block.BrownFormedBlock;
+import co.q64.stars.block.ChallengeDoorBlock;
 import co.q64.stars.block.CyanFormedBlock;
 import co.q64.stars.block.DarkAirBlock;
 import co.q64.stars.block.DarknessBlock;
@@ -14,6 +15,7 @@ import co.q64.stars.block.DecayEdgeBlock;
 import co.q64.stars.block.DecayingBlock;
 import co.q64.stars.block.DoorBlock;
 import co.q64.stars.block.FormingBlock;
+import co.q64.stars.block.GatewayBlock;
 import co.q64.stars.block.GreenFormedBlock;
 import co.q64.stars.block.GreenFruitBlock;
 import co.q64.stars.block.GreyFormedBlock;
@@ -26,6 +28,8 @@ import co.q64.stars.block.SeedBlock;
 import co.q64.stars.block.SpecialAirBlock;
 import co.q64.stars.block.SpecialDecayBlock;
 import co.q64.stars.block.SpecialDecayEdgeBlock;
+import co.q64.stars.block.TubeAirBlock;
+import co.q64.stars.block.TubeDarknessBlock;
 import co.q64.stars.block.YellowFormedBlock;
 import co.q64.stars.capability.GardenerCapability;
 import co.q64.stars.capability.HubCapability;
@@ -41,6 +45,7 @@ import co.q64.stars.item.ArrowItem;
 import co.q64.stars.item.BaseItem;
 import co.q64.stars.item.BlueSeedItem;
 import co.q64.stars.item.BrownSeedItem;
+import co.q64.stars.item.ChallengeStarItem;
 import co.q64.stars.item.CyanSeedItem;
 import co.q64.stars.item.GreenSeedItem;
 import co.q64.stars.item.HeartItem;
@@ -85,6 +90,7 @@ import co.q64.stars.tile.type.ForceRenderCullTileType;
 import co.q64.stars.tile.type.FormingTileType;
 import co.q64.stars.tile.type.SeedTileType;
 import co.q64.stars.tile.type.SpecialDecayEdgeTileType;
+import co.q64.stars.tile.type.TubeTileType;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.forming.BlueFormingBlockType;
 import co.q64.stars.type.forming.BrownFormingBlockType;
@@ -161,6 +167,10 @@ public interface CommonModule {
     @Binds @IntoSet BaseBlock bindBrownFormedBlock(BrownFormedBlock brownFormedBlock);
     @Binds @IntoSet BaseBlock bindOrangeFormedBlock(OrangeFormedBlock orangeFormedBlock);
     @Binds @IntoSet BaseBlock bindGreyFormedBlock(GreyFormedBlock orangeFormedBlock);
+    @Binds @IntoSet BaseBlock bindChallengeDoorBlock(ChallengeDoorBlock challengeDoorBlock);
+    @Binds @IntoSet BaseBlock bindGatewayBlock(GatewayBlock gatewayBlock);
+    @Binds @IntoSet BaseBlock bindTubeDarknessBlock(TubeDarknessBlock tubeDarknessBlock);
+    @Binds @IntoSet BaseBlock bindTubeAirBlock(TubeAirBlock tubeAirBlock);
 
     @Binds @IntoSet BaseItem bindPinkSeedItem(PinkSeedItem pinkSeedItem);
     @Binds @IntoSet BaseItem bindBlueSeedItem(BlueSeedItem blueSeedItem);
@@ -175,6 +185,7 @@ public interface CommonModule {
     @Binds @IntoSet BaseItem bindKeyItem(KeyItem keyItem);
     @Binds @IntoSet BaseItem bindStarItem(StarItem starItem);
     @Binds @IntoSet BaseItem bindArrowItem(ArrowItem arrowItem);
+    @Binds @IntoSet BaseItem bindChallengeStarItem(ChallengeStarItem challengeStarItem);
 
     @Binds @IntoSet Listener bindRegistryListener(RegistryListener serverStartListener);
     @Binds @IntoSet Listener bindInitializationListener(InitializationListener initializationListener);
@@ -190,6 +201,7 @@ public interface CommonModule {
     @Binds @IntoSet TileEntityType<?> bindSpecialDecayEdgeTileType(SpecialDecayEdgeTileType type);
     @Binds @IntoSet TileEntityType<?> bindDoorTileType(DoorTileType type);
     @Binds @IntoSet TileEntityType<?> bindSeedTileType(SeedTileType type);
+    @Binds @IntoSet TileEntityType<?> bindTubeTileType(TubeTileType type);
 
     @Binds @IntoSet EntityType<?> bindPickupEntityType(EntityType<PickupEntity> pickupEntityEntityType);
 

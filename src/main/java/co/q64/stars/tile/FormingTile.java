@@ -5,9 +5,11 @@ import co.q64.stars.block.DecayEdgeBlock;
 import co.q64.stars.block.DecayingBlock;
 import co.q64.stars.block.FormedBlock;
 import co.q64.stars.block.FormingBlock;
+import co.q64.stars.block.GatewayBlock;
 import co.q64.stars.block.GreenFruitBlock;
 import co.q64.stars.block.RedPrimedBlock;
 import co.q64.stars.dimension.fleeting.FleetingDimension;
+import co.q64.stars.dimension.hub.HubDimension;
 import co.q64.stars.tile.type.FormingTileType;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.FormingBlockTypes;
@@ -176,6 +178,19 @@ public class FormingTile extends SyncTileEntity implements ITickableTileEntity {
                         }
                         for (Direction next : directions) {
                             BlockPos placed = getPos().add(next.getXOffset(), next.getYOffset(), next.getZOffset());
+                            if (world.getDimension() instanceof HubDimension) {
+                                boolean found = false;
+                                for (int offset = 0; offset < 8; offset++) {
+                                    BlockPos test = placed.offset(Direction.DOWN, offset);
+                                    if (world.getBlockState(test).getBlock() instanceof GatewayBlock) {
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                                if (found) {
+                                    continue;
+                                }
+                            }
                             world.setBlockState(placed, formingBlock.getDefaultState());
                             Optional.ofNullable((FormingTile) world.getTileEntity(placed)).ifPresent(spawned -> {
                                 spawned.setFirst(false);

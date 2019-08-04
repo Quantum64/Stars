@@ -22,6 +22,7 @@ public class DoorTile extends SyncTileEntity implements ITickableTileEntity {
     protected @Inject EntityType<PickupEntity> pickupEntityType;
 
     private @Setter @Getter boolean fallen = false;
+    private @Setter @Getter boolean challenge = false;
     private int ticks;
 
     @Inject
@@ -53,7 +54,9 @@ public class DoorTile extends SyncTileEntity implements ITickableTileEntity {
                     if (world.setBlockState(updated, getBlockState()) && world.setBlockState(getPos(), specialAirBlock.getDefaultState())) {
                         Optional.ofNullable((DoorTile) world.getTileEntity(updated)).ifPresent(tile -> {
                             tile.setFallen(true);
+                            tile.setChallenge(challenge);
                             world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 2);
+                            fallen = true;
                         });
                         break;
                     }
@@ -65,6 +68,7 @@ public class DoorTile extends SyncTileEntity implements ITickableTileEntity {
                 world.setBlockState(getPos(), specialAirBlock.getDefaultState());
                 Optional.ofNullable((DoorTile) world.getTileEntity(updated)).ifPresent(tile -> {
                     tile.setFallen(true);
+                    tile.setChallenge(challenge);
                     world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 2);
                 });
             }

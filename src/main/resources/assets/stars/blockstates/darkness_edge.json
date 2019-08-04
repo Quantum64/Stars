@@ -1,22 +1,5 @@
 {
-    "variants": {
-        "": [
-            { "model": "stars:block/darkness" },
-            { "model": "stars:block/darkness", "x": 90 },
-            { "model": "stars:block/darkness", "x": 180 },
-            { "model": "stars:block/darkness", "x": 270 },
-            { "model": "stars:block/darkness", "y": 90 },
-            { "model": "stars:block/darkness", "y": 90, "x": 90 },
-            { "model": "stars:block/darkness", "y": 90, "x": 180 },
-            { "model": "stars:block/darkness", "y": 90, "x": 270 },
-            { "model": "stars:block/darkness", "y": 180 },
-            { "model": "stars:block/darkness", "y": 180, "x": 90 },
-            { "model": "stars:block/darkness", "y": 180, "x": 180 },
-            { "model": "stars:block/darkness", "y": 180, "x": 270 },
-            { "model": "stars:block/darkness", "y": 270 },
-            { "model": "stars:block/darkness", "y": 270, "x": 90 },
-            { "model": "stars:block/darkness", "y": 270, "x": 180 },
-            { "model": "stars:block/darkness", "y": 270, "x": 270 }
-        ]
-    }
+  "variants": {
+    "": {"model": "stars:block/decay" }
+  }
 }

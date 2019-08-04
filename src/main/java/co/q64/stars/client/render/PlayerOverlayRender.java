@@ -1,13 +1,18 @@
 package co.q64.stars.client.render;
 
+import co.q64.stars.block.GatewayBlock;
 import co.q64.stars.capability.GardenerCapability;
 import co.q64.stars.dimension.StarsDimension;
+import co.q64.stars.dimension.hub.HubDimension;
 import co.q64.stars.item.KeyItem;
+import co.q64.stars.net.PacketManager;
 import co.q64.stars.net.packets.ClientFadePacket.FadeMode;
 import co.q64.stars.type.FleetingStage;
 import co.q64.stars.type.FormingBlockType;
 import com.mojang.blaze3d.platform.GlStateManager;
 import lombok.Getter;
+import lombok.Setter;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -16,9 +21,11 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Direction;
 import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 import javax.inject.Inject;
@@ -27,14 +34,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Singleton
 public class PlayerOverlayRender {
-    private static final long LOST_EFFECT_TIME = 15000;
+    private static final long LOST_TIME = 80000;
 
     protected @Inject ExtraWorldRender extraWorldRender;
     protected @Inject GuiDynamicRender guiDynamicRender;
+    protected @Inject PacketManager packetManager;
 
     private long fadeStart, fadeTime;
     private FadeMode fadeMode = FadeMode.FADE_FROM_BLACK;
@@ -43,9 +52,10 @@ public class PlayerOverlayRender {
     private @Getter FleetingStage lastStage = FleetingStage.NONE;
     private GardenerCapability gardenerCapability;
     private int lastNextSeeds, lastSeeds, tick;
+    private @Getter @Setter long lostTime;
     private int animationSlot, animationTicks, animationIndex;
     private List<FormingBlockType> types;
-    private boolean planted = false;
+    private boolean planted = false, sentLost = false;
 
     @Inject
     protected PlayerOverlayRender(KeyItem keyItem, Set<FormingBlockType> types) {
@@ -87,6 +97,19 @@ public class PlayerOverlayRender {
 
             }
             drawScreenColorOverlay(r, g, b, a * a);
+        }
+        if (lostTime > 0) {
+            double progress = (lostTime - now + 10000) / Double.valueOf(LOST_TIME);
+            if (progress > 1.0f) {
+                progress = 1.0f;
+            }
+            if (progress < 0f) {
+                progress = 0f;
+            }
+            double a = 1f - progress;
+            a = a * 0.75;
+            a = a * a;
+            drawScreenColorOverlay(1, 1, 1, a);
         }
     }
 
@@ -151,9 +174,10 @@ public class PlayerOverlayRender {
                 lastNextSeeds = 3;
                 lastSeeds = 0;
                 planted = false;
+                sentLost = false;
                 break;
             case DARK:
-                extraWorldRender.setAnimationStart(System.currentTimeMillis());
+                //extraWorldRender.setAnimationStart(System.currentTimeMillis());
                 fade(FadeMode.FADE_FROM_BLACK, 1000);
                 break;
         }
@@ -164,6 +188,7 @@ public class PlayerOverlayRender {
         if (gardenerCapability.getFleetingStage() != lastStage) {
             stageChange(gardenerCapability.getFleetingStage());
             lastStage = gardenerCapability.getFleetingStage();
+            lostTime = lastStage == FleetingStage.DARK ? System.currentTimeMillis() + LOST_TIME : 0;
         }
         int nextSeeds = gardenerCapability.getNextSeeds().size();
         int seeds = gardenerCapability.getSeeds();
@@ -181,11 +206,16 @@ public class PlayerOverlayRender {
                 planted = true;
             }
         }
+        if (lastStage == FleetingStage.DARK) {
+            if (seeds > lastSeeds) {
+                lostTime = System.currentTimeMillis() + LOST_TIME;
+            }
+        }
         lastNextSeeds = nextSeeds;
         lastSeeds = seeds;
     }
 
-    private void drawScreenColorOverlay(float r, float g, float b, float a) {
+    private void drawScreenColorOverlay(double r, double g, double b, double a) {
         int width = Minecraft.getInstance().mainWindow.getWidth();
         int height = Minecraft.getInstance().mainWindow.getHeight();
         GlStateManager.disableAlphaTest();
@@ -194,7 +224,8 @@ public class PlayerOverlayRender {
         GlStateManager.depthMask(false);
         GlStateManager.enableBlend();
         GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        GlStateManager.color4f(r, g, b, a);
+        GlStateManager.color4f((float) r, (float) g, (float) b, (float) a);
+        GL11.glColor4d(r, g, b, a);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
@@ -215,19 +246,34 @@ public class PlayerOverlayRender {
     private static final int ITERATIONS_PER_ANIMATION = 20;
 
     public void tick() {
-        if (!planted && tick % 10 == 0) {
-            String keyName = Minecraft.getInstance().gameSettings.keyBindSneak.getLocalizedName().toLowerCase();
-            if (keyName.contains(" ")) {
-                keyName = keyName.split(" ")[1];
+        if (tick % 10 == 0) {
+            Supplier<String> keyName = () -> {
+                String result = Minecraft.getInstance().gameSettings.keyBindSneak.getLocalizedName().toLowerCase();
+                if (result.contains(" ")) {
+                    result = result.split(" ")[1];
+                }
+                return result;
+            };
+            if (lastStage == FleetingStage.LIGHT && !planted) {
+                Minecraft.getInstance().ingameGUI.addChatMessage(ChatType.GAME_INFO, new StringTextComponent(TextFormatting.GRAY + "Touch " + TextFormatting.BOLD + keyName.get() + TextFormatting.GRAY + " to grow."));
+            } else if (lastStage == FleetingStage.NONE) {
+                if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.getEntityWorld() != null) {
+                    World world = Minecraft.getInstance().player.getEntityWorld();
+                    if (world.getDimension() instanceof HubDimension) {
+                        BlockState state = world.getBlockState(Minecraft.getInstance().player.getPosition().offset(Direction.DOWN));
+                        if (state.getBlock() instanceof GatewayBlock && !state.get(GatewayBlock.COMPLETE)) {
+                            Minecraft.getInstance().ingameGUI.addChatMessage(ChatType.GAME_INFO, new StringTextComponent(TextFormatting.GRAY + "Touch " + keyName.get()));
+                        }
+                    }
+                }
             }
-            Minecraft.getInstance().ingameGUI.addChatMessage(ChatType.GAME_INFO, new StringTextComponent(TextFormatting.GRAY + "Touch " + TextFormatting.BOLD + keyName + TextFormatting.GRAY + " to grow."));
         }
         if (animationTicks > 0) {
-            animationTicks--;
-            if (animationTicks == 0) {
+            animationTicks -= 1;
+            if (animationTicks <= 0) {
                 animationIndex--;
                 if (animationIndex > 0) {
-                    animationTicks = Math.max(15 - (animationIndex / 2), 4);
+                    animationTicks = Math.max(15 - (animationIndex / 1), 4);
                 } else {
                     if (animationSlot >= 0) {
                         animationSlot--;
@@ -238,6 +284,13 @@ public class PlayerOverlayRender {
             if (animationSlot >= 0) {
                 animationTicks = TICKS_PER_ITEM;
                 animationIndex = ITERATIONS_PER_ANIMATION;
+            }
+        }
+        if (lastStage == FleetingStage.DARK) {
+            long now = System.currentTimeMillis();
+            if (now > lostTime && !sentLost) {
+                packetManager.getChannel().sendToServer(packetManager.getLostPacketFactory().create());
+                sentLost = true;
             }
         }
         tick++;

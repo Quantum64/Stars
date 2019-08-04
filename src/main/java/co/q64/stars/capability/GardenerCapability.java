@@ -1,5 +1,6 @@
 package co.q64.stars.capability;
 
+import co.q64.stars.level.LevelType;
 import co.q64.stars.type.FleetingStage;
 import co.q64.stars.type.FormingBlockType;
 import net.minecraft.util.SoundEvent;
@@ -59,6 +60,10 @@ public interface GardenerCapability {
     public FormingBlockType getLastSeed();
 
     public void setLastSeed(FormingBlockType formingBlockType);
+
+    public LevelType getLevelType();
+
+    public void setLevelType(LevelType levelType);
 
     public Deque<FormingBlockType> getNextSeeds();
 

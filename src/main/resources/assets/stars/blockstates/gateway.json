@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "type=red,complete=false": {"model": "stars:block/gateway_red" },
+    "type=red,complete=true": {"model": "stars:block/gateway_red" },
+    "type=blue,complete=false": {"model": "stars:block/gateway_red" },
+    "type=blue,complete=true": {"model": "stars:block/gateway_red" }
+  }
+}

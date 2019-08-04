@@ -2,19 +2,25 @@ package co.q64.stars.util;
 
 import co.q64.stars.block.DarknessEdgeBlock;
 import co.q64.stars.block.DecayBlock;
+import co.q64.stars.block.GatewayBlock;
 import co.q64.stars.block.OrangeFormedBlock;
 import co.q64.stars.capability.GardenerCapability;
 import co.q64.stars.dimension.Dimensions;
 import co.q64.stars.entity.PickupEntity;
+import co.q64.stars.level.Level;
+import co.q64.stars.level.LevelManager;
 import co.q64.stars.net.PacketManager;
 import co.q64.stars.net.packets.ClientFadePacket.FadeMode;
 import co.q64.stars.type.FleetingStage;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.util.DecayManager.SpecialDecayType;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -33,7 +39,6 @@ import java.util.stream.Collectors;
 
 @Singleton
 public class FleetingManager {
-
     protected @Inject Dimensions dimensions;
     protected @Inject OrangeFormedBlock orangeFormedBlock;
     protected @Inject DecayBlock decayBlock;
@@ -45,6 +50,9 @@ public class FleetingManager {
     protected @Inject PlayerManager playerManager;
     protected @Inject Scheduler scheduler;
     protected @Inject Capabilities capabilities;
+    protected @Inject LevelManager levelManager;
+    protected @Inject EntityType<PickupEntity> pickupEntityType;
+    protected @Inject HubManager hubManager;
 
     private Set<FormingBlockType> formingBlockTypes;
     private Map<UUID, Integer> levitationQueue = new HashMap<>();
@@ -67,7 +75,19 @@ public class FleetingManager {
         BlockPos spawnpoint = spawnpointManager.getSpawnpoint(index);
         index++;
         ServerWorld spawnWorld = DimensionManager.getWorld(player.getServer(), dimensions.getFleetingDimensionType(), false, true);
-        setupSpawnpoint(spawnWorld, spawnpoint);
+        capabilities.gardener(player, c -> {
+            Level level = levelManager.getLevel(c.getLevelType());
+            if (c.isOpenChallengeDoor()) {
+                level.createChallenge(spawnWorld, spawnpoint);
+                PickupEntity heart = pickupEntityType.create(spawnWorld);
+                heart.setVariant(PickupEntity.VARIANT_HEART);
+                BlockPos heartPosition = level.getHeartLocation(spawnpoint);
+                heart.setPosition(spawnpoint.getX() + 0.5, spawnpoint.getY(), spawnpoint.getZ() + 0.5);
+                spawnWorld.addEntity(heart);
+            } else {
+                setupSpawnpoint(spawnWorld, spawnpoint, level);
+            }
+        });
         Runnable task = () -> {
             ServerWorld world = DimensionManager.getWorld(player.getServer(), dimensions.getFleetingDimensionType(), false, true);
             player.setMotion(0, 0, 0);
@@ -76,11 +96,11 @@ public class FleetingManager {
             capabilities.gardener(player, c -> {
                 c.setTotalSeeds(0);
                 c.getNextSeeds().clear();
+                c.setOpenDoor(c.isOpenChallengeDoor());
                 c.setOpenChallengeDoor(false);
-                c.setOpenDoor(false);
                 c.setEnteringHub(false);
+                playerManager.setSeeds(player, c.isOpenDoor() ? c.getSeeds() : 13);
             });
-            playerManager.setSeeds(player, 13);
             setKeys(player, 0);
             playerManager.updateSeeds(player);
             playerManager.syncCapability(player);
@@ -90,6 +110,20 @@ public class FleetingManager {
             }
         };
         scheduler.run(task, showEffect ? 60 : 0);
+    }
+
+    public void tryEnter(ServerPlayerEntity player) {
+        capabilities.gardener(player, gardener -> {
+            if (gardener.getFleetingStage() == FleetingStage.NONE) {
+                ServerWorld world = player.getServerWorld();
+                BlockPos target = player.getPosition().offset(Direction.DOWN);
+                BlockState state = world.getBlockState(target);
+                if (state.getBlock() instanceof GatewayBlock) {
+                    gardener.setLevelType(state.get(GatewayBlock.TYPE));
+                    enter(player, true);
+                }
+            }
+        });
     }
 
     public void clearStage(ServerPlayerEntity player) {
@@ -134,17 +168,24 @@ public class FleetingManager {
     }
 
     public void createDarkness(ServerPlayerEntity player) {
-        setStage(player, FleetingStage.DARK);
-        ServerWorld world = player.getServerWorld();
-        world.getEntities()
-                .filter(entity -> entity.getPosition().distanceSq(player.getPosition()) < 1000 * 1000)
-                .filter(entity -> entity instanceof PickupEntity)
-                .map(entity -> (PickupEntity) entity)
-                .filter(p -> p.getVariant() == 2)
-                .forEach(Entity::remove);
-        BlockPos playerPosition = player.getPosition();
-        world.setBlockState(playerPosition, darknessEdgeBlock.getDefaultState());
-        player.teleport((ServerWorld) world, playerPosition.getX() + 0.5, playerPosition.getY() + 0.1, playerPosition.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
+        capabilities.gardener(player, gardener -> {
+            if (gardener.isOpenDoor()) {
+                playerManager.setSeeds(player, 0);
+                hubManager.enter(player);
+                return;
+            }
+            setStage(player, FleetingStage.DARK);
+            ServerWorld world = player.getServerWorld();
+            world.getEntities()
+                    .filter(entity -> entity.getPosition().distanceSq(player.getPosition()) < 1000 * 1000)
+                    .filter(entity -> entity instanceof PickupEntity)
+                    .map(entity -> (PickupEntity) entity)
+                    .filter(p -> p.getVariant() == PickupEntity.VARIANT_STAR || p.getVariant() == PickupEntity.VARIANT_CHALLENGE)
+                    .forEach(Entity::remove);
+            BlockPos playerPosition = player.getPosition();
+            world.setBlockState(playerPosition, darknessEdgeBlock.getDefaultState());
+            player.teleport((ServerWorld) world, playerPosition.getX() + 0.5, playerPosition.getY() + 0.1, playerPosition.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
+        });
     }
 
     public void tickPlayer(ServerPlayerEntity player) {
@@ -163,7 +204,7 @@ public class FleetingManager {
     }
 
     // TODO set the initial decay according to level
-    private void setupSpawnpoint(World world, BlockPos pos) {
+    private void setupSpawnpoint(World world, BlockPos pos, Level level) {
         for (int y = pos.getY() - 8; y < pos.getY(); y++) {
             for (int x = pos.getX() - 2; x <= pos.getX() + 2; x++) {
                 for (int z = pos.getZ() - 2; z <= pos.getZ() + 2; z++) {
@@ -173,6 +214,16 @@ public class FleetingManager {
         }
         BlockPos door = new BlockPos(pos.getX(), pos.getY() - 8, pos.getZ());
         decayManager.createSpecialDecay(world, door, SpecialDecayType.DOOR);
+        for (BlockPos challenge : level.getChallengeStars(pos)) {
+            for (int y = challenge.getY() - 1; y <= challenge.getY() + 1; y++) {
+                for (int x = challenge.getX() - 1; x <= challenge.getX() + 1; x++) {
+                    for (int z = challenge.getZ() - 1; z <= challenge.getZ() + 1; z++) {
+                        world.setBlockState(new BlockPos(x, y, z), decayBlock.getDefaultState());
+                    }
+                }
+            }
+            decayManager.createSpecialDecay(world, challenge, SpecialDecayType.CHALLENGE_DOOR);
+        }
     }
 
     private void createKey(World world, BlockPos key) {

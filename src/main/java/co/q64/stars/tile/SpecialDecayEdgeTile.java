@@ -41,7 +41,7 @@ public class SpecialDecayEdgeTile extends DecayEdgeTile implements ITickableTile
                 }
             }
             PickupEntity pickupEntity = pickupEntityType.create(world);
-            pickupEntity.setVariant(2);
+            pickupEntity.setVariant(decayType == SpecialDecayType.CHALLENGE_DOOR ? PickupEntity.VARIANT_CHALLENGE : PickupEntity.VARIANT_STAR);
             pickupEntity.setLocationId(locId);
             pickupEntity.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
             world.addEntity(pickupEntity);

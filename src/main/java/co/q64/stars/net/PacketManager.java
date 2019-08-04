@@ -2,6 +2,8 @@ package co.q64.stars.net;
 
 import co.q64.stars.net.packets.ClientFadePacket;
 import co.q64.stars.net.packets.ClientFadePacketFactory;
+import co.q64.stars.net.packets.LostPacket;
+import co.q64.stars.net.packets.LostPacketFactory;
 import co.q64.stars.net.packets.PlantSeedPacket;
 import co.q64.stars.net.packets.PlantSeedPacketFactory;
 import co.q64.stars.net.packets.UpdateJumpPacket;
@@ -24,6 +26,7 @@ public class PacketManager {
     protected @Getter @Inject UpdateJumpPacketFactory updateJumpPacketFactory;
     protected @Getter @Inject UpdateOverlayPacketFactory updateOverlayPacketFactory;
     protected @Getter @Inject PlantSeedPacketFactory plantSeedPacketFactory;
+    protected @Getter @Inject LostPacketFactory lostPacketFactory;
 
     private @Getter SimpleChannel channel;
 
@@ -41,5 +44,6 @@ public class PacketManager {
         channel.registerMessage(id++, UpdateJumpPacket.class, (packet, buffer) -> packet.encode(buffer), buffer -> updateJumpPacketFactory.create(buffer), (packet, context) -> packet.handle(context));
         channel.registerMessage(id++, UpdateOverlayPacket.class, (packet, buffer) -> packet.encode(buffer), buffer -> updateOverlayPacketFactory.create(buffer), (packet, context) -> packet.handle(context));
         channel.registerMessage(id++, PlantSeedPacket.class, (packet, buffer) -> packet.encode(buffer), buffer -> plantSeedPacketFactory.create(buffer), (packet, context) -> packet.handle(context));
+        channel.registerMessage(id++, LostPacket.class, (packet, buffer) -> packet.encode(buffer), buffer -> lostPacketFactory.create(buffer), (packet, context) -> packet.handle(context));
     }
 }

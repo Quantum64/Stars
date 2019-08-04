@@ -15,7 +15,7 @@ public class DoorBlockRender extends TileEntityRenderer<DoorTile> {
     protected @Inject DoorBlockRender() {}
 
     public void render(DoorTile tile, double x, double y, double z, float partialTicks, int destroyStage) {
-        if (!tile.isFallen()) {
+        if (!tile.isFallen() || tile.isChallenge()) {
             return;
         }
 

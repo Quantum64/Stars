@@ -1,8 +1,11 @@
 package co.q64.stars.type.forming;
 
 import co.q64.stars.block.DecayEdgeBlock;
+import co.q64.stars.block.GatewayBlock;
+import co.q64.stars.block.GreyFormedBlock;
 import co.q64.stars.block.RedFormedBlock;
 import co.q64.stars.block.RedPrimedBlock;
+import co.q64.stars.dimension.hub.HubDimension;
 import co.q64.stars.item.RedSeedItem;
 import co.q64.stars.qualifier.SoundQualifiers.Explode;
 import co.q64.stars.qualifier.SoundQualifiers.ExplodeDark;
@@ -14,6 +17,7 @@ import co.q64.stars.util.FleetingManager;
 import co.q64.stars.util.Sounds;
 import lombok.Getter;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.play.server.SStopSoundPacket;
 import net.minecraft.util.Direction;
@@ -89,7 +93,21 @@ public class RedFormingBlockType implements FormingBlockType {
                         continue;
                     }
                     BlockPos target = pos.add(x, y, z);
-                    if (!decayManager.isDecayBlock(world, target)) {
+                    BlockState state = world.getBlockState(target);
+                    if (!decayManager.isDecayBlock(world, target) && !(state.getBlock() instanceof GreyFormedBlock || state.getBlock() instanceof GatewayBlock)) {
+                        if (world.getDimension() instanceof HubDimension) {
+                            boolean found = false;
+                            for (int offset = 0; offset < 8; offset++) {
+                                BlockPos test = target.offset(Direction.DOWN, offset);
+                                if (world.getBlockState(test).getBlock() instanceof GatewayBlock) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (found) {
+                                continue;
+                            }
+                        }
                         world.setBlockState(target, block.getDefaultState());
                         for (Direction direction : DIRECTIONS) {
                             decayManager.activateDecay(world, target.offset(direction));

@@ -1,18 +1,21 @@
 package co.q64.stars.util;
 
+import co.q64.stars.block.ChallengeDoorBlock;
 import co.q64.stars.block.DoorBlock;
+import co.q64.stars.block.TubeAirBlock;
+import co.q64.stars.block.TubeDarknessBlock;
 import co.q64.stars.capability.GardenerCapability;
 import co.q64.stars.dimension.hub.HubDimension;
 import co.q64.stars.net.PacketManager;
 import co.q64.stars.qualifier.SoundQualifiers.Door;
 import co.q64.stars.qualifier.SoundQualifiers.Seed;
+import co.q64.stars.tile.DoorTile;
 import co.q64.stars.type.FleetingStage;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.forming.GreenFormingBlockType;
 import co.q64.stars.type.forming.PinkFormingBlockType;
 import co.q64.stars.type.forming.YellowFormingBlockType;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.SoundEvent;
@@ -23,6 +26,7 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -41,6 +45,8 @@ public class PlayerManager {
     protected @Inject @Door SoundEvent doorSound;
     protected @Inject @Seed Set<SoundEvent> seedSounds;
     protected @Inject Capabilities capabilities;
+    protected @Inject TubeAirBlock tubeAirBlock;
+    protected @Inject TubeDarknessBlock tubeDarknessBlock;
 
     private Queue<ServerPlayerEntity> toSync = new ConcurrentLinkedQueue<>();
     private Set<FormingBlockType> formingBlockTypes;
@@ -113,13 +119,24 @@ public class PlayerManager {
                 if (c.getKeys() > 0) {
                     BlockPos target = player.getPosition().offset(Direction.DOWN);
                     Block block = player.getServerWorld().getBlockState(target).getBlock();
-                    if (block instanceof DoorBlock) {
-                        player.getServerWorld().setBlockState(target, Blocks.AIR.getDefaultState());
-                        player.teleport(player.getServerWorld(), target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
-                        player.setMotion(0, 0, 0);
-                        sounds.playSound(player.getServerWorld(), target, doorSound, 1f);
-                        capabilities.gardener(player, gardener -> {
-                            gardener.setOpenDoor(true); // todo challenge door
+                    if (block instanceof DoorBlock || block instanceof ChallengeDoorBlock) {
+                        Optional.ofNullable((DoorTile) player.getServerWorld().getTileEntity(target)).ifPresent(tile -> {
+                            capabilities.gardener(player, gardener -> {
+                                if (!tile.isChallenge() || gardener.getKeys() >= 3) {
+                                    gardener.setOpenDoor(!tile.isChallenge());
+                                    gardener.setOpenChallengeDoor(tile.isChallenge());
+                                    player.getServerWorld().setBlockState(target, tubeAirBlock.getDefaultState());
+                                    for (Direction direction : Direction.values()) {
+                                        if (direction == Direction.UP || direction == Direction.DOWN) {
+                                            continue;
+                                        }
+                                        player.getServerWorld().setBlockState(target.offset(direction), tubeDarknessBlock.getDefaultState());
+                                    }
+                                    player.teleport(player.getServerWorld(), target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
+                                    player.setMotion(0, 0, 0);
+                                    sounds.playSound(player.getServerWorld(), target, doorSound, 1f);
+                                }
+                            });
                         });
                     }
                 }

@@ -2,6 +2,7 @@ package co.q64.stars.client.render.entity;
 
 import co.q64.stars.entity.PickupEntity;
 import co.q64.stars.item.ArrowItem;
+import co.q64.stars.item.ChallengeStarItem;
 import co.q64.stars.item.HeartItem;
 import co.q64.stars.item.KeyItem;
 import co.q64.stars.item.StarItem;
@@ -34,14 +35,15 @@ import java.util.Random;
 
 @AutoFactory
 public class PickupEntityRender extends EntityRenderer<PickupEntity> {
-    private ItemStack heart, key, star, arrow;
+    private ItemStack heart, key, star, arrow, challenge;
 
-    protected PickupEntityRender(EntityRendererManager renderManager, @Provided HeartItem heartItem, @Provided KeyItem keyItem, @Provided StarItem starItem, @Provided ArrowItem arrowItem) {
+    protected PickupEntityRender(EntityRendererManager renderManager, @Provided HeartItem heartItem, @Provided KeyItem keyItem, @Provided StarItem starItem, @Provided ArrowItem arrowItem, @Provided ChallengeStarItem challengeStarItem) {
         super(renderManager);
         this.heart = new ItemStack(heartItem);
         this.key = new ItemStack(keyItem);
         this.star = new ItemStack(starItem);
         this.arrow = new ItemStack(arrowItem);
+        this.challenge = new ItemStack(challengeStarItem);
     }
 
     public void doRender(PickupEntity entity, double x, double y, double z, float yaw, float partialTicks) {
@@ -63,6 +65,9 @@ public class PickupEntityRender extends EntityRenderer<PickupEntity> {
                 break;
             case PickupEntity.VARIANT_ARROW:
                 stack = arrow;
+                break;
+            case PickupEntity.VARIANT_CHALLENGE:
+                stack = challenge;
                 break;
         }
         if (stack != arrow) {

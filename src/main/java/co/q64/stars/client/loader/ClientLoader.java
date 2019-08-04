@@ -5,6 +5,7 @@ import co.q64.stars.client.render.tile.DecayingBlockRender;
 import co.q64.stars.client.render.tile.DoorBlockRender;
 import co.q64.stars.client.render.tile.FormingBlockRender;
 import co.q64.stars.client.render.tile.SeedBlockRender;
+import co.q64.stars.client.util.LoseWayKeyBinding;
 import co.q64.stars.entity.PickupEntity;
 import co.q64.stars.loader.CommonLoader;
 import co.q64.stars.tile.DecayingTile;
@@ -27,6 +28,7 @@ public class ClientLoader {
     protected @Inject SeedBlockRender seedBlockRender;
 
     protected @Inject PickupEntityRenderFactory pickupEntityRenderFactory;
+    protected @Inject LoseWayKeyBinding loseWayKeyBinding;
 
     protected @Inject ClientLoader() {}
 
@@ -35,6 +37,7 @@ public class ClientLoader {
         ClientRegistry.bindTileEntitySpecialRenderer(DecayingTile.class, decayingBlockRender);
         ClientRegistry.bindTileEntitySpecialRenderer(DoorTile.class, doorBlockRender);
         ClientRegistry.bindTileEntitySpecialRenderer(SeedTile.class, seedBlockRender);
+        ClientRegistry.registerKeyBinding(loseWayKeyBinding);
 
         RenderingRegistry.registerEntityRenderingHandler(PickupEntity.class, pickupEntityRenderFactory::create);
     }

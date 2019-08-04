@@ -136,7 +136,12 @@ public class PlayerListener implements Listener {
                 if (player.posY < 20) {
                     capabilities.gardener(player, gardener -> {
                         if (!gardener.isEnteringHub()) {
-                            hubManager.fall(player);
+                            if (gardener.isOpenChallengeDoor()) {
+                                gardener.setEnteringHub(true);
+                                fleetingManager.enter(player, true);
+                            } else {
+                                hubManager.fall(player);
+                            }
                         }
                     });
                     return;

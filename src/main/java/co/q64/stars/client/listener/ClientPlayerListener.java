@@ -2,6 +2,7 @@ package co.q64.stars.client.listener;
 
 import co.q64.stars.client.render.ExtraWorldRender;
 import co.q64.stars.client.render.PlayerOverlayRender;
+import co.q64.stars.client.util.LoseWayKeyBinding;
 import co.q64.stars.dimension.StarsDimension;
 import co.q64.stars.dimension.fleeting.FleetingDimension;
 import co.q64.stars.dimension.hub.HubDimension;
@@ -15,6 +16,8 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
 import javax.inject.Inject;
@@ -25,6 +28,7 @@ public class ClientPlayerListener implements Listener {
     protected @Inject PacketManager packetManager;
     protected @Inject PlayerOverlayRender playerOverlayRender;
     protected @Inject ExtraWorldRender extraWorldRender;
+    protected @Inject LoseWayKeyBinding loseWayKeyBinding;
 
     private Boolean autoJump;
     private Integer renderDistance;
@@ -57,12 +61,18 @@ public class ClientPlayerListener implements Listener {
 
     @SubscribeEvent
     public void onPlayerTick(PlayerTickEvent event) {
-        if (event.player.world.getDimension() instanceof HubDimension || (event.player.world.getDimension() instanceof FleetingDimension && playerOverlayRender.getLastStage() == FleetingStage.LIGHT)) {
-            Minecraft.getInstance().gameSettings.renderDistanceChunks = 2; // No cheating
-        } else if ((event.player.world.getDimension() instanceof FleetingDimension)) {
-            Minecraft.getInstance().gameSettings.renderDistanceChunks = 6;
+        if (event.phase == Phase.END && event.player == Minecraft.getInstance().player) {
+            if (event.player.world.getDimension() instanceof HubDimension || (event.player.world.getDimension() instanceof FleetingDimension && playerOverlayRender.getLastStage() == FleetingStage.LIGHT)) {
+                Minecraft.getInstance().gameSettings.renderDistanceChunks = 2; // No cheating
+            } else if ((event.player.world.getDimension() instanceof FleetingDimension)) {
+                Minecraft.getInstance().gameSettings.renderDistanceChunks = 6;
+            }
         }
-        if (event.player.world.getDimension() instanceof StarsDimension) {
+    }
+
+    @SubscribeEvent
+    public void onClientTick(ClientTickEvent event) {
+        if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.getEntityWorld().getDimension() instanceof StarsDimension) {
             playerOverlayRender.tick();
         }
     }
@@ -86,6 +96,15 @@ public class ClientPlayerListener implements Listener {
             }
             if (Minecraft.getInstance().gameSettings.keyBindSneak.isPressed()) {
                 packetManager.getChannel().sendToServer(packetManager.getPlantSeedPacketFactory().create());
+            }
+            if (playerOverlayRender.getLastStage() == FleetingStage.DARK && loseWayKeyBinding.isKeyDown()) {
+                long now = System.currentTimeMillis();
+                long time = playerOverlayRender.getLostTime();
+                if (time - now > 20000) {
+                    time = now + 20000;
+                }
+                time -= 100;
+                playerOverlayRender.setLostTime(time);
             }
         }
     }

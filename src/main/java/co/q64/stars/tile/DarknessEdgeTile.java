@@ -2,6 +2,7 @@ package co.q64.stars.tile;
 
 import co.q64.stars.block.AirDecayBlock;
 import co.q64.stars.block.AirDecayEdgeBlock;
+import co.q64.stars.block.ChallengeDoorBlock;
 import co.q64.stars.block.DarkAirBlock;
 import co.q64.stars.block.DarknessBlock;
 import co.q64.stars.block.DarknessEdgeBlock;
@@ -16,7 +17,6 @@ import co.q64.stars.block.SpecialAirBlock;
 import co.q64.stars.block.SpecialDecayBlock;
 import co.q64.stars.block.SpecialDecayEdgeBlock;
 import co.q64.stars.entity.PickupEntity;
-import co.q64.stars.state.DarknessState;
 import co.q64.stars.tile.type.DarknessEdgeTileType;
 import co.q64.stars.util.DecayManager.SpecialDecayType;
 import net.minecraft.block.Block;
@@ -29,8 +29,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DarknessEdgeTile extends TileEntity implements ITickableTileEntity {
     private static final Direction[] DIRECTIONS = Direction.values();
@@ -40,6 +38,7 @@ public class DarknessEdgeTile extends TileEntity implements ITickableTileEntity 
     protected @Inject DarknessBlock darknessBlock;
     protected @Inject SpecialAirBlock specialAirBlock;
     protected @Inject DoorBlock doorBlock;
+    protected @Inject ChallengeDoorBlock challengeDoorBlock;
     protected @Inject EntityType<PickupEntity> pickupEntityType;
 
     @Inject
@@ -53,24 +52,7 @@ public class DarknessEdgeTile extends TileEntity implements ITickableTileEntity 
                 BlockPos target = getPos().offset(direction);
                 Block block = world.getBlockState(target).getBlock();
                 if (block == Blocks.AIR || block instanceof FormingBlock) {
-                    /*
-                    List<Direction> connections = new ArrayList<>();
-                    for (Direction test : DIRECTIONS) {
-                        BlockState testState = world.getBlockState(target.offset(test));
-                        if (testState.getBlock() instanceof DarknessBlock) {
-                            connections.add(test);
-                            world.setBlockState(target.offset(test), testState.with(DarknessState.get(test.getOpposite()), true));
-                        }
-                    }
-
-                     */
                     BlockState state = darknessBlock.getDefaultState();
-                    /*
-                    for (Direction connection : connections) {
-                        state = state.with(DarknessState.get(connection), true);
-                    }
-
-                     */
                     world.setBlockState(target, state);
                 } else if (block instanceof SpecialDecayEdgeBlock || block instanceof SpecialDecayBlock || block instanceof GreenFruitBlock) {
                     SpecialDecayType type = SpecialDecayType.HEART;
@@ -88,14 +70,14 @@ public class DarknessEdgeTile extends TileEntity implements ITickableTileEntity 
                         case HEART:
                             PickupEntity heartEntity = pickupEntityType.create(world);
                             heartEntity.setPosition(target.getX() + 0.5, target.getY(), target.getZ() + 0.5);
-                            heartEntity.setVariant(0);
+                            heartEntity.setVariant(PickupEntity.VARIANT_HEART);
                             world.addEntity(heartEntity);
                             world.setBlockState(target, darknessEdgeBlock.getDefaultState());
                             break;
                         case KEY:
                             PickupEntity keyEntity = pickupEntityType.create(world);
                             keyEntity.setPosition(target.getX() + 0.5, target.getY(), target.getZ() + 0.5);
-                            keyEntity.setVariant(1);
+                            keyEntity.setVariant(PickupEntity.VARIANT_KEY);
                             world.addEntity(keyEntity);
                             world.setBlockState(target, darknessEdgeBlock.getDefaultState());
                             break;
@@ -103,6 +85,7 @@ public class DarknessEdgeTile extends TileEntity implements ITickableTileEntity 
                             world.setBlockState(target, doorBlock.getDefaultState());
                             break;
                         case CHALLENGE_DOOR:
+                            world.setBlockState(target, challengeDoorBlock.getDefaultState());
                             break;
                     }
                 } else if (block instanceof FormedBlock || block instanceof DecayBlock || block instanceof DecayEdgeBlock || block instanceof DecayingBlock

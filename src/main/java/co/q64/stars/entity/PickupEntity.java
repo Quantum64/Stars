@@ -20,7 +20,7 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 @AutoFactory
 public class PickupEntity extends Entity {
-    public static final int VARIANT_HEART = 0, VARIANT_KEY = 1, VARIANT_STAR = 2, VARIANT_ARROW = 3;
+    public static final int VARIANT_HEART = 0, VARIANT_KEY = 1, VARIANT_STAR = 2, VARIANT_ARROW = 3, VARIANT_CHALLENGE = 4;
 
     private static final DataParameter<Integer> VARIANT = EntityDataManager.createKey(PickupEntity.class, DataSerializers.VARINT);
     private FleetingManager fleetingManager;
@@ -58,7 +58,9 @@ public class PickupEntity extends Entity {
                         fleetingManager.addKey((ServerPlayerEntity) player);
                         break;
                 }
-                remove();
+                if (getVariant() != VARIANT_ARROW) {
+                    remove();
+                }
             }
         }
     }

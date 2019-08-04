@@ -1,6 +1,7 @@
 package co.q64.stars.capability.gardener;
 
 import co.q64.stars.capability.GardenerCapability;
+import co.q64.stars.level.LevelType;
 import co.q64.stars.type.FleetingStage;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.forming.BrownFormingBlockType;
@@ -22,6 +23,7 @@ public class GardenerCapabilityImpl implements GardenerCapability {
     private @Setter @Getter boolean openDoor, openChallengeDoor, enteringHub;
     private @Setter @Getter FleetingStage fleetingStage = FleetingStage.NONE;
     private @Setter @Getter FormingBlockType lastSeed;
+    private @Setter @Getter LevelType levelType = LevelType.RED;
     private @Getter Deque<FormingBlockType> nextSeeds = new ArrayDeque<>();
     private @Getter Set<SoundEvent> lastSounds = new HashSet<>();
     private Map<SoundEvent, Long> lastPlayed = new HashMap<>();

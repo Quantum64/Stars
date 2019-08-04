@@ -1,8 +1,12 @@
 package co.q64.stars.client.model;
 
-import co.q64.stars.state.DarknessState;
+import co.q64.stars.block.ChallengeDoorBlock;
+import co.q64.stars.block.DarknessBlock;
+import co.q64.stars.block.DarknessEdgeBlock;
+import co.q64.stars.block.DoorBlock;
 import co.q64.stars.util.Identifiers;
 import co.q64.stars.util.Logger;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
@@ -13,12 +17,15 @@ import net.minecraft.client.renderer.texture.ISprite;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.state.BooleanProperty;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IEnviromentBlockReader;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.data.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelDataMap;
+import net.minecraftforge.client.model.data.ModelProperty;
 import net.minecraftforge.common.model.IModelState;
 
 import javax.inject.Inject;
@@ -36,6 +43,13 @@ import java.util.function.BiConsumer;
 public class DarknessModel implements IDynamicBakedModel {
     private static final Direction[] DIRECTIONS = Direction.values();
     private static final EdgeIdentifier[] EDGE_IDENTIFIERS = EdgeIdentifier.values();
+
+    private static final ModelProperty<Boolean> NORTH = new ModelProperty<>();
+    private static final ModelProperty<Boolean> SOUTH = new ModelProperty<>();
+    private static final ModelProperty<Boolean> EAST = new ModelProperty<>();
+    private static final ModelProperty<Boolean> WEST = new ModelProperty<>();
+    private static final ModelProperty<Boolean> UP = new ModelProperty<>();
+    private static final ModelProperty<Boolean> DOWN = new ModelProperty<>();
 
     protected @Inject Identifiers identifiers;
     protected @Inject Logger logger;
@@ -91,58 +105,75 @@ public class DarknessModel implements IDynamicBakedModel {
         return result;
     }
 
-    public List<BakedQuad> getQuads(BlockState state, Direction side, Random rand, IModelData extraData) {
-        if (side == null || state == null) {
-            return core.getQuads(state, side, rand, extraData);
+    public List<BakedQuad> getQuads(BlockState state, Direction side, Random rand, IModelData data) {
+        if (side == null || state == null || data == null) {
+            return core.getQuads(state, side, rand, data);
         }
-        List<BakedQuad> result = new ArrayList<>();
-        result.addAll(core.getQuads(state, side, rand, extraData));
+        List<BakedQuad> darkQuads = new ArrayList<>();
+        List<BakedQuad> lightQuads = new ArrayList<>();
+        darkQuads.addAll(core.getQuads(state, side, rand, data));
         Map<EdgeIdentifier, IBakedModel> dark = darkEdges.get(side);
         Map<EdgeIdentifier, IBakedModel> light = lightEdges.get(side);
-        BiConsumer<BooleanProperty, EdgeIdentifier> helper = (prop, edge) -> result.addAll(state.get(prop) ? dark.get(edge).getQuads(state, side, rand, extraData) : light.get(edge).getQuads(state, side, rand, extraData));
+        BiConsumer<Boolean, EdgeIdentifier> helper = (prop, edge) -> {
+            if (prop == null || prop) {
+                darkQuads.addAll(dark.get(edge).getQuads(state, side, rand, data));
+            } else {
+                lightQuads.addAll(light.get(edge).getQuads(state, side, rand, data));
+            }
+        };
 
         switch (side) {
             case SOUTH:
-                helper.accept(DarknessState.CONNECT_WEST, EdgeIdentifier.LEFT);
-                helper.accept(DarknessState.CONNECT_EAST, EdgeIdentifier.RIGHT);
-                helper.accept(DarknessState.CONNECT_UP, EdgeIdentifier.TOP);
-                helper.accept(DarknessState.CONNECT_DOWN, EdgeIdentifier.BOTTOM);
+                helper.accept(data.getData(WEST), EdgeIdentifier.LEFT);
+                helper.accept(data.getData(EAST), EdgeIdentifier.RIGHT);
+                helper.accept(data.getData(UP), EdgeIdentifier.TOP);
+                helper.accept(data.getData(DOWN), EdgeIdentifier.BOTTOM);
                 break;
             case NORTH:
-                helper.accept(DarknessState.CONNECT_EAST, EdgeIdentifier.LEFT);
-                helper.accept(DarknessState.CONNECT_WEST, EdgeIdentifier.RIGHT);
-                helper.accept(DarknessState.CONNECT_UP, EdgeIdentifier.TOP);
-                helper.accept(DarknessState.CONNECT_DOWN, EdgeIdentifier.BOTTOM);
+                helper.accept(data.getData(EAST), EdgeIdentifier.LEFT);
+                helper.accept(data.getData(WEST), EdgeIdentifier.RIGHT);
+                helper.accept(data.getData(UP), EdgeIdentifier.TOP);
+                helper.accept(data.getData(DOWN), EdgeIdentifier.BOTTOM);
                 break;
             case EAST:
-                helper.accept(DarknessState.CONNECT_SOUTH, EdgeIdentifier.LEFT);
-                helper.accept(DarknessState.CONNECT_NORTH, EdgeIdentifier.RIGHT);
-                helper.accept(DarknessState.CONNECT_UP, EdgeIdentifier.TOP);
-                helper.accept(DarknessState.CONNECT_DOWN, EdgeIdentifier.BOTTOM);
+                helper.accept(data.getData(SOUTH), EdgeIdentifier.LEFT);
+                helper.accept(data.getData(NORTH), EdgeIdentifier.RIGHT);
+                helper.accept(data.getData(UP), EdgeIdentifier.TOP);
+                helper.accept(data.getData(DOWN), EdgeIdentifier.BOTTOM);
                 break;
             case WEST:
-                helper.accept(DarknessState.CONNECT_NORTH, EdgeIdentifier.LEFT);
-                helper.accept(DarknessState.CONNECT_SOUTH, EdgeIdentifier.RIGHT);
-                helper.accept(DarknessState.CONNECT_UP, EdgeIdentifier.TOP);
-                helper.accept(DarknessState.CONNECT_DOWN, EdgeIdentifier.BOTTOM);
+                helper.accept(data.getData(NORTH), EdgeIdentifier.LEFT);
+                helper.accept(data.getData(SOUTH), EdgeIdentifier.RIGHT);
+                helper.accept(data.getData(UP), EdgeIdentifier.TOP);
+                helper.accept(data.getData(DOWN), EdgeIdentifier.BOTTOM);
                 break;
             case UP:
-                helper.accept(DarknessState.CONNECT_EAST, EdgeIdentifier.LEFT);
-                helper.accept(DarknessState.CONNECT_WEST, EdgeIdentifier.RIGHT);
-                helper.accept(DarknessState.CONNECT_SOUTH, EdgeIdentifier.TOP);
-                helper.accept(DarknessState.CONNECT_NORTH, EdgeIdentifier.BOTTOM);
+                helper.accept(data.getData(EAST), EdgeIdentifier.LEFT);
+                helper.accept(data.getData(WEST), EdgeIdentifier.RIGHT);
+                helper.accept(data.getData(SOUTH), EdgeIdentifier.TOP);
+                helper.accept(data.getData(NORTH), EdgeIdentifier.BOTTOM);
                 break;
             case DOWN:
-                helper.accept(DarknessState.CONNECT_EAST, EdgeIdentifier.LEFT);
-                helper.accept(DarknessState.CONNECT_WEST, EdgeIdentifier.RIGHT);
-                helper.accept(DarknessState.CONNECT_NORTH, EdgeIdentifier.TOP);
-                helper.accept(DarknessState.CONNECT_SOUTH, EdgeIdentifier.BOTTOM);
+                helper.accept(data.getData(EAST), EdgeIdentifier.LEFT);
+                helper.accept(data.getData(WEST), EdgeIdentifier.RIGHT);
+                helper.accept(data.getData(NORTH), EdgeIdentifier.TOP);
+                helper.accept(data.getData(SOUTH), EdgeIdentifier.BOTTOM);
                 break;
             default:
                 break;
         }
+        darkQuads.addAll(lightQuads);
+        return darkQuads;
+    }
 
-        return result;
+    public IModelData getModelData(IEnviromentBlockReader world, BlockPos pos, BlockState state, IModelData tileData) {
+        ModelDataMap.Builder data = new ModelDataMap.Builder();
+        for (Direction direction : DIRECTIONS) {
+            Block block = world.getBlockState(pos.offset(direction)).getBlock();
+            boolean connected = block instanceof DarknessBlock || block instanceof DarknessEdgeBlock || block instanceof DoorBlock || block instanceof ChallengeDoorBlock;
+            data = data.withInitial(getProperty(direction), connected);
+        }
+        return data.build();
     }
 
     public boolean isAmbientOcclusion() {
@@ -163,6 +194,23 @@ public class DarknessModel implements IDynamicBakedModel {
 
     public ItemOverrideList getOverrides() {
         return ItemOverrideList.EMPTY;
+    }
+
+    private ModelProperty<Boolean> getProperty(Direction direction) {
+        switch (direction) {
+            case DOWN:
+                return DOWN;
+            case UP:
+                return UP;
+            case NORTH:
+                return NORTH;
+            case SOUTH:
+                return SOUTH;
+            case WEST:
+                return WEST;
+            default:
+                return EAST;
+        }
     }
 
     private ModelRotation getRotation(Direction direction) {
