@@ -79,21 +79,16 @@ public class FleetingManager {
             Level level = levelManager.getLevel(c.getLevelType());
             if (c.isOpenChallengeDoor()) {
                 level.createChallenge(spawnWorld, spawnpoint);
-                PickupEntity heart = pickupEntityType.create(spawnWorld);
-                heart.setVariant(PickupEntity.VARIANT_HEART);
-                BlockPos heartPosition = level.getHeartLocation(spawnpoint);
-                heart.setPosition(spawnpoint.getX() + 0.5, spawnpoint.getY(), spawnpoint.getZ() + 0.5);
-                spawnWorld.addEntity(heart);
             } else {
                 setupSpawnpoint(spawnWorld, spawnpoint, level);
             }
         });
         Runnable task = () -> {
             ServerWorld world = DimensionManager.getWorld(player.getServer(), dimensions.getFleetingDimensionType(), false, true);
-            player.setMotion(0, 0, 0);
-            player.teleport(world, spawnpoint.getX() + 0.5, showEffect ? spawnpoint.getY() + 10 : spawnpoint.getY(), spawnpoint.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
-            setStage(player, FleetingStage.LIGHT);
             capabilities.gardener(player, c -> {
+                player.setMotion(0, 0, 0);
+                player.teleport(world, spawnpoint.getX() + 0.5, showEffect ? spawnpoint.getY() + (c.isOpenChallengeDoor() ? 1 : 10) : spawnpoint.getY(), spawnpoint.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
+                setStage(player, FleetingStage.LIGHT);
                 c.setTotalSeeds(0);
                 c.getNextSeeds().clear();
                 c.setOpenDoor(c.isOpenChallengeDoor());
@@ -150,6 +145,16 @@ public class FleetingManager {
             c.setKeys(seeds);
         });
         playerManager.syncCapability(player);
+    }
+
+    public void touchHeart(ServerPlayerEntity player) {
+        capabilities.gardener(player, gardener -> {
+            if (gardener.isOpenDoor()) {
+                hubManager.enter(player);
+            } else {
+                playerManager.pickupSeed(player);
+            }
+        });
     }
 
     public void addKey(ServerPlayerEntity player) {

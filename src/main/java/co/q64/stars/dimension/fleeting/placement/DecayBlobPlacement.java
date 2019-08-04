@@ -1,6 +1,5 @@
 package co.q64.stars.dimension.fleeting.placement;
 
-import co.q64.stars.util.FleetingManager;
 import co.q64.stars.util.Identifiers;
 import co.q64.stars.util.SpawnpointManager;
 import net.minecraft.util.math.BlockPos;
@@ -14,7 +13,7 @@ import java.util.stream.Stream;
 
 @Singleton
 public class DecayBlobPlacement extends SimplePlacement<NoPlacementConfig> {
-    private static final int MIN_SPAWN_DIST = 20;
+    private static final int MIN_SPAWN_DIST = 12;
 
     @Inject
     protected DecayBlobPlacement(Identifiers identifiers) {

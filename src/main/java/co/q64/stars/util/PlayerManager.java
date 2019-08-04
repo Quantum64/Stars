@@ -26,6 +26,7 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
@@ -49,8 +50,8 @@ public class PlayerManager {
     protected @Inject TubeDarknessBlock tubeDarknessBlock;
 
     private Queue<ServerPlayerEntity> toSync = new ConcurrentLinkedQueue<>();
-    private Set<FormingBlockType> formingBlockTypes;
-    private Set<FormingBlockType> hubFormingBlocks;
+    private List<FormingBlockType> formingBlockTypes;
+    private List<FormingBlockType> hubFormingBlocks;
 
     protected @Inject PlayerManager() {}
 
@@ -71,7 +72,7 @@ public class PlayerManager {
             int seeds = getSeeds(player);
             boolean hub = player.getServerWorld().getDimension() instanceof HubDimension || c.isEnteringHub();
             if (c.getFleetingStage() == FleetingStage.LIGHT || hub) {
-                Set<FormingBlockType> types = hub ? hubFormingBlocks : formingBlockTypes;
+                List<FormingBlockType> types = (hub || c.isOpenDoor()) ? hubFormingBlocks : formingBlockTypes;
                 while (c.getNextSeeds().size() < c.getSeedVisibility() && seeds > 0) {
                     FormingBlockType offering = pinkFormingBlockType;
                     if (c.getSeedsSincePink() < 5 + ThreadLocalRandom.current().nextInt(2)) {
@@ -180,7 +181,8 @@ public class PlayerManager {
 
     @Inject
     protected void setup(Set<FormingBlockType> types) {
-        this.formingBlockTypes = types.stream().filter(FormingBlockType::canGrow).collect(Collectors.toSet());
-        this.hubFormingBlocks = formingBlockTypes.stream().filter(type -> !(type instanceof PinkFormingBlockType)).collect(Collectors.toSet());
+        this.formingBlockTypes = types.stream().filter(FormingBlockType::canGrow).collect(Collectors.toList());
+        this.hubFormingBlocks = formingBlockTypes.stream().filter(type -> !(type instanceof PinkFormingBlockType)).collect(Collectors.toList());
+        formingBlockTypes.add(greenFormingBlockType); // Make green a bit more common
     }
 }

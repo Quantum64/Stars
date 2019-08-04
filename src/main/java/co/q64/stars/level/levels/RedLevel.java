@@ -1,5 +1,7 @@
 package co.q64.stars.level.levels;
 
+import co.q64.stars.block.ChallengeExitBlock;
+import co.q64.stars.block.DarknessBlock;
 import co.q64.stars.block.DecayBlock;
 import co.q64.stars.block.GreyFormedBlock;
 import co.q64.stars.level.Level;
@@ -14,10 +16,12 @@ import java.util.List;
 
 @Singleton
 public class RedLevel implements Level {
-    private static final int DISTANCE = 20;
+    private static final int DISTANCE = 35;
 
     protected @Inject GreyFormedBlock greyFormedBlock;
     protected @Inject DecayBlock decayBlock;
+    protected @Inject DarknessBlock darknessBlock;
+    protected @Inject ChallengeExitBlock challengeExitBlock;
 
     protected @Inject RedLevel() {}
 
@@ -33,12 +37,9 @@ public class RedLevel implements Level {
     }
 
     public void createChallenge(ServerWorld world, BlockPos start) {
-        box(world, decayBlock, start.add(-7, -8, -7), start.add(7, 17, 7));
+        box(world, decayBlock, start.add(-7, -8, -7), start.add(7, 18, 7));
         cube(world, greyFormedBlock, start.add(-2, -5, -2), start.add(2, 0, 2));
-        cube(world, decayBlock, start.add(-2, 5, -2), start.add(2, 10, 2));
-    }
-
-    public BlockPos getHeartLocation(BlockPos start) {
-        return start.add(0, 15, 0);
+        cube(world, darknessBlock, start.add(-2, 5, -2), start.add(2, 10, 2));
+        set(world, challengeExitBlock, start.add(0, 12, 0));
     }
 }

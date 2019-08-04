@@ -6,6 +6,7 @@ import co.q64.stars.block.BaseBlock;
 import co.q64.stars.block.BlueFormedBlock;
 import co.q64.stars.block.BrownFormedBlock;
 import co.q64.stars.block.ChallengeDoorBlock;
+import co.q64.stars.block.ChallengeExitBlock;
 import co.q64.stars.block.CyanFormedBlock;
 import co.q64.stars.block.DarkAirBlock;
 import co.q64.stars.block.DarknessBlock;
@@ -82,6 +83,7 @@ import co.q64.stars.qualifier.SoundQualifiers.Seed;
 import co.q64.stars.qualifier.SoundQualifiers.Ticking;
 import co.q64.stars.qualifier.SoundQualifiers.Yellow;
 import co.q64.stars.tile.type.AirDecayEdgeTileType;
+import co.q64.stars.tile.type.ChallengeExitTileType;
 import co.q64.stars.tile.type.DarknessEdgeTileType;
 import co.q64.stars.tile.type.DecayEdgeTileType;
 import co.q64.stars.tile.type.DecayingTileType;
@@ -171,6 +173,7 @@ public interface CommonModule {
     @Binds @IntoSet BaseBlock bindGatewayBlock(GatewayBlock gatewayBlock);
     @Binds @IntoSet BaseBlock bindTubeDarknessBlock(TubeDarknessBlock tubeDarknessBlock);
     @Binds @IntoSet BaseBlock bindTubeAirBlock(TubeAirBlock tubeAirBlock);
+    @Binds @IntoSet BaseBlock bindChallengeExitBlock(ChallengeExitBlock challengeExitBlock);
 
     @Binds @IntoSet BaseItem bindPinkSeedItem(PinkSeedItem pinkSeedItem);
     @Binds @IntoSet BaseItem bindBlueSeedItem(BlueSeedItem blueSeedItem);
@@ -202,6 +205,7 @@ public interface CommonModule {
     @Binds @IntoSet TileEntityType<?> bindDoorTileType(DoorTileType type);
     @Binds @IntoSet TileEntityType<?> bindSeedTileType(SeedTileType type);
     @Binds @IntoSet TileEntityType<?> bindTubeTileType(TubeTileType type);
+    @Binds @IntoSet TileEntityType<?> bindChallengeExitTileType(ChallengeExitTileType type);
 
     @Binds @IntoSet EntityType<?> bindPickupEntityType(EntityType<PickupEntity> pickupEntityEntityType);
 

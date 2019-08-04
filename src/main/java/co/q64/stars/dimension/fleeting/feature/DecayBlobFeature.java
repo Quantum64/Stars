@@ -4,7 +4,6 @@ import co.q64.stars.block.DecayBlock;
 import co.q64.stars.block.SpecialDecayEdgeBlock;
 import co.q64.stars.util.DecayManager;
 import co.q64.stars.util.DecayManager.SpecialDecayType;
-import co.q64.stars.util.FleetingManager;
 import co.q64.stars.util.Identifiers;
 import co.q64.stars.util.SpawnpointManager;
 import net.minecraft.block.Block;
@@ -44,15 +43,15 @@ public class DecayBlobFeature extends Feature<NoFeatureConfig> {
                 SpawnpointManager.SPREAD_DISTANCE * (Math.round(pos.getZ() / Double.valueOf(SpawnpointManager.SPREAD_DISTANCE)))
         );
         int dist = (int) Math.sqrt(pos.distanceSq(nearestIsland));
-        if (dist < 30) {
+        if (dist < 24) {
             dist = rand.nextInt(dist + 1);
-            if (dist < 20) {
+            if (dist < 12) {
                 if (pos.getY() < 130) {
                     return false;
                 }
             }
         } else {
-            dist = (dist * dist) / 4;
+            dist = (dist * dist) / 2;
             dist = dist > 5000 ? 5000 : dist;
         }
 
