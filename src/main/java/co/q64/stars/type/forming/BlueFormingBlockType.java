@@ -23,7 +23,7 @@ public class BlueFormingBlockType implements FormingBlockType {
     private final @Getter String name = "blue";
     private final @Getter int buildTime = 4500;
     private final @Getter int buildTimeOffset = 0;
-    private final @Getter float r = 18, g = 0, b = 255;
+    private final @Getter float r = 0, g = 114, b = 255;
 
     protected @Getter @Inject BlueFormedBlock formedBlock;
     protected @Getter @Inject Provider<BlueSeedItem> itemProvider;

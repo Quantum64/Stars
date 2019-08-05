@@ -37,7 +37,7 @@ public class RedLevel implements Level {
     }
 
     public void createChallenge(ServerWorld world, BlockPos start) {
-        box(world, decayBlock, start.add(-7, -8, -7), start.add(7, 18, 7));
+        box(world, decayBlock, start.add(-7, -8, -7), start.add(7, 20, 7));
         cube(world, greyFormedBlock, start.add(-2, -5, -2), start.add(2, 0, 2));
         cube(world, darknessBlock, start.add(-2, 5, -2), start.add(2, 10, 2));
         set(world, challengeExitBlock, start.add(0, 12, 0));

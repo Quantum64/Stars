@@ -23,7 +23,7 @@ public class PinkFormingBlockType implements FormingBlockType {
     private final @Getter String name = "pink";
     private final @Getter int buildTime = 10000;
     private final @Getter int buildTimeOffset = 0;
-    private final @Getter float r = 228, g = 0, b = 255;
+    private final @Getter float r = 255, g = 88, b = 245;
 
     protected @Getter @Inject PinkFormedBlock formedBlock;
     protected @Getter @Inject Provider<PinkSeedItem> itemProvider;

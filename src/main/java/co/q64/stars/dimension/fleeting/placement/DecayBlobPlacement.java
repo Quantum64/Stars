@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 @Singleton
 public class DecayBlobPlacement extends SimplePlacement<NoPlacementConfig> {
-    private static final int MIN_SPAWN_DIST = 12;
+    private static final int MIN_SPAWN_DIST = 10;
 
     @Inject
     protected DecayBlobPlacement(Identifiers identifiers) {
@@ -38,11 +38,11 @@ public class DecayBlobPlacement extends SimplePlacement<NoPlacementConfig> {
             stream = generate(stream, pos, random, high);
             //}
         }
-        if (dist > 40) {
-            for (int i = 0; i < 10; i++) {
-                stream = generate(stream, pos, random, high);
-            }
+        //if (dist > 40) {
+        for (int i = 0; i < 10; i++) {
+            stream = generate(stream, pos, random, high);
         }
+        //}
 
         return stream;
     }

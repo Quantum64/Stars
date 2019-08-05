@@ -334,5 +334,15 @@
     "sounds": [
       "stars:empty"
     ]
+  },
+  "ambient_dark": {
+    "category": "master",
+    "subtitle": "stars.subtitle.ambient_dark",
+    "sounds": [
+      {
+        "name": "stars:ambient_dark",
+        "stream": true
+      }
+    ]
   }
 }

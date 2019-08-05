@@ -2,6 +2,7 @@ package co.q64.stars.client.listener;
 
 import co.q64.stars.client.render.ExtraWorldRender;
 import co.q64.stars.client.render.PlayerOverlayRender;
+import co.q64.stars.client.util.ClientSound;
 import co.q64.stars.client.util.LoseWayKeyBinding;
 import co.q64.stars.dimension.StarsDimension;
 import co.q64.stars.dimension.fleeting.FleetingDimension;
@@ -29,6 +30,7 @@ public class ClientPlayerListener implements Listener {
     protected @Inject PlayerOverlayRender playerOverlayRender;
     protected @Inject ExtraWorldRender extraWorldRender;
     protected @Inject LoseWayKeyBinding loseWayKeyBinding;
+    protected @Inject ClientSound clientSound;
 
     private Boolean autoJump;
     private Integer renderDistance;
@@ -72,6 +74,7 @@ public class ClientPlayerListener implements Listener {
 
     @SubscribeEvent
     public void onClientTick(ClientTickEvent event) {
+        clientSound.tick();
         if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.getEntityWorld().getDimension() instanceof StarsDimension) {
             playerOverlayRender.tick();
         }
@@ -100,10 +103,10 @@ public class ClientPlayerListener implements Listener {
             if (playerOverlayRender.getLastStage() == FleetingStage.DARK && loseWayKeyBinding.isKeyDown()) {
                 long now = System.currentTimeMillis();
                 long time = playerOverlayRender.getLostTime();
-                if (time - now > 20000) {
-                    time = now + 20000;
+                if (time - now > 10000) {
+                    time = now + 10000;
                 }
-                time -= 100;
+                time -= 250;
                 playerOverlayRender.setLostTime(time);
             }
         }

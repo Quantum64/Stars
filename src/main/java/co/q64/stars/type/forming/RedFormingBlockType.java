@@ -2,6 +2,7 @@ package co.q64.stars.type.forming;
 
 import co.q64.stars.block.DecayEdgeBlock;
 import co.q64.stars.block.GatewayBlock;
+import co.q64.stars.block.GreenFruitBlock;
 import co.q64.stars.block.GreyFormedBlock;
 import co.q64.stars.block.RedFormedBlock;
 import co.q64.stars.block.RedPrimedBlock;
@@ -42,7 +43,7 @@ public class RedFormingBlockType implements FormingBlockType {
     private final @Getter String name = "red";
     private final @Getter int buildTime = 3000;
     private final @Getter int buildTimeOffset = 0;
-    private final @Getter float r = 255, g = 0, b = 0;
+    private final @Getter float r = 221, g = 32, b = 32;
 
     protected @Getter @Inject RedPrimedBlock formedBlock;
     protected @Getter @Inject Provider<RedSeedItem> itemProvider;
@@ -94,7 +95,7 @@ public class RedFormingBlockType implements FormingBlockType {
                     }
                     BlockPos target = pos.add(x, y, z);
                     BlockState state = world.getBlockState(target);
-                    if (!decayManager.isDecayBlock(world, target) && !(state.getBlock() instanceof GreyFormedBlock || state.getBlock() instanceof GatewayBlock)) {
+                    if (!decayManager.isDecayBlock(world, target) && !(state.getBlock() instanceof GreyFormedBlock || state.getBlock() instanceof GatewayBlock || block instanceof GreenFruitBlock)) {
                         if (world.getDimension() instanceof HubDimension) {
                             boolean found = false;
                             for (int offset = 0; offset < 8; offset++) {

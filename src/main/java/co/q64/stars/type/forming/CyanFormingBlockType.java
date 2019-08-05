@@ -25,7 +25,7 @@ public class CyanFormingBlockType implements FormingBlockType {
     private final @Getter String name = "cyan";
     private final @Getter int buildTime = 1000;
     private final @Getter int buildTimeOffset = 0;
-    private final @Getter float r = 181, g = 255, b = 251;
+    private final @Getter float r = 167, g = 255, b = 250;
 
     protected @Getter @Inject CyanFormedBlock formedBlock;
     protected @Getter @Inject Provider<CyanSeedItem> itemProvider;

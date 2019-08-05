@@ -28,7 +28,7 @@ public class BrownFormingBlockType implements FormingBlockType {
     private final @Getter String name = "brown";
     private final @Getter int buildTime = 2300;
     private final @Getter int buildTimeOffset = 300;
-    private final @Getter float r = 173, g = 85, b = 0;
+    private final @Getter float r = 100, g = 70, b = 27;
 
     protected @Getter @Inject BrownFormedBlock formedBlock;
     protected @Getter @Inject Provider<BrownSeedItem> itemProvider;

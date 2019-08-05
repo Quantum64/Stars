@@ -1,5 +1,9 @@
 {
   "variants": {
-    "": { "model": "stars:block/orange_formed" }
+    "": [
+      { "model": "stars:block/orange_formed_1" },
+      { "model": "stars:block/orange_formed_2" },
+      { "model": "stars:block/orange_formed_3" }
+    ]
   }
 }

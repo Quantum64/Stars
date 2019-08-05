@@ -43,19 +43,19 @@ public class DecayBlobFeature extends Feature<NoFeatureConfig> {
                 SpawnpointManager.SPREAD_DISTANCE * (Math.round(pos.getZ() / Double.valueOf(SpawnpointManager.SPREAD_DISTANCE)))
         );
         int dist = (int) Math.sqrt(pos.distanceSq(nearestIsland));
-        if (dist < 24) {
+        if (dist < 35) {
             dist = rand.nextInt(dist + 1);
-            if (dist < 12) {
+            if (dist < 10) {
                 if (pos.getY() < 130) {
                     return false;
                 }
             }
         } else {
-            dist = (dist * dist) / 2;
+            dist = (dist * dist) / 3;
             dist = dist > 5000 ? 5000 : dist;
         }
 
-        if (rand.nextInt(2) == 0) {
+        if (rand.nextInt(3) < 2) {
             decayManager.createSpecialDecay(world, pos, SpecialDecayType.KEY, false);
         } else {
             world.setBlockState(pos, decayBlock.getDefaultState(), 2);

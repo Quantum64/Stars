@@ -26,7 +26,7 @@ public class GreenFormingBlockType implements FormingBlockType {
     private final @Getter String name = "green";
     private final @Getter int buildTime = 250;
     private final @Getter int buildTimeOffset = 0;
-    private final @Getter float r = 48, g = 255, b = 0;
+    private final @Getter float r = 132, g = 237, b = 8;
 
     protected @Getter @Inject GreenFormedBlock formedBlock;
     protected @Getter @Inject Provider<GreenSeedItem> itemProvider;
