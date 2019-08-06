@@ -4,6 +4,8 @@ import javax.inject.Qualifier;
 
 public interface SoundQualifiers {
     // @formatter:off
+
+    // Server
     public static @Qualifier @interface Red {}
     public static @Qualifier @interface Yellow {}
     public static @Qualifier @interface Green {}
@@ -19,6 +21,12 @@ public interface SoundQualifiers {
     public static @Qualifier @interface Door {}
     public static @Qualifier @interface Ticking {}
     public static @Qualifier @interface Empty {}
+    public static @Qualifier @interface DarkAir {}
+    public static @Qualifier @interface Key {}
+    public static @Qualifier @interface Bubble {}
+    public static @Qualifier @interface Pop {}
+
+    // Client
     public static @Qualifier @interface AmbientDark {}
 
     public static @Qualifier @interface Misc {}

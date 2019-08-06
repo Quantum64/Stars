@@ -4,13 +4,20 @@ import co.q64.stars.block.DarknessEdgeBlock;
 import co.q64.stars.block.DecayBlock;
 import co.q64.stars.block.GatewayBlock;
 import co.q64.stars.block.OrangeFormedBlock;
+import co.q64.stars.block.SpecialDecayBlock;
+import co.q64.stars.block.SpecialDecayEdgeBlock;
 import co.q64.stars.capability.GardenerCapability;
 import co.q64.stars.dimension.Dimensions;
 import co.q64.stars.entity.PickupEntity;
 import co.q64.stars.level.Level;
 import co.q64.stars.level.LevelManager;
+import co.q64.stars.level.LevelType;
 import co.q64.stars.net.PacketManager;
 import co.q64.stars.net.packets.ClientFadePacket.FadeMode;
+import co.q64.stars.qualifier.SoundQualifiers.Bubble;
+import co.q64.stars.qualifier.SoundQualifiers.Key;
+import co.q64.stars.qualifier.SoundQualifiers.Pop;
+import co.q64.stars.tile.DecayEdgeTile;
 import co.q64.stars.type.FleetingStage;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.util.DecayManager.SpecialDecayType;
@@ -21,6 +28,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.Direction;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -33,6 +41,7 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -53,6 +62,10 @@ public class FleetingManager {
     protected @Inject LevelManager levelManager;
     protected @Inject EntityType<PickupEntity> pickupEntityType;
     protected @Inject HubManager hubManager;
+    protected @Inject Sounds sounds;
+    protected @Inject @Key SoundEvent keySound;
+    protected @Inject @Bubble SoundEvent bubbleSound;
+    protected @Inject @Pop SoundEvent popSound;
 
     private Set<FormingBlockType> formingBlockTypes;
     private Map<UUID, Integer> levitationQueue = new HashMap<>();
@@ -80,7 +93,7 @@ public class FleetingManager {
             if (c.isOpenChallengeDoor()) {
                 level.createChallenge(spawnWorld, spawnpoint);
             } else {
-                setupSpawnpoint(spawnWorld, spawnpoint, level);
+                setupSpawnpoint(player, spawnWorld, spawnpoint, level);
             }
         });
         Runnable task = () -> {
@@ -161,13 +174,21 @@ public class FleetingManager {
         setKeys(player, getKeys(player) + 1);
     }
 
+    public void touchKey(ServerPlayerEntity player) {
+        addKey(player);
+        sounds.playSound(player.getServerWorld(), player.getPosition(), keySound, 1f);
+    }
+
     public void updateJumpStatus(ServerPlayerEntity player, boolean jumping) {
         if (getStage(player) == FleetingStage.DARK) {
             if (jumping) {
                 levitationQueue.put(player.getUniqueID(), 18);
             } else {
                 levitationQueue.remove(player.getUniqueID());
-                player.removePotionEffect(Effects.LEVITATION);
+                if (player.getActivePotionEffect(Effects.LEVITATION) != null) {
+                    player.removePotionEffect(Effects.LEVITATION);
+                    sounds.playSound(player.getServerWorld(), player.getPosition(), popSound, 1f);
+                }
             }
         }
     }
@@ -188,7 +209,11 @@ public class FleetingManager {
                     .filter(p -> p.getVariant() == PickupEntity.VARIANT_STAR || p.getVariant() == PickupEntity.VARIANT_CHALLENGE)
                     .forEach(Entity::remove);
             BlockPos playerPosition = player.getPosition();
-            world.setBlockState(playerPosition, darknessEdgeBlock.getDefaultState());
+            BlockPos darknessLocation = playerPosition;
+            if (world.getBlockState(playerPosition).getBlock() instanceof SpecialDecayEdgeBlock || world.getBlockState(playerPosition).getBlock() instanceof SpecialDecayBlock) {
+                darknessLocation = darknessLocation.offset(Direction.NORTH); // Special case fix for when the player decides to dig directly down after entering
+            }
+            world.setBlockState(darknessLocation, darknessEdgeBlock.getDefaultState());
             player.teleport((ServerWorld) world, playerPosition.getX() + 0.5, playerPosition.getY() + 0.1, playerPosition.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
         });
     }
@@ -204,12 +229,12 @@ public class FleetingManager {
             levitationQueue.remove(player.getUniqueID());
             playerManager.useSeed(player, () -> {
                 player.addPotionEffect(new EffectInstance(Effects.LEVITATION, 200, 1, true, false));
+                sounds.playSound(player.getServerWorld(), player.getPosition(), bubbleSound, 1f);
             });
         }
     }
 
-    // TODO set the initial decay according to level
-    private void setupSpawnpoint(World world, BlockPos pos, Level level) {
+    private void setupSpawnpoint(ServerPlayerEntity player, World world, BlockPos pos, Level level) {
         for (int y = pos.getY() - 8; y < pos.getY(); y++) {
             for (int x = pos.getX() - 2; x <= pos.getX() + 2; x++) {
                 for (int z = pos.getZ() - 2; z <= pos.getZ() + 2; z++) {
@@ -219,6 +244,15 @@ public class FleetingManager {
         }
         BlockPos door = new BlockPos(pos.getX(), pos.getY() - 8, pos.getZ());
         decayManager.createSpecialDecay(world, door, SpecialDecayType.DOOR);
+        capabilities.gardener(player, gardener -> {
+            Optional.ofNullable((DecayEdgeTile) world.getTileEntity(door)).ifPresent(tile -> {
+                if (gardener.getLevelType() == LevelType.WHITE) {
+                    tile.setMultiplier(1.25);
+                } else if (gardener.getLevelType() == LevelType.ORANGE) {
+                    tile.setMultiplier(0.5);
+                }
+            });
+        });
         for (BlockPos challenge : level.getChallengeStars(pos)) {
             for (int y = challenge.getY() - 1; y <= challenge.getY() + 1; y++) {
                 for (int x = challenge.getX() - 1; x <= challenge.getX() + 1; x++) {

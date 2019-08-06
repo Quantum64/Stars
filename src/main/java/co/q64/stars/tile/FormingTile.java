@@ -17,10 +17,12 @@ import co.q64.stars.type.forming.BrownFormingBlockType;
 import co.q64.stars.type.forming.GreenFormingBlockType;
 import co.q64.stars.type.forming.RedFormingBlockType;
 import co.q64.stars.type.forming.YellowFormingBlockType;
+import co.q64.stars.util.Capabilities;
 import co.q64.stars.util.DecayManager;
 import co.q64.stars.util.Sounds;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.play.server.SPlayerPositionLookPacket.Flags;
@@ -36,10 +38,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class FormingTile extends SyncTileEntity implements ITickableTileEntity {
-    private static final int FRUIT_CHANCE = 4;
+    private static final int FRUIT_CHANCE = 3;
     private static final Direction[] DIRECTIONS = Direction.values();
     private static final long SALT = 0x1029adbc3847efefL;
 
@@ -53,12 +56,14 @@ public class FormingTile extends SyncTileEntity implements ITickableTileEntity {
     protected @Inject DecayManager decayManager;
     protected @Inject BrownFormingBlockType brownFormingBlockType;
     protected @Inject Sounds sounds;
+    protected @Inject Capabilities capabilities;
 
     private @Setter @Getter boolean calculated = false;
     private @Setter @Getter boolean first = true;
     private @Setter @Getter int iterationsRemaining = 0;
     private @Setter @Getter Direction direction = Direction.UP;
     private @Setter @Getter FormingBlockType formType;
+    private @Setter @Getter double multiplier = 1;
     private @Getter long placed = System.currentTimeMillis();
     private @Getter int buildTime = 0;
 
@@ -84,6 +89,7 @@ public class FormingTile extends SyncTileEntity implements ITickableTileEntity {
         if (formType == brownFormingBlockType && direction == Direction.DOWN) {
             buildTime = 250;
         }
+        this.buildTime = (int) (buildTime * multiplier);
         this.formTicks = buildTime / 50; // 50 ms per tick
         if (first) {
             this.iterationsRemaining = formType.getIterations(getSeed());
@@ -127,11 +133,20 @@ public class FormingTile extends SyncTileEntity implements ITickableTileEntity {
             }
             if (ticks == formTicks) {
                 ((ServerWorld) world).spawnParticle(ParticleTypes.CLOUD, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5, 20, 0.4, 0.4, 0.4, 0.01);
-                sounds.playSound((ServerWorld) world, pos, formType.getSounds(), 1f);
-                if (formType == greenFormingBlockType && world.getDimension() instanceof FleetingDimension && ThreadLocalRandom.current().nextInt(FRUIT_CHANCE) == 0) {
-                    world.setBlockState(getPos(), greenFruitBlock.getDefaultState());
+                sounds.playSound((ServerWorld) world, pos, formType.getSounds(), formType instanceof BrownFormingBlockType ? 0.6f : 1f);
+
+                Consumer<Boolean> task = door -> {
+                    if (formType == greenFormingBlockType && world.getDimension() instanceof FleetingDimension && ThreadLocalRandom.current().nextInt(FRUIT_CHANCE) == 0 && !door) {
+                        world.setBlockState(getPos(), greenFruitBlock.getDefaultState());
+                    } else {
+                        world.setBlockState(getPos(), formType.getFormedBlock().getDefaultState());
+                    }
+                };
+                PlayerEntity closest = world.getClosestPlayer(pos.getX(), pos.getZ(), 100);
+                if (closest == null) {
+                    task.accept(false);
                 } else {
-                    world.setBlockState(getPos(), formType.getFormedBlock().getDefaultState());
+                    capabilities.gardener(closest, gardener -> task.accept(gardener.isOpenDoor()));
                 }
 
                 // Check for primed block
@@ -196,6 +211,7 @@ public class FormingTile extends SyncTileEntity implements ITickableTileEntity {
                                 spawned.setFirst(false);
                                 spawned.setIterationsRemaining(iterationsRemaining - 1);
                                 spawned.setDirection(next);
+                                spawned.setMultiplier(multiplier);
                                 spawned.setup(formType);
                                 spawned.setCalculated(true);
                             });

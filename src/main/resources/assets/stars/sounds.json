@@ -293,6 +293,13 @@
       "stars:dark_4"
     ]
   },
+  "dark_air": {
+    "category": "master",
+    "subtitle": "stars.subtitle.dark_air",
+    "sounds": [
+      "stars:dark_air"
+    ]
+  },
   "seed_1": {
     "category": "master",
     "subtitle": "stars.subtitle.seed_1",
@@ -333,6 +340,27 @@
     "subtitle": "stars.subtitle.empty",
     "sounds": [
       "stars:empty"
+    ]
+  },
+  "key": {
+    "category": "master",
+    "subtitle": "stars.subtitle.key",
+    "sounds": [
+      "stars:key"
+    ]
+  },
+  "bubble": {
+    "category": "master",
+    "subtitle": "stars.subtitle.bubble",
+    "sounds": [
+      "stars:bubble"
+    ]
+  },
+  "pop": {
+    "category": "master",
+    "subtitle": "stars.subtitle.pop",
+    "sounds": [
+      "stars:pop"
     ]
   },
   "ambient_dark": {

@@ -1,7 +1,6 @@
 package co.q64.stars.entity;
 
 import co.q64.stars.util.FleetingManager;
-import co.q64.stars.util.PlayerManager;
 import com.google.auto.factory.AutoFactory;
 import com.google.auto.factory.Provided;
 import lombok.Getter;
@@ -24,14 +23,12 @@ public class PickupEntity extends Entity {
 
     private static final DataParameter<Integer> VARIANT = EntityDataManager.createKey(PickupEntity.class, DataSerializers.VARINT);
     private FleetingManager fleetingManager;
-    private PlayerManager playerManager;
     private @Getter @Setter long locationId;
     private @Getter int age;
 
-    protected PickupEntity(@Provided EntityType<PickupEntity> type, World world, @Provided FleetingManager fleetingManager, @Provided PlayerManager playerManager) {
+    protected PickupEntity(@Provided EntityType<PickupEntity> type, World world, @Provided FleetingManager fleetingManager) {
         super(type, world);
         this.fleetingManager = fleetingManager;
-        this.playerManager = playerManager;
     }
 
     protected boolean canTriggerWalking() {
@@ -55,7 +52,7 @@ public class PickupEntity extends Entity {
                         fleetingManager.touchHeart((ServerPlayerEntity) player);
                         break;
                     case 1:
-                        fleetingManager.addKey((ServerPlayerEntity) player);
+                        fleetingManager.touchKey((ServerPlayerEntity) player);
                         break;
                 }
                 if (getVariant() != VARIANT_ARROW) {

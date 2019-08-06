@@ -68,15 +68,19 @@ import co.q64.stars.qualifier.ConstantQualifiers.Name;
 import co.q64.stars.qualifier.ConstantQualifiers.Version;
 import co.q64.stars.qualifier.SoundQualifiers.Blue;
 import co.q64.stars.qualifier.SoundQualifiers.Brown;
+import co.q64.stars.qualifier.SoundQualifiers.Bubble;
 import co.q64.stars.qualifier.SoundQualifiers.Cyan;
 import co.q64.stars.qualifier.SoundQualifiers.Dark;
+import co.q64.stars.qualifier.SoundQualifiers.DarkAir;
 import co.q64.stars.qualifier.SoundQualifiers.Door;
 import co.q64.stars.qualifier.SoundQualifiers.Empty;
 import co.q64.stars.qualifier.SoundQualifiers.Explode;
 import co.q64.stars.qualifier.SoundQualifiers.ExplodeDark;
 import co.q64.stars.qualifier.SoundQualifiers.Green;
+import co.q64.stars.qualifier.SoundQualifiers.Key;
 import co.q64.stars.qualifier.SoundQualifiers.Misc;
 import co.q64.stars.qualifier.SoundQualifiers.Pink;
+import co.q64.stars.qualifier.SoundQualifiers.Pop;
 import co.q64.stars.qualifier.SoundQualifiers.Purple;
 import co.q64.stars.qualifier.SoundQualifiers.Red;
 import co.q64.stars.qualifier.SoundQualifiers.Seed;
@@ -305,11 +309,19 @@ public interface CommonModule {
     static @Provides @Singleton @Door SoundEvent provideDoorSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("door")); }
     static @Provides @Singleton @Ticking SoundEvent provideTickingSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("ticking")); }
     static @Provides @Singleton @Empty SoundEvent provideEmptySound(Identifiers identifiers) { return new SoundEvent(identifiers.get("empty")); }
+    static @Provides @Singleton @DarkAir SoundEvent provideDarkAirSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("dark_air")); }
+    static @Provides @Singleton @Key SoundEvent provideKeySound(Identifiers identifiers) { return new SoundEvent(identifiers.get("key")); }
+    static @Provides @Singleton @Bubble SoundEvent provideBubbleSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("bubble")); }
+    static @Provides @Singleton @Pop SoundEvent providePopSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("pop")); }
 
     @Binds @IntoSet @Misc SoundEvent bindExplodeDarkSound(@ExplodeDark SoundEvent event);
     @Binds @IntoSet @Misc SoundEvent bindDoorSound(@Door SoundEvent event);
     @Binds @IntoSet @Misc SoundEvent bindTickingSound(@Ticking SoundEvent event);
     @Binds @IntoSet @Misc SoundEvent bindEmptySound(@Empty SoundEvent event);
+    @Binds @IntoSet @Misc SoundEvent bindDarkAirSound(@DarkAir SoundEvent event);
+    @Binds @IntoSet @Misc SoundEvent bindKeySound(@Key SoundEvent event);
+    @Binds @IntoSet @Misc SoundEvent bindBubbleSound(@Bubble SoundEvent event);
+    @Binds @IntoSet @Misc SoundEvent bindPopSound(@Pop SoundEvent event);
 
     // @formatter:on
 }

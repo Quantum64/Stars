@@ -45,7 +45,7 @@ public class DecayBlobFeature extends Feature<NoFeatureConfig> {
         int dist = (int) Math.sqrt(pos.distanceSq(nearestIsland));
         if (dist < 35) {
             dist = rand.nextInt(dist + 1);
-            if (dist < 10) {
+            if (dist < 16) {
                 if (pos.getY() < 130) {
                     return false;
                 }

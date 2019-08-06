@@ -22,9 +22,8 @@ public abstract class SeedItem extends BaseItem {
     }
 
     public ActionResultType onItemUse(ItemUseContext context) {
-        World world = context.getWorld();
         BlockPos pos = context.getPos();
-        if (seedManager.tryGrow(world, pos, type)) {
+        if (seedManager.tryGrow(context.getPlayer(), pos, type)) {
             context.getItem().shrink(1);
             return ActionResultType.SUCCESS;
         }

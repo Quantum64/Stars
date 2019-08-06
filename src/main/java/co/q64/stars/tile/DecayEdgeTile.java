@@ -10,17 +10,22 @@ import co.q64.stars.block.FormingBlock;
 import co.q64.stars.block.GreenFruitBlock;
 import co.q64.stars.block.RedPrimedBlock;
 import co.q64.stars.block.SeedBlock;
+import co.q64.stars.level.LevelType;
 import co.q64.stars.qualifier.SoundQualifiers.Dark;
+import co.q64.stars.qualifier.SoundQualifiers.DarkAir;
 import co.q64.stars.tile.type.DecayEdgeTileType;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.FormingBlockTypes;
 import co.q64.stars.type.forming.RedFormingBlockType;
+import co.q64.stars.util.Capabilities;
 import co.q64.stars.util.DecayManager;
 import co.q64.stars.util.DecayManager.SpecialDecayType;
 import co.q64.stars.util.Sounds;
+import lombok.Setter;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -32,10 +37,12 @@ import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 
 import javax.inject.Inject;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class DecayEdgeTile extends SyncTileEntity implements ITickableTileEntity {
     private static final Direction[] DIRECTIONS = Direction.values();
@@ -50,10 +57,13 @@ public class DecayEdgeTile extends SyncTileEntity implements ITickableTileEntity
     protected @Inject DecayManager decayManager;
     protected @Inject Sounds sounds;
     protected @Inject @Dark Set<SoundEvent> darkSounds;
+    protected @Inject @DarkAir SoundEvent darkAir;
+    protected @Inject Capabilities capabilities; // TODO remove
 
     private Map<Direction, Integer> decayAmount = new HashMap<>();
 
     protected boolean replaceWithStaticBlock = true;
+    private @Setter double multiplier = 1;
     private int ticks = 0;
 
     @Inject
@@ -67,6 +77,19 @@ public class DecayEdgeTile extends SyncTileEntity implements ITickableTileEntity
 
     public void tick() {
         if (!world.isRemote) {
+            if (ticks == 0) {
+                // Temporary hack
+                PlayerEntity closest = ((ServerWorld) world).getClosestPlayer(pos.getX(), pos.getZ(), 1000);
+                if (closest != null) {
+                    capabilities.gardener(closest, gardener -> {
+                        if (gardener.getLevelType() == LevelType.WHITE) {
+                            multiplier = 1.25;
+                        } else if (gardener.getLevelType() == LevelType.ORANGE) {
+                            multiplier = 0.5;
+                        }
+                    });
+                }
+            }
             int counts = 0;
             for (Direction direction : DIRECTIONS) {
                 BlockPos target = getPos().offset(direction);
@@ -74,6 +97,9 @@ public class DecayEdgeTile extends SyncTileEntity implements ITickableTileEntity
                 if (block instanceof DarkAirBlock) {
                     ((ServerWorld) world).spawnParticle(ParticleTypes.LARGE_SMOKE, target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5, 20, 0.5, 0.5, 0.5, 0.01);
                     world.setBlockState(target, airDecayEdgeBlock.getDefaultState());
+                    if (!(this instanceof AirDecayEdgeTile)) {
+                        sounds.playSound((ServerWorld) world, pos, Collections.singleton(darkAir), 2f, 0.8f + (ThreadLocalRandom.current().nextFloat() * 0.4f));
+                    }
                 }
                 if (block instanceof FormedBlock) {
                     FormingBlockType type = types.get(block);
@@ -82,7 +108,7 @@ public class DecayEdgeTile extends SyncTileEntity implements ITickableTileEntity
                         decayingTile.setFormingBlockType(type);
                         decayingTile.setPrimed(block instanceof RedPrimedBlock);
                         decayingTile.setFruit(block instanceof GreenFruitBlock);
-                        decayingTile.setExpectedDecayTime(type.getDecayTime(target.toLong() ^ SALT) * 50);
+                        decayingTile.setExpectedDecayTime(getDecayTicks(type, target) * 50);
                         decayingTile.setCalculated(true);
                     });
                     counts++;
@@ -96,7 +122,7 @@ public class DecayEdgeTile extends SyncTileEntity implements ITickableTileEntity
                             decayingTile.setGrowTicks(seedTile.getGrowTicks());
                             decayingTile.setSeedType(seedTile.getSeedType());
                             decayingTile.setHasSeed(true);
-                            decayingTile.setExpectedDecayTime(seedTile.getFormingBlockType().getDecayTime(target.toLong() ^ SALT) * 50);
+                            decayingTile.setExpectedDecayTime(getDecayTicks(seedTile.getFormingBlockType(), target) * 50);
                             decayingTile.setCalculated(true);
                         });
                     });
@@ -109,7 +135,7 @@ public class DecayEdgeTile extends SyncTileEntity implements ITickableTileEntity
                         continue;
                     }
                     FormingBlockType type = decayingTile.getFormingBlockType();
-                    if (decay > type.getDecayTime(Math.abs(target.toLong() ^ SALT))) {
+                    if (decay > getDecayTicks(type, target)) {
                         ((ServerWorld) world).spawnParticle(ParticleTypes.LARGE_SMOKE, target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5, 20, 0.5, 0.5, 0.5, 0.01);
                         sounds.playRangedSound((ServerWorld) world, target, darkSounds, 10, 0.5f);
                         if (decayingTile.isPrimed()) {
@@ -118,6 +144,9 @@ public class DecayEdgeTile extends SyncTileEntity implements ITickableTileEntity
                             decayManager.createSpecialDecay(world, target, SpecialDecayType.HEART);
                         } else {
                             world.setBlockState(target, decayEdgeBlock.getDefaultState());
+                            Optional.ofNullable((DecayEdgeTile) world.getTileEntity(target)).ifPresent(tile -> {
+                                tile.setMultiplier(multiplier);
+                            });
                         }
                     } else {
                         //decayAmount.put(direction, decay + 10);
@@ -131,8 +160,12 @@ public class DecayEdgeTile extends SyncTileEntity implements ITickableTileEntity
             if (counts == 0) {
                 world.setBlockState(getPos(), getDecayState(decayBlock));
             }
+            ticks++;
         }
-        ticks++;
+    }
+
+    private int getDecayTicks(FormingBlockType type, BlockPos pos) {
+        return (int) (type.getDecayTime(Math.abs(pos.toLong() ^ SALT)) * multiplier);
     }
 
     protected BlockState getDecayState(DecayBlock block) {

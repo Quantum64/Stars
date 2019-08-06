@@ -52,11 +52,15 @@ public class Sounds {
     }
 
     public void playSound(ServerWorld world, BlockPos pos, Set<SoundEvent> sounds, float volume) {
+        playSound(world, pos, sounds, volume, 1f);
+    }
+
+    public void playSound(ServerWorld world, BlockPos pos, Set<SoundEvent> sounds, float volume, float pitch) {
         for (ServerPlayerEntity player : world.getPlayers()) {
             player.getCapability(gardenerCapability.get()).ifPresent(cap -> {
                 SoundEvent event = getSound(cap, sounds);
                 if (System.currentTimeMillis() > cap.getLastPlayed(event) + playLimit.getOrDefault(event, 0L)) {
-                    world.playSound(null, pos, event, SoundCategory.MASTER, volume, 1f);
+                    world.playSound(null, pos, event, SoundCategory.MASTER, volume, pitch);
                     cap.setLastPlayed(event, System.currentTimeMillis());
                 }
             });

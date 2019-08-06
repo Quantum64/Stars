@@ -4,9 +4,7 @@ import co.q64.stars.block.BaseBlock;
 import co.q64.stars.item.BaseItem;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.Item.Properties;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
@@ -41,9 +39,6 @@ public class RegistryListener implements Listener {
     @SubscribeEvent
     public void onItemRegistry(Register<Item> event) {
         event.getRegistry().registerAll(items.get().toArray(new Item[0]));
-        for (BaseBlock block : blocks.get()) { // TODO remove
-            event.getRegistry().register(new BlockItem(block, new Properties()).setRegistryName(block.getRegistryName()));
-        }
     }
 
     @SubscribeEvent

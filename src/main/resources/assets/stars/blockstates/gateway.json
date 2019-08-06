@@ -2,7 +2,23 @@
   "variants": {
     "type=red,complete=false": {"model": "stars:block/gateway_red" },
     "type=red,complete=true": {"model": "stars:block/gateway_red" },
-    "type=blue,complete=false": {"model": "stars:block/gateway_red" },
-    "type=blue,complete=true": {"model": "stars:block/gateway_red" }
+    "type=blue,complete=false": {"model": "stars:block/gateway_blue" },
+    "type=blue,complete=true": {"model": "stars:block/gateway_blue" },
+    "type=cyan,complete=false": {"model": "stars:block/gateway_cyan" },
+    "type=cyan,complete=true": {"model": "stars:block/gateway_cyan" },
+    "type=green,complete=false": {"model": "stars:block/gateway_green" },
+    "type=green,complete=true": {"model": "stars:block/gateway_green" },
+    "type=purple,complete=false": {"model": "stars:block/gateway_purple" },
+    "type=purple,complete=true": {"model": "stars:block/gateway_purple" },
+    "type=pink,complete=false": {"model": "stars:block/gateway_pink" },
+    "type=pink,complete=true": {"model": "stars:block/gateway_pink" },
+    "type=yellow,complete=false": {"model": "stars:block/gateway_yellow" },
+    "type=yellow,complete=true": {"model": "stars:block/gateway_yellow" },
+    "type=orange,complete=false": {"model": "stars:block/gateway_orange" },
+    "type=orange,complete=true": {"model": "stars:block/gateway_orange" },
+    "type=teal,complete=false": {"model": "stars:block/gateway_teal" },
+    "type=teal,complete=true": {"model": "stars:block/gateway_teal" },
+    "type=white,complete=false": {"model": "stars:block/gateway_white" },
+    "type=white,complete=true": {"model": "stars:block/gateway_white" }
   }
 }

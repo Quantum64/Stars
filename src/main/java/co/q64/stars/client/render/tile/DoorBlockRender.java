@@ -10,7 +10,7 @@ import javax.inject.Singleton;
 @Singleton
 public class DoorBlockRender extends TileEntityRenderer<DoorTile> {
     private static final String LINE1 = "You are always home-bound.";
-    private static final String LINE2 = "Press 'H' to lose your way.";
+    private static final String LINE2 = "Hold 'H' to lose your way.";
 
     protected @Inject DoorBlockRender() {}
 

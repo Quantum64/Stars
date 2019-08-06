@@ -75,7 +75,7 @@ public class PlayerManager {
                 List<FormingBlockType> types = (hub || c.isOpenDoor()) ? hubFormingBlocks : formingBlockTypes;
                 while (c.getNextSeeds().size() < c.getSeedVisibility() && seeds > 0) {
                     FormingBlockType offering = pinkFormingBlockType;
-                    if (c.getSeedsSincePink() < 5 + ThreadLocalRandom.current().nextInt(2)) {
+                    if (hub || c.getSeedsSincePink() < 5 + ThreadLocalRandom.current().nextInt(2)) {
                         for (int i = 0; i < 50; i++) {
                             offering = types.stream().skip(ThreadLocalRandom.current().nextInt(types.size())).findFirst().orElseThrow(() -> new RuntimeException("It is impossible for this exception to be thrown."));
                             if (offering != c.getLastSeed()) {
@@ -111,7 +111,7 @@ public class PlayerManager {
     public void grow(ServerPlayerEntity player) {
         capabilities.gardener(player, c -> {
             if (c.getFleetingStage() != FleetingStage.DARK && !c.getNextSeeds().isEmpty()) {
-                if (seedManager.tryGrow(player.getServerWorld(), player.getPosition().offset(Direction.DOWN), c.getNextSeeds().peek())) {
+                if (seedManager.tryGrow(player, player.getPosition().offset(Direction.DOWN), c.getNextSeeds().peek())) {
                     c.getNextSeeds().poll();
                     updateSeeds(player);
                 }

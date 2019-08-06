@@ -21,8 +21,8 @@ import java.util.Set;
 public class PurpleFormingBlockType implements FormingBlockType {
     private final @Getter int id = 1;
     private final @Getter String name = "purple";
-    private final @Getter int buildTime = 3000;
-    private final @Getter int buildTimeOffset = 500;
+    private final @Getter int buildTime = 2500;
+    private final @Getter int buildTimeOffset = 200;
     private final @Getter float r = 141, g = 49, b = 194;
 
     protected @Getter @Inject PurpleFormedBlock formedBlock;

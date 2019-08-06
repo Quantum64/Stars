@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 @Singleton
 public class PlayerOverlayRender {
     private static final long LOST_TIME = 80000;
+    private static final long LOST_TIME_FIRST_BONUS = 5000;
 
     protected @Inject ExtraWorldRender extraWorldRender;
     protected @Inject GuiDynamicRender guiDynamicRender;
@@ -178,7 +179,7 @@ public class PlayerOverlayRender {
                 break;
             case DARK:
                 //extraWorldRender.setAnimationStart(System.currentTimeMillis());
-                fade(FadeMode.FADE_FROM_BLACK, 1000);
+                fade(FadeMode.FADE_FROM_BLACK, 4000);
                 break;
         }
     }
@@ -188,7 +189,7 @@ public class PlayerOverlayRender {
         if (gardenerCapability.getFleetingStage() != lastStage) {
             stageChange(gardenerCapability.getFleetingStage());
             lastStage = gardenerCapability.getFleetingStage();
-            lostTime = lastStage == FleetingStage.DARK ? System.currentTimeMillis() + LOST_TIME : 0;
+            lostTime = lastStage == FleetingStage.DARK ? System.currentTimeMillis() + LOST_TIME + LOST_TIME_FIRST_BONUS : 0;
         }
         int nextSeeds = gardenerCapability.getNextSeeds().size();
         int seeds = gardenerCapability.getSeeds();

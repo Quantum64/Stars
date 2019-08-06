@@ -103,10 +103,10 @@ public class ClientPlayerListener implements Listener {
             if (playerOverlayRender.getLastStage() == FleetingStage.DARK && loseWayKeyBinding.isKeyDown()) {
                 long now = System.currentTimeMillis();
                 long time = playerOverlayRender.getLostTime();
-                if (time - now > 10000) {
-                    time = now + 10000;
+                if (time - now > 70000) {
+                    time = now + 70000;
                 }
-                time -= 250;
+                time -= 500;
                 playerOverlayRender.setLostTime(time);
             }
         }

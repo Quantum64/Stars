@@ -35,6 +35,7 @@ public class SeedTile extends SyncTileEntity implements ITickableTileEntity {
     private @Getter @Setter FormingBlockType seedType;
     private @Getter @Setter boolean primed = false;
     private @Getter @Setter boolean fruit = false;
+    private @Getter @Setter double multiplier = 1;
 
     @Inject
     protected SeedTile(SeedTileType type) {
@@ -107,6 +108,7 @@ public class SeedTile extends SyncTileEntity implements ITickableTileEntity {
                     } else {
                         tile.setFirst(true);
                         tile.setDirection(direction);
+                        tile.setMultiplier(multiplier);
                         tile.setup(seedType);
                         tile.setCalculated(true);
                     }

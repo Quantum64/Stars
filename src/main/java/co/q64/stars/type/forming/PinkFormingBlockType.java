@@ -21,7 +21,7 @@ import java.util.Set;
 public class PinkFormingBlockType implements FormingBlockType {
     private final @Getter int id = 2;
     private final @Getter String name = "pink";
-    private final @Getter int buildTime = 10000;
+    private final @Getter int buildTime = 7000;
     private final @Getter int buildTimeOffset = 0;
     private final @Getter float r = 255, g = 88, b = 245;
 
