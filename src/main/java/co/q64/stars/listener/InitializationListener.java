@@ -11,11 +11,13 @@ import co.q64.stars.dimension.Dimensions;
 import co.q64.stars.net.PacketManager;
 import co.q64.stars.util.PlayerManager;
 import co.q64.stars.util.Scheduler;
+import co.q64.stars.util.Structures;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 
@@ -37,6 +39,7 @@ public class InitializationListener implements Listener {
     protected @Inject HubCapabilityFactory hubCapabilityFactory;
     protected @Inject Scheduler scheduler;
     protected @Inject PlayerManager playerManager;
+    protected @Inject Structures structures;
 
     protected @Inject InitializationListener() {}
 
@@ -69,6 +72,11 @@ public class InitializationListener implements Listener {
     @SubscribeEvent
     public void onServerStart(FMLServerStartingEvent event) {
         command.register(event.getCommandDispatcher());
+    }
+
+    @SubscribeEvent
+    public void onServerAboutToStart(FMLServerAboutToStartEvent event) {
+        event.getServer().getResourceManager().addReloadListener(structures);
     }
 
     @SubscribeEvent

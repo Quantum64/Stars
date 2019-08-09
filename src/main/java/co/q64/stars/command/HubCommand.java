@@ -43,7 +43,7 @@ public class HubCommand {
             if (world.getDimension() instanceof HubDimension) {
                 world.getCapability(hubCapability.get()).ifPresent(hub -> {
                     hub.setNextIndex(id);
-                    context.getSource().sendFeedback(new StringTextComponent("Next hub index for world '" + world.toString() + "' updated to " + id + "."), true);
+                    context.getSource().sendFeedback(new StringTextComponent("Next hub index for world '" + world.getDimension().getType().getRegistryName() + "' updated to " + id + "."), true);
                 });
             }
         }
@@ -55,7 +55,7 @@ public class HubCommand {
         int id = IntegerArgumentType.getInteger(context, "id");
         player.getCapability(gardenerCapability.get()).ifPresent(gardener -> {
             gardener.setHubIndex(id);
-            context.getSource().sendFeedback(new StringTextComponent("Updated hub index for '" + player.getName() + "' to " + id + "."), true);
+            context.getSource().sendFeedback(new StringTextComponent("Updated hub index for '" + player.getName().getFormattedText() + "' to " + id + "."), true);
         });
         return 0;
     }
@@ -63,7 +63,7 @@ public class HubCommand {
     private int info(CommandContext<CommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity player = EntityArgument.getPlayer(context, "player");
         player.getCapability(gardenerCapability.get()).ifPresent(gardener -> {
-            context.getSource().sendFeedback(new StringTextComponent("Hub index for '" + player.getName() + "' is " + gardener.getHubIndex() + "."), true);
+            context.getSource().sendFeedback(new StringTextComponent("Hub index for '" + player.getName().getFormattedText() + "' is " + gardener.getHubIndex() + "."), true);
         });
         return 0;
     }

@@ -1,18 +1,15 @@
 package co.q64.stars.util;
 
-import co.q64.stars.block.GatewayBlock;
-import co.q64.stars.block.GreyFormedBlock;
 import co.q64.stars.dimension.Dimensions;
-import co.q64.stars.level.LevelType;
 import co.q64.stars.net.PacketManager;
 import co.q64.stars.net.packets.ClientFadePacket.FadeMode;
 import co.q64.stars.type.FleetingStage;
+import co.q64.stars.util.Structures.StructureType;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -28,10 +25,11 @@ public class HubManager {
     protected @Inject PacketManager packetManager;
     protected @Inject SpawnpointManager spawnpointManager;
     protected @Inject PlayerManager playerManager;
-    protected @Inject GreyFormedBlock greyFormedBlock;
+    //protected @Inject GreyFormedBlock greyFormedBlock;
     protected @Inject Scheduler scheduler;
     protected @Inject Capabilities capabilities;
-    protected @Inject GatewayBlock gatewayBlock;
+    //protected @Inject GatewayBlock gatewayBlock;
+    protected @Inject Structures structures;
 
     protected @Inject HubManager() {}
 
@@ -106,7 +104,8 @@ public class HubManager {
     }
 
     //TODO the biggest todo
-    private void setupSpawnpoint(World world, BlockPos pos) {
+    private void setupSpawnpoint(World world, BlockPos spawn) {
+        /*
         for (int y = pos.getY() - 8; y < pos.getY(); y++) {
             for (int x = pos.getX() - 2; x <= pos.getX() + 2; x++) {
                 for (int z = pos.getZ() - 2; z <= pos.getZ() + 2; z++) {
@@ -115,6 +114,8 @@ public class HubManager {
             }
         }
         world.setBlockState(pos.offset(Direction.DOWN), gatewayBlock.getDefaultState().with(GatewayBlock.TYPE, LevelType.RED));
+         */
+        structures.get(StructureType.HUB_WHITE).place(world, spawn.add(-2, -2, -2));
     }
 
     private void createCube(World world, Block block, BlockPos start, BlockPos end) {
