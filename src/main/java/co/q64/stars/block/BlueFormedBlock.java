@@ -12,4 +12,15 @@ public class BlueFormedBlock extends FormedBlock {
     protected @Inject BlueFormedBlock() {
         super("blue_formed", Properties.create(Material.EARTH).sound(SoundType.GROUND).hardnessAndResistance(0f, 0f));
     }
+
+    private BlueFormedBlock(String id, Properties properties) {
+        super(id, properties);
+    }
+
+    @Singleton
+    public static class BlueFormedBlockHard extends BlueFormedBlock implements HardBlock {
+        protected @Inject BlueFormedBlockHard() {
+            super("blue_formed_hard", Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(-1f, 3600000f));
+        }
+    }
 }

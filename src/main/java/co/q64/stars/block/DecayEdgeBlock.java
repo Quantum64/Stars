@@ -33,4 +33,20 @@ public class DecayEdgeBlock extends BaseBlock {
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         return tileFactory.get();
     }
+
+    private DecayEdgeBlock(String id, Properties properties) {
+        super(id, properties);
+    }
+
+    @Singleton
+    public static class DecayEdgeBlockSolid extends DecayEdgeBlock {
+        protected @Inject DecayEdgeBlockSolid() {
+            super("decay_edge_solid", Properties.create(Material.GLASS).hardnessAndResistance(-1f, 3600000f));
+        }
+
+        @Override
+        public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+            return VoxelShapes.fullCube();
+        }
+    }
 }

@@ -34,4 +34,15 @@ public class DecayingBlock extends BaseBlock {
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         return tileFactory.get();
     }
+
+    private DecayingBlock(String id, Properties properties) {
+        super(id, properties);
+    }
+
+    @Singleton
+    public static class DecayingBlockHard extends DecayingBlock implements HardBlock {
+        protected @Inject DecayingBlockHard() {
+            super("decaying_hard", Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(-1f, 3600000f));
+        }
+    }
 }

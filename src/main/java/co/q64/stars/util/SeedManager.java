@@ -5,6 +5,7 @@ import co.q64.stars.block.FormedBlock;
 import co.q64.stars.block.GreenFruitBlock;
 import co.q64.stars.block.RedPrimedBlock;
 import co.q64.stars.block.SeedBlock;
+import co.q64.stars.block.SeedBlock.SeedBlockHard;
 import co.q64.stars.level.LevelType;
 import co.q64.stars.tile.DecayingTile;
 import co.q64.stars.tile.SeedTile;
@@ -25,6 +26,7 @@ import java.util.Optional;
 public class SeedManager {
     protected @Inject FormingBlockTypes types;
     protected @Inject SeedBlock seedBlock;
+    protected @Inject SeedBlockHard seedBlockHard;
     protected @Inject Capabilities capabilities;
 
     protected @Inject SeedManager() {}
@@ -41,16 +43,16 @@ public class SeedManager {
             if (types.get(block) == type) {
                 return false;
             }
-            world.setBlockState(pos, seedBlock.getDefaultState(), 3);
-            if (world.isRemote) {
-                Optional.ofNullable((SeedTile) world.getTileEntity(pos)).ifPresent(tile -> {
-                    tile.setFormingBlockType(types.get(block));
-                    tile.setPrimed(primed);
-                    tile.setSeedType(type);
-                    tile.setCalculated(true);
-                });
-            } else {
-                capabilities.gardener(player, gardener -> {
+            capabilities.gardener(player, gardener -> {
+                world.setBlockState(pos, gardener.getLevelType() == LevelType.PURPLE ? seedBlockHard.getDefaultState() : seedBlock.getDefaultState(), 3);
+                if (world.isRemote) {
+                    Optional.ofNullable((SeedTile) world.getTileEntity(pos)).ifPresent(tile -> {
+                        tile.setFormingBlockType(types.get(block));
+                        tile.setPrimed(primed);
+                        tile.setSeedType(type);
+                        tile.setCalculated(true);
+                    });
+                } else {
                     Optional.ofNullable((SeedTile) world.getTileEntity(pos)).ifPresent(tile -> {
                         tile.setFormingBlockType(types.get(block));
                         tile.setPrimed(primed);
@@ -64,8 +66,8 @@ public class SeedManager {
                             }
                         }
                     });
-                });
-            }
+                }
+            });
             return true;
         }
         if (block instanceof DecayingBlock) {

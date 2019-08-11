@@ -4,10 +4,12 @@ import co.q64.stars.block.DarknessEdgeBlock;
 import co.q64.stars.block.DecayBlock;
 import co.q64.stars.block.GatewayBlock;
 import co.q64.stars.block.OrangeFormedBlock;
+import co.q64.stars.block.OrangeFormedBlock.OrangeFormedBlockHard;
 import co.q64.stars.block.SpecialDecayBlock;
 import co.q64.stars.block.SpecialDecayEdgeBlock;
 import co.q64.stars.capability.GardenerCapability;
-import co.q64.stars.dimension.Dimensions;
+import co.q64.stars.dimension.fleeting.FleetingDimension.FleetingDimensionTemplate;
+import co.q64.stars.dimension.fleeting.FleetingSolidDimension.FleetingSolidDimensionTemplate;
 import co.q64.stars.entity.PickupEntity;
 import co.q64.stars.level.Level;
 import co.q64.stars.level.LevelManager;
@@ -48,8 +50,8 @@ import java.util.stream.Collectors;
 
 @Singleton
 public class FleetingManager {
-    protected @Inject Dimensions dimensions;
     protected @Inject OrangeFormedBlock orangeFormedBlock;
+    protected @Inject OrangeFormedBlockHard orangeFormedBlockHard;
     protected @Inject DecayBlock decayBlock;
     protected @Inject DarknessEdgeBlock darknessEdgeBlock;
     protected @Inject PacketManager packetManager;
@@ -66,6 +68,8 @@ public class FleetingManager {
     protected @Inject @Key SoundEvent keySound;
     protected @Inject @Bubble SoundEvent bubbleSound;
     protected @Inject @Pop SoundEvent popSound;
+    protected @Inject FleetingDimensionTemplate fleetingDimensionTemplate;
+    protected @Inject FleetingSolidDimensionTemplate fleetingSolidDimensionTemplate;
 
     private Set<FormingBlockType> formingBlockTypes;
     private Map<UUID, Integer> levitationQueue = new HashMap<>();
@@ -87,7 +91,7 @@ public class FleetingManager {
         }
         BlockPos spawnpoint = spawnpointManager.getSpawnpoint(index);
         index++;
-        ServerWorld spawnWorld = DimensionManager.getWorld(player.getServer(), dimensions.getFleetingDimensionType(), false, true);
+        ServerWorld spawnWorld = getSpawnWorld(player);
         capabilities.gardener(player, c -> {
             Level level = levelManager.getLevel(c.getLevelType());
             if (c.isOpenChallengeDoor()) {
@@ -97,7 +101,7 @@ public class FleetingManager {
             }
         });
         Runnable task = () -> {
-            ServerWorld world = DimensionManager.getWorld(player.getServer(), dimensions.getFleetingDimensionType(), false, true);
+            ServerWorld world = getSpawnWorld(player);
             capabilities.gardener(player, c -> {
                 player.setMotion(0, 0, 0);
                 player.teleport(world, spawnpoint.getX() + 0.5, showEffect ? spawnpoint.getY() + (c.isOpenChallengeDoor() ? 1 : 10) : spawnpoint.getY(), spawnpoint.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
@@ -234,17 +238,23 @@ public class FleetingManager {
         }
     }
 
+    private ServerWorld getSpawnWorld(ServerPlayerEntity player) {
+        return DimensionManager.getWorld(player.getServer(), player.getCapability(gardenerCapability.get())
+                .map(gardener -> gardener.getLevelType() == LevelType.TEAL ? fleetingSolidDimensionTemplate.getType() : fleetingDimensionTemplate.getType())
+                .orElse(fleetingDimensionTemplate.getType()), false, true);
+    }
+
     private void setupSpawnpoint(ServerPlayerEntity player, World world, BlockPos pos, Level level) {
-        for (int y = pos.getY() - 8; y < pos.getY(); y++) {
-            for (int x = pos.getX() - 2; x <= pos.getX() + 2; x++) {
-                for (int z = pos.getZ() - 2; z <= pos.getZ() + 2; z++) {
-                    world.setBlockState(new BlockPos(x, y, z), orangeFormedBlock.getDefaultState());
+        capabilities.gardener(player, gardener -> {
+            for (int y = pos.getY() - 8; y < pos.getY(); y++) {
+                for (int x = pos.getX() - 2; x <= pos.getX() + 2; x++) {
+                    for (int z = pos.getZ() - 2; z <= pos.getZ() + 2; z++) {
+                        world.setBlockState(new BlockPos(x, y, z), gardener.getLevelType() == LevelType.PURPLE ? orangeFormedBlockHard.getDefaultState() : orangeFormedBlock.getDefaultState());
+                    }
                 }
             }
-        }
-        BlockPos door = new BlockPos(pos.getX(), pos.getY() - 8, pos.getZ());
-        decayManager.createSpecialDecay(world, door, SpecialDecayType.DOOR);
-        capabilities.gardener(player, gardener -> {
+            BlockPos door = new BlockPos(pos.getX(), pos.getY() - 8, pos.getZ());
+            decayManager.createSpecialDecay(world, door, SpecialDecayType.DOOR);
             Optional.ofNullable((DecayEdgeTile) world.getTileEntity(door)).ifPresent(tile -> {
                 if (gardener.getLevelType() == LevelType.WHITE) {
                     tile.setMultiplier(1.25);
@@ -252,17 +262,17 @@ public class FleetingManager {
                     tile.setMultiplier(0.5);
                 }
             });
-        });
-        for (BlockPos challenge : level.getChallengeStars(pos)) {
-            for (int y = challenge.getY() - 1; y <= challenge.getY() + 1; y++) {
-                for (int x = challenge.getX() - 1; x <= challenge.getX() + 1; x++) {
-                    for (int z = challenge.getZ() - 1; z <= challenge.getZ() + 1; z++) {
-                        world.setBlockState(new BlockPos(x, y, z), decayBlock.getDefaultState());
+            for (BlockPos challenge : level.getChallengeStars(pos)) {
+                for (int y = challenge.getY() - 1; y <= challenge.getY() + 1; y++) {
+                    for (int x = challenge.getX() - 1; x <= challenge.getX() + 1; x++) {
+                        for (int z = challenge.getZ() - 1; z <= challenge.getZ() + 1; z++) {
+                            world.setBlockState(new BlockPos(x, y, z), decayBlock.getDefaultState());
+                        }
                     }
                 }
+                decayManager.createSpecialDecay(world, challenge, SpecialDecayType.CHALLENGE_DOOR);
             }
-            decayManager.createSpecialDecay(world, challenge, SpecialDecayType.CHALLENGE_DOOR);
-        }
+        });
     }
 
     private void createKey(World world, BlockPos key) {

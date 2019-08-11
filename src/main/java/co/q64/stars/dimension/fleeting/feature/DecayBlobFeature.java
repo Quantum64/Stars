@@ -26,13 +26,19 @@ public class DecayBlobFeature extends Feature<NoFeatureConfig> {
     private static final int BLOB_SIZE = 16;
     private static final Direction[] DIRECTIONS = Direction.values();
 
-    protected @Inject DecayBlock decayBlock;
     protected @Inject SpecialDecayEdgeBlock specialDecayEdgeBlock;
     protected @Inject DecayManager decayManager;
 
-    @Inject
-    protected DecayBlobFeature(Identifiers identifiers) {
+    private DecayBlock decayBlock;
+
+    protected DecayBlobFeature(DecayBlock decayBlock) {
         super(NoFeatureConfig::deserialize);
+        this.decayBlock = decayBlock;
+    }
+
+    @Inject
+    protected DecayBlobFeature(Identifiers identifiers, DecayBlock decayBlock) {
+        this(decayBlock);
         setRegistryName(identifiers.get("decay_blob"));
     }
 

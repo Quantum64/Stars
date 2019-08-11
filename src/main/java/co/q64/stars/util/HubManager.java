@@ -1,6 +1,6 @@
 package co.q64.stars.util;
 
-import co.q64.stars.dimension.Dimensions;
+import co.q64.stars.dimension.hub.HubDimension.HubDimensionTemplate;
 import co.q64.stars.net.PacketManager;
 import co.q64.stars.net.packets.ClientFadePacket.FadeMode;
 import co.q64.stars.type.FleetingStage;
@@ -21,15 +21,13 @@ import javax.inject.Singleton;
 
 @Singleton
 public class HubManager {
-    protected @Inject Dimensions dimensions;
     protected @Inject PacketManager packetManager;
     protected @Inject SpawnpointManager spawnpointManager;
     protected @Inject PlayerManager playerManager;
-    //protected @Inject GreyFormedBlock greyFormedBlock;
     protected @Inject Scheduler scheduler;
     protected @Inject Capabilities capabilities;
-    //protected @Inject GatewayBlock gatewayBlock;
     protected @Inject Structures structures;
+    protected @Inject HubDimensionTemplate hubDimensionTemplate;
 
     protected @Inject HubManager() {}
 
@@ -129,6 +127,6 @@ public class HubManager {
     }
 
     public ServerWorld getWorld(MinecraftServer server) {
-        return DimensionManager.getWorld(server, dimensions.getHubDimensionType(), false, true);
+        return DimensionManager.getWorld(server, hubDimensionTemplate.getType(), false, true);
     }
 }

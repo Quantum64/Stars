@@ -4,6 +4,7 @@ import co.q64.stars.block.AirDecayBlock;
 import co.q64.stars.block.AirDecayEdgeBlock;
 import co.q64.stars.block.DecayBlock;
 import co.q64.stars.block.DecayEdgeBlock;
+import co.q64.stars.block.DecayEdgeBlock.DecayEdgeBlockSolid;
 import co.q64.stars.block.SpecialDecayBlock;
 import co.q64.stars.block.SpecialDecayEdgeBlock;
 import co.q64.stars.entity.PickupEntity;
@@ -27,6 +28,7 @@ public class DecayManager {
     protected @Inject DecayBlock decayBlock;
     protected @Inject AirDecayEdgeBlock airDecayEdgeBlock;
     protected @Inject DecayEdgeBlock decayEdgeBlock;
+    protected @Inject DecayEdgeBlockSolid decayEdgeBlockSolid;
     protected @Inject SpecialDecayEdgeBlock specialDecayEdgeBlock;
     protected @Inject EntityType<PickupEntity> pickupEntityType;
 
@@ -40,6 +42,8 @@ public class DecayManager {
                 world.setBlockState(target, airDecayEdgeBlock.getDefaultState());
             } else if (state.getBlock() instanceof SpecialDecayBlock) {
                 world.setBlockState(target, specialDecayEdgeBlock.getDefaultState().with(SpecialDecayBlock.TYPE, state.get(SpecialDecayBlock.TYPE)));
+            } else if (state.getBlock() instanceof DecayEdgeBlockSolid) {
+                world.setBlockState(target, decayEdgeBlockSolid.getDefaultState());
             } else if (state.getBlock() instanceof DecayBlock) {
                 world.setBlockState(target, decayEdgeBlock.getDefaultState());
             }

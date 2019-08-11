@@ -28,6 +28,8 @@ public interface FormingBlockType {
 
     public Block getFormedBlock();
 
+    public Block getFormedBlockHard();
+
     public String getName();
 
     public int getBuildTimeOffset();

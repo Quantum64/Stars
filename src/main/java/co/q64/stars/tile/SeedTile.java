@@ -1,7 +1,9 @@
 package co.q64.stars.tile;
 
 import co.q64.stars.block.FormingBlock;
+import co.q64.stars.block.HardBlock;
 import co.q64.stars.block.RedFormedBlock;
+import co.q64.stars.block.RedFormedBlock.RedFormedBlockHard;
 import co.q64.stars.qualifier.SoundQualifiers.Ticking;
 import co.q64.stars.tile.type.SeedTileType;
 import co.q64.stars.type.FormingBlockType;
@@ -25,6 +27,7 @@ public class SeedTile extends SyncTileEntity implements ITickableTileEntity {
     protected @Inject FormingBlock formingBlock;
     protected @Inject RedFormingBlockType redFormingBlockType;
     protected @Inject RedFormedBlock redFormedBlock;
+    protected @Inject RedFormedBlockHard redFormedBlockHard;
     protected @Inject Sounds sounds;
     protected @Inject @Ticking SoundEvent tickingSound;
 
@@ -110,19 +113,21 @@ public class SeedTile extends SyncTileEntity implements ITickableTileEntity {
                         tile.setDirection(direction);
                         tile.setMultiplier(multiplier);
                         tile.setup(seedType);
+                        tile.setHard(getBlockState().getBlock() instanceof HardBlock);
                         tile.setCalculated(true);
                     }
                 }
             }
             if (growTicks < 0) {
+                boolean hard = getBlockState().getBlock() instanceof HardBlock;
                 if (direction == null) {
                     return;
                 }
                 if (world.getBlockState(pos.offset(direction)).getBlock() != formingBlock) {
                     if (formingBlockType instanceof RedFormingBlockType) {
-                        world.setBlockState(pos, redFormedBlock.getDefaultState());
+                        world.setBlockState(pos, hard ? redFormedBlockHard.getDefaultState() : redFormedBlock.getDefaultState());
                     } else {
-                        world.setBlockState(pos, formingBlockType.getFormedBlock().getDefaultState());
+                        world.setBlockState(pos, hard ? formingBlockType.getFormedBlockHard().getDefaultState() : formingBlockType.getFormedBlock().getDefaultState());
                     }
                 }
             }

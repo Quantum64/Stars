@@ -15,11 +15,11 @@ import net.minecraftforge.client.ForgeIngameGui;
 import net.minecraftforge.client.event.InputEvent.KeyInputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.event.TickEvent.ClientTickEvent;
+import net.minecraftforge.event.TickEvent.Phase;
+import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
-import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

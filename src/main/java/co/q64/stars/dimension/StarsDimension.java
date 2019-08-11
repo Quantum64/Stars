@@ -1,6 +1,5 @@
 package co.q64.stars.dimension;
 
-import com.google.auto.factory.AutoFactory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;

@@ -1,11 +1,11 @@
 package co.q64.stars.type.forming;
 
 import co.q64.stars.block.GreyFormedBlock;
-import co.q64.stars.block.OrangeFormedBlock;
 import co.q64.stars.item.YellowSeedItem;
 import co.q64.stars.qualifier.SoundQualifiers.Dark;
 import co.q64.stars.type.FormingBlockType;
 import lombok.Getter;
+import net.minecraft.block.Block;
 import net.minecraft.util.Direction;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -42,6 +42,10 @@ public class GreyFormingBlockType implements FormingBlockType {
 
     public List<Direction> getNextDirections(World world, BlockPos position, Direction last, int iterations) {
         return Collections.emptyList();
+    }
+
+    public Block getFormedBlockHard() {
+        return formedBlock;
     }
 
     public int getDecayTime(long seed) {

@@ -1,6 +1,8 @@
 package co.q64.stars.type.forming;
 
+import co.q64.stars.block.GreenFormedBlock.GreenFormedBlockHard;
 import co.q64.stars.block.PurpleFormedBlock;
+import co.q64.stars.block.PurpleFormedBlock.PurpleFormedBlockHard;
 import co.q64.stars.item.PurpleSeedItem;
 import co.q64.stars.qualifier.SoundQualifiers.Purple;
 import co.q64.stars.type.FormingBlockType;
@@ -26,6 +28,7 @@ public class PurpleFormingBlockType implements FormingBlockType {
     private final @Getter float r = 141, g = 49, b = 194;
 
     protected @Getter @Inject PurpleFormedBlock formedBlock;
+    protected @Getter @Inject PurpleFormedBlockHard formedBlockHard;
     protected @Getter @Inject Provider<PurpleSeedItem> itemProvider;
     protected @Getter @Inject @Purple Set<SoundEvent> sounds;
 

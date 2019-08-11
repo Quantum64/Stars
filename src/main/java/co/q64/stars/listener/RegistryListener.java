@@ -8,14 +8,19 @@ import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.placement.Placement;
+import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.event.RegistryEvent.Register;
+import net.minecraftforge.event.world.RegisterDimensionsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import java.util.Optional;
 import java.util.Set;
 
 @Singleton
@@ -28,6 +33,7 @@ public class RegistryListener implements Listener {
     protected @Inject Provider<Set<Biome>> biomes;
     protected @Inject Provider<Set<Placement<?>>> placements;
     protected @Inject Provider<Set<Set<SoundEvent>>> soundEvents;
+    protected @Inject Provider<Set<ModDimension>> dimensions;
 
     protected @Inject RegistryListener() {}
 
@@ -69,5 +75,24 @@ public class RegistryListener implements Listener {
     @SubscribeEvent
     public void onSoundEventRegistry(Register<SoundEvent> event) {
         event.getRegistry().registerAll(soundEvents.get().stream().flatMap(Set::stream).map(sound -> sound.setRegistryName(sound.getName())).toArray(SoundEvent[]::new));
+    }
+
+    @SubscribeEvent
+    public void onDimensionsRegistry(Register<ModDimension> event) {
+        event.getRegistry().registerAll(dimensions.get().toArray(new ModDimension[0]));
+    }
+
+    @SubscribeEvent
+    public void onRegisterDimensions(RegisterDimensionsEvent event) {
+        // Crazy stupid thing where you have to "manually" register the dimensions if they
+        // haven't been previously saved because for some reason the above event isn't
+        // able to handle that for you
+        // https://gyazo.com/83e7d02c650aef81ce03ed342f760a5e
+        for (ModDimension dimension : dimensions.get()) {
+            if (!Optional.ofNullable(DimensionType.byName(dimension.getRegistryName())).isPresent()) {
+                // The dimension hasn't been saved in this world before so register it manually
+                DimensionManager.registerDimension(dimension.getRegistryName(), dimension, null, false);
+            }
+        }
     }
 }

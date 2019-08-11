@@ -1,6 +1,8 @@
 package co.q64.stars.type.forming;
 
+import co.q64.stars.block.BlueFormedBlock.BlueFormedBlockHard;
 import co.q64.stars.block.CyanFormedBlock;
+import co.q64.stars.block.CyanFormedBlock.CyanFormedBlockHard;
 import co.q64.stars.item.BlueSeedItem;
 import co.q64.stars.item.CyanSeedItem;
 import co.q64.stars.qualifier.SoundQualifiers.Cyan;
@@ -28,6 +30,7 @@ public class CyanFormingBlockType implements FormingBlockType {
     private final @Getter float r = 167, g = 255, b = 250;
 
     protected @Getter @Inject CyanFormedBlock formedBlock;
+    protected @Getter @Inject CyanFormedBlockHard formedBlockHard;
     protected @Getter @Inject Provider<CyanSeedItem> itemProvider;
     protected @Getter @Inject @Cyan Set<SoundEvent> sounds;
 

@@ -6,12 +6,14 @@ import co.q64.stars.block.TubeAirBlock;
 import co.q64.stars.block.TubeDarknessBlock;
 import co.q64.stars.capability.GardenerCapability;
 import co.q64.stars.dimension.hub.HubDimension;
+import co.q64.stars.level.LevelType;
 import co.q64.stars.net.PacketManager;
 import co.q64.stars.qualifier.SoundQualifiers.Door;
 import co.q64.stars.qualifier.SoundQualifiers.Seed;
 import co.q64.stars.tile.DoorTile;
 import co.q64.stars.type.FleetingStage;
 import co.q64.stars.type.FormingBlockType;
+import co.q64.stars.type.forming.CyanFormingBlockType;
 import co.q64.stars.type.forming.GreenFormingBlockType;
 import co.q64.stars.type.forming.PinkFormingBlockType;
 import co.q64.stars.type.forming.YellowFormingBlockType;
@@ -41,6 +43,7 @@ public class PlayerManager {
     protected @Inject YellowFormingBlockType yellowFormingBlockType;
     protected @Inject GreenFormingBlockType greenFormingBlockType;
     protected @Inject PinkFormingBlockType pinkFormingBlockType;
+    protected @Inject CyanFormingBlockType cyanFormingBlockType;
     protected @Inject Provider<Capability<GardenerCapability>> gardenerCapability;
     protected @Inject Sounds sounds;
     protected @Inject @Door SoundEvent doorSound;
@@ -83,14 +86,30 @@ public class PlayerManager {
                             }
                         }
                     }
+                    if (!hub && c.getLevelType() == LevelType.CYAN) {
+                        if (ThreadLocalRandom.current().nextInt(4) == 0) {
+                            offering = cyanFormingBlockType;
+                        }
+                    }
                     if (c.getFleetingStage() == FleetingStage.LIGHT) {
-                        if (c.getTotalSeeds() == 0) {
-                            offering = pinkFormingBlockType;
-                        } else if (c.getTotalSeeds() == 1) {
-                            offering = yellowFormingBlockType;
-                        } else if (c.getTotalSeeds() == 2) {
-                            offering = greenFormingBlockType;
-                            c.setSeedsSincePink(0);
+                        if (c.getLevelType() == LevelType.CYAN) {
+                            if (c.getTotalSeeds() == 0) {
+                                offering = cyanFormingBlockType;
+                            } else if (c.getTotalSeeds() == 1) {
+                                offering = pinkFormingBlockType;
+                            } else if (c.getTotalSeeds() == 2) {
+                                offering = yellowFormingBlockType;
+                                c.setSeedsSincePink(0);
+                            }
+                        } else {
+                            if (c.getTotalSeeds() == 0) {
+                                offering = pinkFormingBlockType;
+                            } else if (c.getTotalSeeds() == 1) {
+                                offering = yellowFormingBlockType;
+                            } else if (c.getTotalSeeds() == 2) {
+                                offering = greenFormingBlockType;
+                                c.setSeedsSincePink(0);
+                            }
                         }
                     }
                     c.setSeedsSincePink(offering == pinkFormingBlockType ? 0 : c.getSeedsSincePink() + 1);

@@ -1,19 +1,25 @@
 package co.q64.stars.tile;
 
 import co.q64.stars.block.AirDecayEdgeBlock;
+import co.q64.stars.block.CyanFormedBlock;
+import co.q64.stars.block.DarkAirBlock;
 import co.q64.stars.block.DecayEdgeBlock;
 import co.q64.stars.block.DecayingBlock;
 import co.q64.stars.block.FormedBlock;
 import co.q64.stars.block.FormingBlock;
 import co.q64.stars.block.GatewayBlock;
 import co.q64.stars.block.GreenFruitBlock;
+import co.q64.stars.block.GreenFruitBlock.GreenFruitBlockHard;
 import co.q64.stars.block.RedPrimedBlock;
+import co.q64.stars.block.SpecialAirBlock;
 import co.q64.stars.dimension.fleeting.FleetingDimension;
 import co.q64.stars.dimension.hub.HubDimension;
+import co.q64.stars.level.LevelType;
 import co.q64.stars.tile.type.FormingTileType;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.FormingBlockTypes;
 import co.q64.stars.type.forming.BrownFormingBlockType;
+import co.q64.stars.type.forming.CyanFormingBlockType;
 import co.q64.stars.type.forming.GreenFormingBlockType;
 import co.q64.stars.type.forming.RedFormingBlockType;
 import co.q64.stars.type.forming.YellowFormingBlockType;
@@ -22,6 +28,8 @@ import co.q64.stars.util.DecayManager;
 import co.q64.stars.util.Sounds;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -33,10 +41,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 
 import javax.inject.Inject;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Queue;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -53,10 +64,12 @@ public class FormingTile extends SyncTileEntity implements ITickableTileEntity {
     protected @Inject RedFormingBlockType redFormingBlockType;
     protected @Inject GreenFormingBlockType greenFormingBlockType;
     protected @Inject GreenFruitBlock greenFruitBlock;
+    protected @Inject GreenFruitBlockHard greenFruitBlockHard;
     protected @Inject DecayManager decayManager;
     protected @Inject BrownFormingBlockType brownFormingBlockType;
     protected @Inject Sounds sounds;
     protected @Inject Capabilities capabilities;
+    protected @Inject CyanFormedBlock cyanFormedBlock;
 
     private @Setter @Getter boolean calculated = false;
     private @Setter @Getter boolean first = true;
@@ -64,6 +77,7 @@ public class FormingTile extends SyncTileEntity implements ITickableTileEntity {
     private @Setter @Getter Direction direction = Direction.UP;
     private @Setter @Getter FormingBlockType formType;
     private @Setter @Getter double multiplier = 1;
+    private @Setter @Getter boolean hard = false;
     private @Getter long placed = System.currentTimeMillis();
     private @Getter int buildTime = 0;
 
@@ -137,9 +151,9 @@ public class FormingTile extends SyncTileEntity implements ITickableTileEntity {
 
                 Consumer<Boolean> task = door -> {
                     if (formType == greenFormingBlockType && world.getDimension() instanceof FleetingDimension && ThreadLocalRandom.current().nextInt(FRUIT_CHANCE) == 0 && !door) {
-                        world.setBlockState(getPos(), greenFruitBlock.getDefaultState());
+                        world.setBlockState(getPos(), hard ? greenFruitBlockHard.getDefaultState() : greenFruitBlock.getDefaultState());
                     } else {
-                        world.setBlockState(getPos(), formType.getFormedBlock().getDefaultState());
+                        world.setBlockState(getPos(), hard ? formType.getFormedBlockHard().getDefaultState() : formType.getFormedBlock().getDefaultState());
                     }
                 };
                 PlayerEntity closest = world.getClosestPlayer(pos.getX(), pos.getZ(), 100);
@@ -178,7 +192,6 @@ public class FormingTile extends SyncTileEntity implements ITickableTileEntity {
                     }
 
                     decayManager.activateDecay((ServerWorld) world, pos);
-
                     if (iterationsRemaining > 0) {
                         List<Direction> directions = formType.getNextDirections(world, pos, direction, iterationsRemaining - 1);
                         if (formType instanceof BrownFormingBlockType && direction == Direction.DOWN && directions.isEmpty()) {
@@ -212,8 +225,61 @@ public class FormingTile extends SyncTileEntity implements ITickableTileEntity {
                                 spawned.setIterationsRemaining(iterationsRemaining - 1);
                                 spawned.setDirection(next);
                                 spawned.setMultiplier(multiplier);
+                                spawned.setHard(hard);
                                 spawned.setup(formType);
                                 spawned.setCalculated(true);
+                            });
+                        }
+                        if (world.getDimension() instanceof FleetingDimension) {
+                            if (formType instanceof GreenFormingBlockType) {
+                                capabilities.gardener(closest, gardener -> {
+                                    if (gardener.getLevelType() == LevelType.GREEN && ThreadLocalRandom.current().nextInt(3) == 0) {
+                                        List<Direction> options = new ArrayList<>(Arrays.asList(DIRECTIONS));
+                                        Collections.shuffle(options);
+                                        for (Direction option : options) {
+                                            BlockPos test = pos.offset(option);
+                                            BlockState state = world.getBlockState(test);
+                                            Block block = state.getBlock();
+                                            if (block.isAir(state, world, test) || block instanceof DarkAirBlock || block instanceof SpecialAirBlock) {
+                                                world.setBlockState(test, formingBlock.getDefaultState());
+                                                Optional.ofNullable((FormingTile) world.getTileEntity(test)).ifPresent(spawned -> {
+                                                    spawned.setFirst(false);
+                                                    spawned.setIterationsRemaining(iterationsRemaining + (ThreadLocalRandom.current().nextBoolean() ? 1 : 0));
+                                                    spawned.setDirection(option);
+                                                    spawned.setMultiplier(multiplier);
+                                                    spawned.setHard(hard);
+                                                    spawned.setup(formType);
+                                                    spawned.setCalculated(true);
+                                                });
+                                                break;
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    } else if (iterationsRemaining == 0 && world.getDimension() instanceof FleetingDimension) {
+                        if (formType instanceof CyanFormingBlockType) {
+                            capabilities.gardener(closest, gardener -> {
+                                if (gardener.getLevelType() == LevelType.CYAN) {
+                                    int remaining = 300;
+                                    Queue<BlockPos> check = new ArrayDeque<>();
+                                    check.add(pos);
+                                    while (!check.isEmpty()) {
+                                        remaining--;
+                                        if (remaining < 0) {
+                                            break;
+                                        }
+                                        BlockPos target = check.poll();
+                                        for (Direction direction : DIRECTIONS) {
+                                            BlockPos update = target.offset(direction);
+                                            if (world.getBlockState(update).getBlock() instanceof FormedBlock && !(world.getBlockState(update).getBlock() instanceof CyanFormedBlock)) {
+                                                world.setBlockState(update, cyanFormedBlock.getDefaultState(), 3);
+                                                check.add(update);
+                                            }
+                                        }
+                                    }
+                                }
                             });
                         }
                     }

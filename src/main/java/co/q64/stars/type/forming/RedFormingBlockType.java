@@ -1,18 +1,24 @@
 package co.q64.stars.type.forming;
 
 import co.q64.stars.block.DecayEdgeBlock;
+import co.q64.stars.block.DecayEdgeBlock.DecayEdgeBlockSolid;
 import co.q64.stars.block.GatewayBlock;
 import co.q64.stars.block.GreenFruitBlock;
 import co.q64.stars.block.GreyFormedBlock;
 import co.q64.stars.block.RedFormedBlock;
+import co.q64.stars.block.RedFormedBlock.RedFormedBlockHard;
 import co.q64.stars.block.RedPrimedBlock;
+import co.q64.stars.block.RedPrimedBlock.RedPrimedBlockHard;
+import co.q64.stars.dimension.fleeting.FleetingSolidDimension;
 import co.q64.stars.dimension.hub.HubDimension;
 import co.q64.stars.item.RedSeedItem;
+import co.q64.stars.level.LevelType;
 import co.q64.stars.qualifier.SoundQualifiers.Explode;
 import co.q64.stars.qualifier.SoundQualifiers.ExplodeDark;
 import co.q64.stars.qualifier.SoundQualifiers.Red;
 import co.q64.stars.qualifier.SoundQualifiers.Ticking;
 import co.q64.stars.type.FormingBlockType;
+import co.q64.stars.util.Capabilities;
 import co.q64.stars.util.DecayManager;
 import co.q64.stars.util.FleetingManager;
 import co.q64.stars.util.Sounds;
@@ -33,7 +39,9 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Singleton
 public class RedFormingBlockType implements FormingBlockType {
@@ -46,17 +54,21 @@ public class RedFormingBlockType implements FormingBlockType {
     private final @Getter float r = 221, g = 32, b = 32;
 
     protected @Getter @Inject RedPrimedBlock formedBlock;
+    protected @Getter @Inject RedPrimedBlockHard formedBlockHard;
     protected @Getter @Inject Provider<RedSeedItem> itemProvider;
     protected @Getter @Inject @Red Set<SoundEvent> sounds;
 
     protected @Inject Provider<FleetingManager> entryManager;
     protected @Inject DecayEdgeBlock decayBlock;
+    protected @Inject DecayEdgeBlockSolid decayEdgeBlockSolid;
     protected @Inject RedFormedBlock redBlock;
+    protected @Inject RedFormedBlockHard redBlockHard;
     protected @Inject DecayManager decayManager;
     protected @Inject @Explode Set<SoundEvent> explodeSounds;
     protected @Inject @ExplodeDark SoundEvent explodeDarkSound;
     protected @Inject @Ticking SoundEvent tickingSound;
     protected @Inject Sounds soundManager;
+    protected @Inject Capabilities capabilities;
 
     protected @Inject RedFormingBlockType() {}
 
@@ -80,7 +92,13 @@ public class RedFormingBlockType implements FormingBlockType {
     }
 
     public void explode(ServerWorld world, BlockPos pos, boolean decay) {
-        Block block = decay ? decayBlock : redBlock;
+        AtomicBoolean hard = new AtomicBoolean(false);
+        Optional.ofNullable(world.getClosestPlayer(pos.getX(), pos.getZ(), 1000)).ifPresent(player -> {
+            capabilities.gardener(player, gardener -> {
+                hard.set(gardener.getLevelType() == LevelType.PURPLE);
+            });
+        });
+        Block block = decay ? (world.getDimension() instanceof FleetingSolidDimension ? decayEdgeBlockSolid : decayBlock) : hard.get() ? redBlockHard : redBlock;
         if (decay) {
             soundManager.playSound(world, pos, explodeDarkSound, 4f);
         } else {

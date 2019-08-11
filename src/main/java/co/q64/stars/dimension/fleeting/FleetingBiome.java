@@ -17,7 +17,7 @@ public class FleetingBiome extends Biome {
     protected @Inject DecayBlobFeature decayBlobFeature;
     protected @Inject DecayBlobPlacement decayBlobPlacement;
 
-    protected @Inject FleetingBiome(Identifiers identifiers) {
+    protected FleetingBiome() {
         super((new Biome.Builder())
                 .surfaceBuilder(SurfaceBuilder.NOPE, SurfaceBuilder.AIR_CONFIG)
                 .precipitation(Biome.RainType.NONE).category(Category.DESERT)
@@ -27,11 +27,18 @@ public class FleetingBiome extends Biome {
                 .waterColor(0xffffff)
                 .waterFogColor(0xffffff)
                 .parent((String) null));
+    }
+
+    protected @Inject FleetingBiome(Identifiers identifiers) {
+        this();
         setRegistryName(identifiers.get("fleeting"));
     }
 
     @Inject
     protected void setup() {
+        if (this instanceof FleetingSolidBiome) {
+            return; // TODO extremely hacky?
+        }
         addFeature(Decoration.UNDERGROUND_DECORATION, Biome.createDecoratedFeature(decayBlobFeature, IFeatureConfig.NO_FEATURE_CONFIG, decayBlobPlacement, IPlacementConfig.NO_PLACEMENT_CONFIG));
     }
 }

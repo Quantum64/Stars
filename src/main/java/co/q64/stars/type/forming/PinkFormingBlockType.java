@@ -5,6 +5,7 @@ import co.q64.stars.item.PinkSeedItem;
 import co.q64.stars.qualifier.SoundQualifiers.Pink;
 import co.q64.stars.type.FormingBlockType;
 import lombok.Getter;
+import net.minecraft.block.Block;
 import net.minecraft.util.Direction;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -47,6 +48,10 @@ public class PinkFormingBlockType implements FormingBlockType {
             return Collections.singletonList(Direction.UP);
         }
         return Collections.emptyList();
+    }
+
+    public Block getFormedBlockHard() {
+        return formedBlock;
     }
 
     public int getDecayTime(long seed) {

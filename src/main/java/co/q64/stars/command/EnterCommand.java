@@ -1,6 +1,5 @@
 package co.q64.stars.command;
 
-import co.q64.stars.dimension.Dimensions;
 import co.q64.stars.util.FleetingManager;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
@@ -15,7 +14,6 @@ import javax.inject.Singleton;
 
 @Singleton
 public class EnterCommand {
-    protected @Inject Dimensions dimensions;
     protected @Inject FleetingManager spawnpointManager;
 
     protected @Inject EnterCommand() {}

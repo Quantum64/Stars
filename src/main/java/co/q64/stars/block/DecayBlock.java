@@ -25,4 +25,16 @@ public class DecayBlock extends BaseBlock {
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
         return VoxelShapes.empty();
     }
+
+    @Singleton
+    public static class DecayBlockSolid extends DecayBlock {
+        protected @Inject DecayBlockSolid() {
+            super("decay_solid", Properties.create(Material.GLASS).hardnessAndResistance(-1f, 3600000f));
+        }
+
+        @Override
+        public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+            return VoxelShapes.fullCube();
+        }
+    }
 }
