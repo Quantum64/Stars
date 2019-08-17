@@ -16,7 +16,7 @@ public class HubBiome extends Biome {
                 .precipitation(RainType.NONE).category(Category.DESERT)
                 .depth(0.1F).scale(0.2F)
                 .temperature(0.5F)
-                .downfall(0.5F)
+                .downfall(0.0F)
                 .waterColor(0xffffff)
                 .waterFogColor(0xffffff)
                 .parent((String) null));

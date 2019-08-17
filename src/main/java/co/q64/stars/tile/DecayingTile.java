@@ -10,8 +10,6 @@ import net.minecraft.nbt.CompoundNBT;
 import javax.inject.Inject;
 
 public class DecayingTile extends SeedTile {
-    private static final long SALT = 0x1029adbc3847efefL;
-
     protected @Inject FormingBlockTypes types;
 
     private @Getter @Setter boolean calculated;
@@ -50,9 +48,5 @@ public class DecayingTile extends SeedTile {
         setGrowTicks(getInitialGrowTicks());
         setHasSeed(true);
         world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
-    }
-
-    public long getSeed() {
-        return Math.abs(getPos().toLong() ^ SALT);
     }
 }

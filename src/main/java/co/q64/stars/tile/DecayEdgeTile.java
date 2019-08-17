@@ -11,6 +11,7 @@ import co.q64.stars.block.DecayingBlock.DecayingBlockHard;
 import co.q64.stars.block.FormedBlock;
 import co.q64.stars.block.FormingBlock;
 import co.q64.stars.block.GreenFruitBlock;
+import co.q64.stars.block.GreyFormedBlock;
 import co.q64.stars.block.HardBlock;
 import co.q64.stars.block.RedPrimedBlock;
 import co.q64.stars.block.SeedBlock;
@@ -37,6 +38,7 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
@@ -51,7 +53,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class DecayEdgeTile extends SyncTileEntity implements ITickableTileEntity {
     private static final Direction[] DIRECTIONS = Direction.values();
-    private static final long SALT = 0xabcd0123dcba3210L;
 
     protected @Inject FormingBlockTypes types;
     protected @Inject DecayEdgeBlock decayEdgeBlock;
@@ -92,7 +93,7 @@ public class DecayEdgeTile extends SyncTileEntity implements ITickableTileEntity
                 if (closest != null) {
                     capabilities.gardener(closest, gardener -> {
                         if (gardener.getLevelType() == LevelType.WHITE) {
-                            multiplier = 1.25;
+                            multiplier = 1.5;
                         } else if (gardener.getLevelType() == LevelType.ORANGE) {
                             multiplier = 0.5;
                         } else if (gardener.getLevelType() == LevelType.CYAN) {
@@ -112,7 +113,7 @@ public class DecayEdgeTile extends SyncTileEntity implements ITickableTileEntity
                         sounds.playSound((ServerWorld) world, pos, Collections.singleton(darkAir), 2f, 0.8f + (ThreadLocalRandom.current().nextFloat() * 0.4f));
                     }
                 }
-                if (block instanceof FormedBlock) {
+                if (block instanceof FormedBlock && !(block instanceof GreyFormedBlock)) {
                     FormingBlockType type = types.get(block);
                     world.setBlockState(target, block instanceof HardBlock ? decayingBlockHard.getDefaultState() : decayingBlock.getDefaultState());
                     Optional.ofNullable((DecayingTile) world.getTileEntity(target)).ifPresent(decayingTile -> {
@@ -180,7 +181,7 @@ public class DecayEdgeTile extends SyncTileEntity implements ITickableTileEntity
     }
 
     private int getDecayTicks(FormingBlockType type, BlockPos pos) {
-        return (int) (type.getDecayTime(Math.abs(pos.toLong() ^ SALT)) * multiplier);
+        return (int) (type.getDecayTime(MathHelper.getPositionRandom(getPos())) * multiplier);
     }
 
     protected BlockState getDecayState(DecayBlock block) {

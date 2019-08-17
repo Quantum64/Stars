@@ -65,7 +65,7 @@ public class ClientPlayerListener implements Listener {
     public void onPlayerTick(PlayerTickEvent event) {
         if (event.phase == Phase.END && event.player == Minecraft.getInstance().player) {
             if (event.player.world.getDimension() instanceof HubDimension || (event.player.world.getDimension() instanceof FleetingDimension && playerOverlayRender.getLastStage() == FleetingStage.LIGHT)) {
-                Minecraft.getInstance().gameSettings.renderDistanceChunks = 2; // No cheating
+                //Minecraft.getInstance().gameSettings.renderDistanceChunks = 2; // No cheating
             } else if ((event.player.world.getDimension() instanceof FleetingDimension)) {
                 Minecraft.getInstance().gameSettings.renderDistanceChunks = 6;
             }

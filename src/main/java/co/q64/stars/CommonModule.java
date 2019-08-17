@@ -8,6 +8,7 @@ import co.q64.stars.block.BlueFormedBlock.BlueFormedBlockHard;
 import co.q64.stars.block.BrownFormedBlock;
 import co.q64.stars.block.BrownFormedBlock.BrownFormedBlockHard;
 import co.q64.stars.block.ChallengeDoorBlock;
+import co.q64.stars.block.ChallengeEntranceBlock;
 import co.q64.stars.block.ChallengeExitBlock;
 import co.q64.stars.block.CyanFormedBlock;
 import co.q64.stars.block.CyanFormedBlock.CyanFormedBlockHard;
@@ -76,6 +77,9 @@ import co.q64.stars.item.RedSeedItem;
 import co.q64.stars.item.SeedPouchItem;
 import co.q64.stars.item.StarItem;
 import co.q64.stars.item.YellowSeedItem;
+import co.q64.stars.level.Level;
+import co.q64.stars.level.levels.CyanLevel;
+import co.q64.stars.level.levels.RedLevel;
 import co.q64.stars.listener.InitializationListener;
 import co.q64.stars.listener.Listener;
 import co.q64.stars.listener.PlayerListener;
@@ -167,6 +171,9 @@ public interface CommonModule {
     @Binds @IntoSet FormingBlockType bindOrangeFormingBlockType(OrangeFormingBlockType type);
     @Binds @IntoSet FormingBlockType bindGreyFormingBlockType(GreyFormingBlockType type);
 
+    @Binds @IntoSet Level bindRedLevel(RedLevel redLevel);
+    @Binds @IntoSet Level bindCyanLevel(CyanLevel cyanLevel);
+
     @Binds @IntoSet BaseBlock bindFormingBlock(FormingBlock formingBlock);
     @Binds @IntoSet BaseBlock bindDecayBlock(DecayBlock decayBlock);
     @Binds @IntoSet BaseBlock bindDecayBlockSolid(DecayBlockSolid decayBlockSolid);
@@ -212,6 +219,7 @@ public interface CommonModule {
     @Binds @IntoSet BaseBlock bindTubeDarknessBlock(TubeDarknessBlock tubeDarknessBlock);
     @Binds @IntoSet BaseBlock bindTubeAirBlock(TubeAirBlock tubeAirBlock);
     @Binds @IntoSet BaseBlock bindChallengeExitBlock(ChallengeExitBlock challengeExitBlock);
+    @Binds @IntoSet BaseBlock bindChallengeEntranceBlock(ChallengeEntranceBlock challengeEntranceBlock);
 
     @Binds @IntoSet BaseItem bindPinkSeedItem(PinkSeedItem pinkSeedItem);
     @Binds @IntoSet BaseItem bindBlueSeedItem(BlueSeedItem blueSeedItem);

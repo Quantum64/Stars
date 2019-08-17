@@ -4,6 +4,7 @@ import co.q64.stars.client.util.ModelUtil;
 import co.q64.stars.tile.SeedTile;
 import co.q64.stars.type.FormingBlockType;
 import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.RenderHelper;
@@ -58,7 +59,8 @@ public class SeedBlockRender extends TileEntityRenderer<SeedTile> {
         BlockPos pos = tile.getPos();
         ChunkRenderCache world = MinecraftForgeClient.getRegionRenderCache(tile.getWorld(), pos);
         buffer.setTranslation(x - (double) pos.getX(), y - (double) pos.getY(), z - (double) pos.getZ());
-        Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(world, model, world.getBlockState(pos), pos, buffer, false, random, 42L, EmptyModelData.INSTANCE);
+        BlockState state = world.getBlockState(pos);
+        Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(world, model, state, pos, buffer, false, random, state.getPositionRandom(pos), EmptyModelData.INSTANCE);
         buffer.setTranslation(0, 0, 0);
         tessellator.draw();
         RenderHelper.enableStandardItemLighting();

@@ -8,9 +8,11 @@ import net.minecraft.world.server.ServerWorld;
 import java.util.List;
 
 public interface Level {
+    public LevelType getType();
+
     public List<BlockPos> getChallengeStars(BlockPos start);
 
-    public void createChallenge(ServerWorld world, BlockPos start);
+    public BlockPos createChallenge(ServerWorld world, BlockPos start);
 
     public default void cube(ServerWorld world, Block block, BlockPos start, BlockPos end) {
         for (int x = start.getX(); x <= end.getX(); x++) {

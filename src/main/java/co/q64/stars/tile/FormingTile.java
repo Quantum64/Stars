@@ -10,6 +10,7 @@ import co.q64.stars.block.FormingBlock;
 import co.q64.stars.block.GatewayBlock;
 import co.q64.stars.block.GreenFruitBlock;
 import co.q64.stars.block.GreenFruitBlock.GreenFruitBlockHard;
+import co.q64.stars.block.GreyFormedBlock;
 import co.q64.stars.block.RedPrimedBlock;
 import co.q64.stars.block.SpecialAirBlock;
 import co.q64.stars.dimension.fleeting.FleetingDimension;
@@ -38,6 +39,7 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.server.ServerWorld;
 
 import javax.inject.Inject;
@@ -55,7 +57,6 @@ import java.util.stream.Collectors;
 public class FormingTile extends SyncTileEntity implements ITickableTileEntity {
     private static final int FRUIT_CHANCE = 3;
     private static final Direction[] DIRECTIONS = Direction.values();
-    private static final long SALT = 0x1029adbc3847efefL;
 
     protected @Inject FormingBlockTypes types;
     protected @Inject FormingBlock formingBlock;
@@ -106,7 +107,7 @@ public class FormingTile extends SyncTileEntity implements ITickableTileEntity {
         this.buildTime = (int) (buildTime * multiplier);
         this.formTicks = buildTime / 50; // 50 ms per tick
         if (first) {
-            this.iterationsRemaining = formType.getIterations(getSeed());
+            this.iterationsRemaining = formType.getIterations(MathHelper.getPositionRandom(getPos()));
         }
     }
 
@@ -129,10 +130,6 @@ public class FormingTile extends SyncTileEntity implements ITickableTileEntity {
         result.putBoolean("calculated", calculated);
         result.putInt("buildTime", buildTime);
         return result;
-    }
-
-    private long getSeed() {
-        return Math.abs(getPos().toLong() ^ SALT);
     }
 
     public void tick() {
@@ -206,6 +203,9 @@ public class FormingTile extends SyncTileEntity implements ITickableTileEntity {
                         }
                         for (Direction next : directions) {
                             BlockPos placed = getPos().add(next.getXOffset(), next.getYOffset(), next.getZOffset());
+                            if (world.getBlockState(placed).getBlock() instanceof GreyFormedBlock || world.getBlockState(placed).getBlock() instanceof GatewayBlock) {
+                                continue;
+                            }
                             if (world.getDimension() instanceof HubDimension) {
                                 boolean found = false;
                                 for (int offset = 0; offset < 8; offset++) {
@@ -233,7 +233,7 @@ public class FormingTile extends SyncTileEntity implements ITickableTileEntity {
                         if (world.getDimension() instanceof FleetingDimension) {
                             if (formType instanceof GreenFormingBlockType) {
                                 capabilities.gardener(closest, gardener -> {
-                                    if (gardener.getLevelType() == LevelType.GREEN && ThreadLocalRandom.current().nextInt(3) == 0) {
+                                    if (gardener.getLevelType() == LevelType.GREEN && ThreadLocalRandom.current().nextInt(4) == 0) {
                                         List<Direction> options = new ArrayList<>(Arrays.asList(DIRECTIONS));
                                         Collections.shuffle(options);
                                         for (Direction option : options) {
@@ -244,7 +244,7 @@ public class FormingTile extends SyncTileEntity implements ITickableTileEntity {
                                                 world.setBlockState(test, formingBlock.getDefaultState());
                                                 Optional.ofNullable((FormingTile) world.getTileEntity(test)).ifPresent(spawned -> {
                                                     spawned.setFirst(false);
-                                                    spawned.setIterationsRemaining(iterationsRemaining + (ThreadLocalRandom.current().nextBoolean() ? 1 : 0));
+                                                    spawned.setIterationsRemaining(iterationsRemaining + (ThreadLocalRandom.current().nextInt(3) == 0 ? 1 : 0));
                                                     spawned.setDirection(option);
                                                     spawned.setMultiplier(multiplier);
                                                     spawned.setHard(hard);

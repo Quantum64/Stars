@@ -2,7 +2,11 @@ package co.q64.stars.util;
 
 import co.q64.stars.block.BlueFormedBlock;
 import co.q64.stars.block.BrownFormedBlock;
+import co.q64.stars.block.ChallengeEntranceBlock;
+import co.q64.stars.block.ChallengeExitBlock;
 import co.q64.stars.block.CyanFormedBlock;
+import co.q64.stars.block.DecayBlock;
+import co.q64.stars.block.DecayEdgeBlock;
 import co.q64.stars.block.GatewayBlock;
 import co.q64.stars.block.GreenFormedBlock;
 import co.q64.stars.block.GreyFormedBlock;
@@ -12,8 +16,8 @@ import co.q64.stars.block.PurpleFormedBlock;
 import co.q64.stars.block.RedFormedBlock;
 import co.q64.stars.block.YellowFormedBlock;
 import co.q64.stars.level.LevelType;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.nbt.CompoundNBT;
@@ -49,6 +53,10 @@ public class Structures implements IFutureReloadListener {
     protected @Inject YellowFormedBlock yellowFormedBlock;
     protected @Inject CyanFormedBlock cyanFormedBlock;
     protected @Inject GreyFormedBlock greyFormedBlock;
+    protected @Inject DecayBlock decayBlock;
+    protected @Inject DecayEdgeBlock decayEdgeBlock;
+    protected @Inject ChallengeEntranceBlock challengeEntranceBlock;
+    protected @Inject ChallengeExitBlock challengeExitBlock;
 
     protected @Inject GatewayBlock gatewayBlock;
 
@@ -94,7 +102,17 @@ public class Structures implements IFutureReloadListener {
     }
 
     public static enum StructureType {
-        HUB_WHITE("hub_white.dat");
+        HUB_WHITE("hub_white.dat"),
+        HUB_GREEN("hub_green.dat"),
+        HUB_ORANGE("hub_orange.dat"),
+        HUB_BLUE("hub_blue.dat"),
+        HUB_PURPLE("hub_purple.dat"),
+        HUB_YELLOW("hub_yellow.dat"),
+        HUB_TEAL("hub_teal.dat"),
+        HUB_RED("hub_red.dat"),
+        HUB_PINK("hub_pink.dat"),
+
+        CHALLENGE_CYAN("challenge_cyan.dat");
 
         private @Getter String name;
 
@@ -103,10 +121,11 @@ public class Structures implements IFutureReloadListener {
         }
     }
 
-    @AllArgsConstructor
+    @RequiredArgsConstructor
     public class Structure {
-        private byte[] blocks, data;
-        private @Getter int width, length, height;
+        private final byte[] blocks, data;
+        private final @Getter int width, length, height;
+        private BlockPos challengeStartCache = null;
 
         private int index(BlockPos pos) {
             return (pos.getY() * this.length + pos.getZ()) * this.width + pos.getX();
@@ -131,10 +150,35 @@ public class Structures implements IFutureReloadListener {
             }
         }
 
-        public void place(World world, BlockPos pos) {
+        public void place(World world, BlockPos pos, boolean ignoreAir) {
             forEachBlock(pos, (block, state) -> {
+                if (state.getBlock() == Blocks.AIR) {
+                    return;
+                }
                 world.setBlockState(block, state, 0);
             });
+        }
+
+        public void place(World world, BlockPos pos) {
+            place(world, pos, true);
+        }
+
+        private BlockPos getChallengeStart(BlockPos offset) {
+            if (challengeStartCache != null) {
+                return challengeStartCache.add(offset);
+            }
+            challengeStartCache = BlockPos.ZERO;
+            forEachBlock((pos, state) -> {
+                if (state.getBlock() == challengeEntranceBlock) {
+                    challengeStartCache = pos;
+                }
+            });
+            return challengeStartCache.add(offset);
+        }
+
+        public BlockPos placeChallenge(World world, BlockPos pos) {
+            place(world, pos);
+            return getChallengeStart(pos);
         }
     }
 
@@ -148,6 +192,11 @@ public class Structures implements IFutureReloadListener {
 
     private static enum Block {
         AIR(0),
+        STONE(1),
+        COBBLESTONE(4),
+        BARRIER(166),
+        LAPIS(22),
+        SPONGE(19),
         STAINED_CLAY(159),
         STAINED_GLASS(95);
 
@@ -187,10 +236,14 @@ public class Structures implements IFutureReloadListener {
         map.put(id(block, color), state);
     }
 
+    private void put(Map<Integer, BlockState> map, Block block, BlockState state) {
+        map.put(id(block, Color.WHITE), state);
+    }
+
     @Inject
     protected void init() {
         Map<Integer, BlockState> ids = new HashMap<>();
-        put(ids, Block.AIR, Color.WHITE, Blocks.AIR.getDefaultState());
+        put(ids, Block.AIR, Blocks.AIR.getDefaultState());
 
         put(ids, Block.STAINED_CLAY, Color.PINK, pinkFormedBlock.getDefaultState());
         put(ids, Block.STAINED_CLAY, Color.RED, redFormedBlock.getDefaultState());
@@ -213,6 +266,12 @@ public class Structures implements IFutureReloadListener {
         put(ids, Block.STAINED_GLASS, Color.PURPLE, gatewayBlock.getDefaultState().with(GatewayBlock.TYPE, LevelType.PURPLE));
         put(ids, Block.STAINED_GLASS, Color.YELLOW, gatewayBlock.getDefaultState().with(GatewayBlock.TYPE, LevelType.YELLOW));
         put(ids, Block.STAINED_GLASS, Color.LIGHT_BLUE, gatewayBlock.getDefaultState().with(GatewayBlock.TYPE, LevelType.TEAL));
+
+        put(ids, Block.BARRIER, Blocks.BARRIER.getDefaultState());
+        put(ids, Block.STONE, decayBlock.getDefaultState());
+        put(ids, Block.COBBLESTONE, decayEdgeBlock.getDefaultState());
+        put(ids, Block.LAPIS, challengeExitBlock.getDefaultState());
+        put(ids, Block.SPONGE, challengeEntranceBlock.getDefaultState());
 
         this.ids = Collections.unmodifiableMap(ids);
     }

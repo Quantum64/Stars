@@ -5,6 +5,7 @@ import co.q64.stars.capability.GardenerCapability;
 import co.q64.stars.dimension.StarsDimension;
 import co.q64.stars.dimension.hub.HubDimension;
 import co.q64.stars.item.KeyItem;
+import co.q64.stars.level.LevelType;
 import co.q64.stars.net.PacketManager;
 import co.q64.stars.net.packets.ClientFadePacket.FadeMode;
 import co.q64.stars.type.FleetingStage;
@@ -124,14 +125,16 @@ public class PlayerOverlayRender {
         int centerX = windowWidth / 2;
         int color = gardenerCapability.getFleetingStage() == FleetingStage.DARK ? 0xFFFFFF : 0x000000;
 
+        boolean pink = gardenerCapability.getFleetingStage() == FleetingStage.LIGHT && gardenerCapability.getLevelType() == LevelType.PINK;
         int width = (18 * 3) + 6;
+        width -= pink ? (18 * 2) + 2 : 0;
         int height = 4 + 18;
         int startX = centerX - (width / 2);
         int x = startX;
         guiDynamicRender.drawGuiPanel(x, 0, width, height);
         int y = 2;
         x += 2;
-        for (int i = 0; i < 3; i++) {
+        for (int i = pink ? 2 : 0; i < 3; i++) {
             guiDynamicRender.drawItemSlot(x, y);
             RenderHelper.enableGUIStandardItemLighting();
             if (gardenerCapability.getFleetingStage() == FleetingStage.LIGHT || gardenerCapability.getFleetingStage() == FleetingStage.NONE) {

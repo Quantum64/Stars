@@ -1,6 +1,7 @@
 package co.q64.stars.util;
 
 import co.q64.stars.dimension.hub.HubDimension.HubDimensionTemplate;
+import co.q64.stars.level.LevelType;
 import co.q64.stars.net.PacketManager;
 import co.q64.stars.net.packets.ClientFadePacket.FadeMode;
 import co.q64.stars.type.FleetingStage;
@@ -28,6 +29,7 @@ public class HubManager {
     protected @Inject Capabilities capabilities;
     protected @Inject Structures structures;
     protected @Inject HubDimensionTemplate hubDimensionTemplate;
+    protected @Inject Logger logger;
 
     protected @Inject HubManager() {}
 
@@ -64,23 +66,36 @@ public class HubManager {
         ServerWorld spawnWorld = getWorld(player.getServer());
         capabilities.hub(spawnWorld, hub -> {
             capabilities.gardener(player, gardener -> {
+                gardener.setLevelType(LevelType.WHITE); // No side effects
                 int index = gardener.getHubIndex();
                 boolean setup = false;
+
+                int cIndex = index, cHub = hub.getNextIndex();
+                long start = System.currentTimeMillis();
+
                 gardener.setEnteringHub(true);
                 if (index == -1) {
                     index = hub.getNextIndex();
                     setup = true;
                     hub.setNextIndex(hub.getNextIndex() + 1);
                     gardener.setHubIndex(index);
+                    gardener.setHubSpawn(BlockPos.ZERO);
                 }
                 BlockPos spawnpoint = spawnpointManager.getSpawnpoint(index);
                 if (setup) {
                     setupSpawnpoint(spawnWorld, spawnpoint);
+                    logger.info("Setup hub for player '" + player.getName().getFormattedText() + "' in " + (System.currentTimeMillis() - start) + " ms " +
+                            "(Previous player index: " + cIndex + ", Previous hub index: " + cHub + ", New player index: " + gardener.getHubIndex() +
+                            ", New hub index: " + hub.getNextIndex() + ")");
+                }
+                if (gardener.getHubSpawn().equals(BlockPos.ZERO)) {
+                    gardener.setHubSpawn(spawnpoint);
                 }
                 scheduler.run(() -> {
                     ServerWorld world = getWorld(player.getServer());
+                    BlockPos hubSpawn = gardener.getHubSpawn();
                     player.setMotion(0, 0, 0);
-                    player.teleport(world, spawnpoint.getX() + 0.5, spawnpoint.getY() + 5, spawnpoint.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
+                    player.teleport(world, hubSpawn.getX() + 0.5, hubSpawn.getY() + 5, hubSpawn.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
                     capabilities.gardener(player, c -> {
                         c.setFleetingStage(FleetingStage.NONE);
                     });
@@ -101,19 +116,16 @@ public class HubManager {
         });
     }
 
-    //TODO the biggest todo
     private void setupSpawnpoint(World world, BlockPos spawn) {
-        /*
-        for (int y = pos.getY() - 8; y < pos.getY(); y++) {
-            for (int x = pos.getX() - 2; x <= pos.getX() + 2; x++) {
-                for (int z = pos.getZ() - 2; z <= pos.getZ() + 2; z++) {
-                    world.setBlockState(new BlockPos(x, y, z), greyFormedBlock.getDefaultState());
-                }
-            }
-        }
-        world.setBlockState(pos.offset(Direction.DOWN), gatewayBlock.getDefaultState().with(GatewayBlock.TYPE, LevelType.RED));
-         */
-        structures.get(StructureType.HUB_WHITE).place(world, spawn.add(-2, -2, -2));
+        structures.get(StructureType.HUB_WHITE).place(world, spawn.add(-2, -2, -2), true);
+        structures.get(StructureType.HUB_GREEN).place(world, spawn.add(18, 2, -12), true);
+        structures.get(StructureType.HUB_ORANGE).place(world, spawn.add(48, 2, 15), true);
+        structures.get(StructureType.HUB_PURPLE).place(world, spawn.add(45, -16, -20), true);
+        structures.get(StructureType.HUB_BLUE).place(world, spawn.add(-42, 0, -40), true);
+        structures.get(StructureType.HUB_YELLOW).place(world, spawn.add(-42, 30, -70), true);
+        structures.get(StructureType.HUB_TEAL).place(world, spawn.add(-65, 10, -85), true);
+        structures.get(StructureType.HUB_PINK).place(world, spawn.add(-22, 0, 30), true);
+        structures.get(StructureType.HUB_RED).place(world, spawn.add(80, -11, 0), true);
     }
 
     private void createCube(World world, Block block, BlockPos start, BlockPos end) {

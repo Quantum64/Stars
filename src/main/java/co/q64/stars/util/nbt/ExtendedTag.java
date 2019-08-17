@@ -104,6 +104,18 @@ public class ExtendedTag {
         runIfContains(key, this::getByte, action);
     }
 
+    public CompoundNBT getCompound(String key, CompoundNBT value) {
+        return getIfContains(key, this::getCompound, () -> value);
+    }
+
+    public CompoundNBT getCompound(String key, Supplier<CompoundNBT> value) {
+        return getIfContains(key, this::getCompound, value);
+    }
+
+    public void ifCompound(String key, Consumer<CompoundNBT> action) {
+        runIfContains(key, this::getCompound, action);
+    }
+
     private <T> T getIfContains(String key, Function<String, T> actual, Supplier<T> missing) {
         return contains(key) ? actual.apply(key) : missing.get();
     }

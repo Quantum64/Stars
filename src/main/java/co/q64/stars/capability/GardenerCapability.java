@@ -4,6 +4,7 @@ import co.q64.stars.level.LevelType;
 import co.q64.stars.type.FleetingStage;
 import co.q64.stars.type.FormingBlockType;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
 
 import java.util.Deque;
 import java.util.Set;
@@ -57,6 +58,10 @@ public interface GardenerCapability {
 
     public void setEnteringHub(boolean enteringHub);
 
+    public boolean isEnteringFleeting();
+
+    public void setEnteringFleeting(boolean enteringFleeting);
+
     public FormingBlockType getLastSeed();
 
     public void setLastSeed(FormingBlockType formingBlockType);
@@ -64,6 +69,10 @@ public interface GardenerCapability {
     public LevelType getLevelType();
 
     public void setLevelType(LevelType levelType);
+
+    public BlockPos getHubSpawn();
+
+    public void setHubSpawn(BlockPos pos);
 
     public Deque<FormingBlockType> getNextSeeds();
 

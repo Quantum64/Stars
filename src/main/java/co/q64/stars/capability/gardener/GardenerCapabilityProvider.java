@@ -1,14 +1,15 @@
 package co.q64.stars.capability.gardener;
 
 import co.q64.stars.capability.GardenerCapability;
+import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.inject.Inject;
 
-public class GardenerCapabilityProvider implements ICapabilityProvider {
+public class GardenerCapabilityProvider implements ICapabilitySerializable<INBT> {
     private Capability<GardenerCapability> gardenerCapability;
     private GardenerCapability instance;
 
@@ -23,5 +24,13 @@ public class GardenerCapabilityProvider implements ICapabilityProvider {
             return LazyOptional.empty();
         }
         return (LazyOptional<T>) LazyOptional.of(() -> instance);
+    }
+
+    public INBT serializeNBT() {
+        return gardenerCapability.getStorage().writeNBT(gardenerCapability, instance, null);
+    }
+
+    public void deserializeNBT(INBT nbt) {
+        gardenerCapability.getStorage().readNBT(gardenerCapability, instance, null, nbt);
     }
 }

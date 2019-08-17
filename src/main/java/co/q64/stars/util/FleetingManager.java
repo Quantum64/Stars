@@ -85,43 +85,50 @@ public class FleetingManager {
     }
 
     public void enter(ServerPlayerEntity player, boolean showEffect) {
-        if (showEffect) {
-            packetManager.getChannel().send(PacketDistributor.PLAYER.with(() -> player), packetManager.getClientFadePacketFactory().create(FadeMode.FADE_TO_WHITE, 3000));
-            player.addPotionEffect(new EffectInstance(Effects.LEVITATION, 60, 1, true, false));
-        }
-        BlockPos spawnpoint = spawnpointManager.getSpawnpoint(index);
-        index++;
-        ServerWorld spawnWorld = getSpawnWorld(player);
-        capabilities.gardener(player, c -> {
-            Level level = levelManager.getLevel(c.getLevelType());
-            if (c.isOpenChallengeDoor()) {
-                level.createChallenge(spawnWorld, spawnpoint);
-            } else {
-                setupSpawnpoint(player, spawnWorld, spawnpoint, level);
+        capabilities.gardener(player, gardener -> {
+            if (gardener.isEnteringFleeting()) {
+                return;
             }
-        });
-        Runnable task = () -> {
-            ServerWorld world = getSpawnWorld(player);
-            capabilities.gardener(player, c -> {
-                player.setMotion(0, 0, 0);
-                player.teleport(world, spawnpoint.getX() + 0.5, showEffect ? spawnpoint.getY() + (c.isOpenChallengeDoor() ? 1 : 10) : spawnpoint.getY(), spawnpoint.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
-                setStage(player, FleetingStage.LIGHT);
-                c.setTotalSeeds(0);
-                c.getNextSeeds().clear();
-                c.setOpenDoor(c.isOpenChallengeDoor());
-                c.setOpenChallengeDoor(false);
-                c.setEnteringHub(false);
-                playerManager.setSeeds(player, c.isOpenDoor() ? c.getSeeds() : 13);
-            });
-            setKeys(player, 0);
-            playerManager.updateSeeds(player);
-            playerManager.syncCapability(player);
+            gardener.setEnteringFleeting(true);
             if (showEffect) {
-                player.addPotionEffect(new EffectInstance(Effects.SLOW_FALLING, 60, 3, true, false));
-                packetManager.getChannel().send(PacketDistributor.PLAYER.with(() -> player), packetManager.getClientFadePacketFactory().create(FadeMode.FADE_FROM_WHITE, 3000));
+                packetManager.getChannel().send(PacketDistributor.PLAYER.with(() -> player), packetManager.getClientFadePacketFactory().create(FadeMode.FADE_TO_WHITE, 3000));
+                player.addPotionEffect(new EffectInstance(Effects.LEVITATION, 60, 1, true, false));
             }
-        };
-        scheduler.run(task, showEffect ? 60 : 0);
+            BlockPos levelStart = spawnpointManager.getSpawnpoint(index);
+            BlockPos teleportPoint = levelStart;
+            index++;
+            ServerWorld spawnWorld = getSpawnWorld(player);
+
+            Level level = levelManager.getLevel(gardener.getLevelType());
+            if (gardener.isOpenChallengeDoor()) {
+                teleportPoint = level.createChallenge(spawnWorld, levelStart);
+            } else {
+                setupSpawnpoint(player, spawnWorld, levelStart, level);
+                teleportPoint = levelStart.add(0, 10, 0);
+            }
+            final BlockPos lock = teleportPoint;
+            Runnable task = () -> {
+                gardener.setEnteringFleeting(false);
+                ServerWorld world = getSpawnWorld(player);
+                player.setMotion(0, 0, 0);
+                player.teleport(world, lock.getX() + 0.5, lock.getY(), lock.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
+                setStage(player, FleetingStage.LIGHT);
+                gardener.setTotalSeeds(0);
+                gardener.getNextSeeds().clear();
+                gardener.setOpenDoor(gardener.isOpenChallengeDoor());
+                gardener.setOpenChallengeDoor(false);
+                gardener.setEnteringHub(false);
+                playerManager.setSeeds(player, gardener.isOpenDoor() ? gardener.getSeeds() : 13);
+                setKeys(player, 0);
+                playerManager.updateSeeds(player);
+                playerManager.syncCapability(player);
+                if (showEffect) {
+                    player.addPotionEffect(new EffectInstance(Effects.SLOW_FALLING, 60, 3, true, false));
+                    packetManager.getChannel().send(PacketDistributor.PLAYER.with(() -> player), packetManager.getClientFadePacketFactory().create(FadeMode.FADE_FROM_WHITE, 3000));
+                }
+            };
+            scheduler.run(task, showEffect ? 60 : 0);
+        });
     }
 
     public void tryEnter(ServerPlayerEntity player) {
@@ -132,6 +139,7 @@ public class FleetingManager {
                 BlockState state = world.getBlockState(target);
                 if (state.getBlock() instanceof GatewayBlock) {
                     gardener.setLevelType(state.get(GatewayBlock.TYPE));
+                    gardener.setHubSpawn(target.offset(Direction.UP));
                     enter(player, true);
                 }
             }

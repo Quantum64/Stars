@@ -61,6 +61,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 
@@ -156,7 +157,7 @@ public class PlayerListener implements Listener {
                 if (playerManager.shouldApplyJump(player)) {
                     capabilities.gardener(player, gardener -> {
                         if (gardener.getFleetingStage() == FleetingStage.DARK) {
-                            player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, 2, true, false));
+                            player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, 1, true, false));
                         } else {
                             if (gardener.getLevelType() == LevelType.YELLOW) {
                                 player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, 2, true, false));
@@ -292,6 +293,31 @@ public class PlayerListener implements Listener {
                                     for (Direction dir : DIRECTIONS) {
                                         if (world.getBlockState(target.offset(dir)).getBlock() instanceof FormingBlock) {
                                             Optional.ofNullable((FormingTile) world.getTileEntity(event.getPos().offset(dir))).ifPresent(tile -> {
+                                                if (tile.getDirection() == dir) {
+                                                    world.setBlockState(target.offset(dir), Blocks.AIR.getDefaultState(), 3);
+                                                }
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                        } else if (gardener.getLevelType() == LevelType.PINK) {
+                            for (boolean down : Arrays.asList(true, false)) {
+                                for (int offset = 1; offset < 50; offset++) {
+                                    int yOffset = offset * (down ? -1 : 1);
+                                    BlockPos target = event.getPos().add(0, yOffset, 0);
+                                    if (target.getY() < 0 || target.getY() >= 255) {
+                                        break;
+                                    }
+                                    if (!(world.getBlockState(target).getBlock() instanceof PinkFormedBlock)) {
+                                        break;
+                                    }
+                                    world.setBlockState(target, darkAirBlock.getDefaultState(), 3);
+                                    sounds.playSound((ServerWorld) world, event.getPos(), seedSounds, 1f);
+                                    playerManager.addSeed((ServerPlayerEntity) event.getPlayer());
+                                    for (Direction dir : DIRECTIONS) {
+                                        if (world.getBlockState(target.offset(dir)).getBlock() instanceof FormingBlock) {
+                                            Optional.ofNullable((FormingTile) world.getTileEntity(target.offset(dir))).ifPresent(tile -> {
                                                 if (tile.getDirection() == dir) {
                                                     world.setBlockState(target.offset(dir), Blocks.AIR.getDefaultState(), 3);
                                                 }

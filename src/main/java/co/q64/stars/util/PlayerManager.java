@@ -75,7 +75,7 @@ public class PlayerManager {
             int seeds = getSeeds(player);
             boolean hub = player.getServerWorld().getDimension() instanceof HubDimension || c.isEnteringHub();
             if (c.getFleetingStage() == FleetingStage.LIGHT || hub) {
-                List<FormingBlockType> types = (hub || c.isOpenDoor()) ? hubFormingBlocks : formingBlockTypes;
+                List<FormingBlockType> types = (hub || c.isOpenChallengeDoor() || c.isOpenDoor()) ? hubFormingBlocks : formingBlockTypes;
                 while (c.getNextSeeds().size() < c.getSeedVisibility() && seeds > 0) {
                     FormingBlockType offering = pinkFormingBlockType;
                     if (hub || c.getSeedsSincePink() < 5 + ThreadLocalRandom.current().nextInt(2)) {

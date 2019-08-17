@@ -60,7 +60,7 @@ public class SeedManager {
                         tile.setCalculated(true);
                         if (gardener.getFleetingStage() == FleetingStage.LIGHT) {
                             if (gardener.getLevelType() == LevelType.WHITE) {
-                                tile.setMultiplier(1.25);
+                                tile.setMultiplier(1.5);
                             } else if (gardener.getLevelType() == LevelType.ORANGE) {
                                 tile.setMultiplier(0.5);
                             }

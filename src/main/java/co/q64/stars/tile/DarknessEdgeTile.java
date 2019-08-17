@@ -32,7 +32,6 @@ import javax.inject.Inject;
 
 public class DarknessEdgeTile extends TileEntity implements ITickableTileEntity {
     private static final Direction[] DIRECTIONS = Direction.values();
-    private static final long SALT = 0xabcd0123dcba3210L;
 
     protected @Inject DarknessEdgeBlock darknessEdgeBlock;
     protected @Inject DarknessBlock darknessBlock;

@@ -1,11 +1,9 @@
 package co.q64.stars.level.levels;
 
-import co.q64.stars.block.ChallengeExitBlock;
-import co.q64.stars.block.DarknessBlock;
-import co.q64.stars.block.DecayBlock;
-import co.q64.stars.block.GreyFormedBlock;
 import co.q64.stars.level.Level;
 import co.q64.stars.level.LevelType;
+import co.q64.stars.util.Structures;
+import co.q64.stars.util.Structures.StructureType;
 import lombok.Getter;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -17,17 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Singleton
-public class RedLevel implements Level {
+public class CyanLevel implements Level {
     private static final int DISTANCE = 35;
 
-    protected @Inject GreyFormedBlock greyFormedBlock;
-    protected @Inject DecayBlock decayBlock;
-    protected @Inject DarknessBlock darknessBlock;
-    protected @Inject ChallengeExitBlock challengeExitBlock;
+    protected @Inject Structures structures;
 
-    private final @Getter LevelType type = LevelType.RED;
+    private final @Getter LevelType type = LevelType.CYAN;
 
-    protected @Inject RedLevel() {}
+    protected @Inject CyanLevel() {}
 
     public List<BlockPos> getChallengeStars(BlockPos start) {
         List<BlockPos> result = new ArrayList<>();
@@ -41,10 +36,6 @@ public class RedLevel implements Level {
     }
 
     public BlockPos createChallenge(ServerWorld world, BlockPos start) {
-        box(world, decayBlock, start.add(-7, -8, -7), start.add(7, 20, 7));
-        cube(world, greyFormedBlock, start.add(-2, -5, -2), start.add(2, 0, 2));
-        cube(world, darknessBlock, start.add(-2, 5, -2), start.add(2, 10, 2));
-        set(world, challengeExitBlock, start.add(0, 12, 0));
-        return start;
+        return structures.get(StructureType.CHALLENGE_CYAN).placeChallenge(world, start);
     }
 }
