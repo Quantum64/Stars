@@ -9,7 +9,6 @@ import co.q64.stars.listener.Listener;
 import co.q64.stars.net.ClientNetHandler;
 import co.q64.stars.qualifier.Qualifiers.TrophyItemProperties;
 import co.q64.stars.qualifier.SoundQualifiers.AmbientDark;
-import co.q64.stars.qualifier.SoundQualifiers.Misc;
 import co.q64.stars.util.Identifiers;
 import dagger.Binds;
 import dagger.Module;
@@ -34,6 +33,6 @@ public interface ClientModule {
     }
     static @Provides @Singleton @AmbientDark SoundEvent provideAmbientDarkSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("ambient_dark")); }
 
-    @Binds @IntoSet @Misc SoundEvent bindAmbientDarkSound(@AmbientDark SoundEvent event);
+    @Binds @IntoSet SoundEvent bindAmbientDarkSound(@AmbientDark SoundEvent event);
     // @formatter:on
 }

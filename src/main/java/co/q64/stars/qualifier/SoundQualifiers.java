@@ -30,7 +30,5 @@ public interface SoundQualifiers {
 
     // Client
     public static @Qualifier @interface AmbientDark {}
-
-    public static @Qualifier @interface Misc {}
     // @formatter:on
 }

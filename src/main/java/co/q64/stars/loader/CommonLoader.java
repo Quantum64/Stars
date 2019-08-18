@@ -1,7 +1,6 @@
 package co.q64.stars.loader;
 
-import co.q64.stars.capability.gardener.GardenerCapabilityFactory;
-import co.q64.stars.capability.gardener.GardenerCapabilityStorage;
+import co.q64.stars.link.LinkManager;
 import co.q64.stars.listener.Listener;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -13,6 +12,7 @@ import java.util.Set;
 @Singleton
 public class CommonLoader {
     protected @Inject Set<Listener> listeners;
+    protected @Inject LinkManager linkManager;
 
     protected @Inject CommonLoader() {}
 
@@ -21,5 +21,6 @@ public class CommonLoader {
             MinecraftForge.EVENT_BUS.register(listener);
             FMLJavaModLoadingContext.get().getModEventBus().register(listener);
         }
+        linkManager.init();
     }
 }

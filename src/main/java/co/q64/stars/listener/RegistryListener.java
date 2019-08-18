@@ -1,10 +1,7 @@
 package co.q64.stars.listener;
 
-import co.q64.stars.block.BaseBlock;
-import co.q64.stars.item.BaseItem;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.SoundEvent;
@@ -26,15 +23,14 @@ import java.util.Set;
 
 @Singleton
 public class RegistryListener implements Listener {
-    protected @Inject Provider<Set<BaseBlock>> blocks;
-    protected @Inject Provider<Set<BaseItem>> items;
-    protected @Inject Provider<Set<BlockItem>> blockItems;
+    protected @Inject Provider<Set<Block>> blocks;
+    protected @Inject Provider<Set<Item>> items;
     protected @Inject Provider<Set<TileEntityType<?>>> tileEntityTypes;
     protected @Inject Provider<Set<EntityType<?>>> entityTypes;
     protected @Inject Provider<Set<Feature<?>>> features;
     protected @Inject Provider<Set<Biome>> biomes;
     protected @Inject Provider<Set<Placement<?>>> placements;
-    protected @Inject Provider<Set<Set<SoundEvent>>> soundEvents;
+    protected @Inject Provider<Set<SoundEvent>> soundEvents;
     protected @Inject Provider<Set<ModDimension>> dimensions;
 
     protected @Inject RegistryListener() {}
@@ -46,8 +42,8 @@ public class RegistryListener implements Listener {
 
     @SubscribeEvent
     public void onItemRegistry(Register<Item> event) {
-        event.getRegistry().registerAll(items.get().toArray(new Item[0]));
-        event.getRegistry().registerAll(blockItems.get().toArray(new Item[0]));
+        //event.getRegistry().registerAll(items.get().toArray(new Item[0]));
+        event.getRegistry().registerAll(items.get().stream().sorted(((o1, o2) -> o1.getRegistryName().compareTo(o2.getRegistryName()))).toArray(Item[]::new));
     }
 
     @SubscribeEvent
@@ -77,7 +73,7 @@ public class RegistryListener implements Listener {
 
     @SubscribeEvent
     public void onSoundEventRegistry(Register<SoundEvent> event) {
-        event.getRegistry().registerAll(soundEvents.get().stream().flatMap(Set::stream).map(sound -> sound.setRegistryName(sound.getName())).toArray(SoundEvent[]::new));
+        event.getRegistry().registerAll(soundEvents.get().stream().map(sound -> sound.setRegistryName(sound.getName())).toArray(SoundEvent[]::new));
     }
 
     @SubscribeEvent

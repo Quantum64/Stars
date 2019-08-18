@@ -1,4 +1,4 @@
-package co.q64.stars.jei;
+package co.q64.stars.link.jei;
 
 import co.q64.stars.item.TrophyBlockItem;
 import mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter;
@@ -10,12 +10,12 @@ import javax.inject.Singleton;
 
 @Singleton
 public class TrophySubtypeInterpreter implements ISubtypeInterpreter {
-    protected @Inject TrophyBlockItem trophyBlockItem;
+    //protected @Inject TrophyBlockItem trophyBlockItem;
 
     protected @Inject TrophySubtypeInterpreter() {}
 
     public void register(ISubtypeRegistration registration) {
-        registration.registerSubtypeInterpreter(trophyBlockItem, this);
+        //registration.registerSubtypeInterpreter(trophyBlockItem, this);
     }
 
     public String apply(ItemStack stack) {

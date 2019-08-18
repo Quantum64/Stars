@@ -45,6 +45,8 @@ import co.q64.stars.block.SpecialDecayBlock;
 import co.q64.stars.block.SpecialDecayEdgeBlock;
 import co.q64.stars.block.TealFormedBlock;
 import co.q64.stars.block.TrophyBlock;
+import co.q64.stars.block.TrophyBlock.TrophyVariant;
+import co.q64.stars.block.TrophyBlockFactory;
 import co.q64.stars.block.TubeAirBlock;
 import co.q64.stars.block.TubeDarknessBlock;
 import co.q64.stars.block.YellowFormedBlock;
@@ -89,11 +91,14 @@ import co.q64.stars.item.StarItem;
 import co.q64.stars.item.TealSeedItem;
 import co.q64.stars.item.TealSeedItem.TealSeedItemRobust;
 import co.q64.stars.item.TrophyBlockItem;
+import co.q64.stars.item.TrophyBlockItemFactory;
 import co.q64.stars.item.YellowSeedItem;
 import co.q64.stars.item.YellowSeedItem.YellowSeedItemRobust;
 import co.q64.stars.level.Level;
 import co.q64.stars.level.levels.CyanLevel;
 import co.q64.stars.level.levels.RedLevel;
+import co.q64.stars.link.LinkInformation;
+import co.q64.stars.link.jei.JEILinkInformation;
 import co.q64.stars.listener.InitializationListener;
 import co.q64.stars.listener.Listener;
 import co.q64.stars.listener.PlayerListener;
@@ -115,7 +120,6 @@ import co.q64.stars.qualifier.SoundQualifiers.Explode;
 import co.q64.stars.qualifier.SoundQualifiers.ExplodeDark;
 import co.q64.stars.qualifier.SoundQualifiers.Green;
 import co.q64.stars.qualifier.SoundQualifiers.Key;
-import co.q64.stars.qualifier.SoundQualifiers.Misc;
 import co.q64.stars.qualifier.SoundQualifiers.Pink;
 import co.q64.stars.qualifier.SoundQualifiers.Pop;
 import co.q64.stars.qualifier.SoundQualifiers.Purple;
@@ -154,10 +158,13 @@ import co.q64.stars.util.UnfortunateForgeBlackMagic;
 import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
+import dagger.multibindings.ElementsIntoSet;
 import dagger.multibindings.IntoSet;
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
@@ -170,7 +177,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.inject.Singleton;
+import java.util.Arrays;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Module
 public interface CommonModule {
@@ -178,6 +187,8 @@ public interface CommonModule {
 
     @Binds GardenerCapability bindGardenerCapability(GardenerCapabilityImpl gardenerCapability);
     @Binds HubCapability bindHubCapability(HubCapabilityImpl hubCapability);
+
+    @Binds @IntoSet LinkInformation bindJEILinkInformation(JEILinkInformation jeiLinkInformation);
 
     @Binds @IntoSet FormingBlockType bindYellowFormingBlockType(YellowFormingBlockType type);
     @Binds @IntoSet FormingBlockType bindPurpleFormingBlockType(PurpleFormingBlockType type);
@@ -193,6 +204,10 @@ public interface CommonModule {
 
     @Binds @IntoSet Level bindRedLevel(RedLevel redLevel);
     @Binds @IntoSet Level bindCyanLevel(CyanLevel cyanLevel);
+
+    @Binds @ElementsIntoSet Set<Block> bindBlocks(Set<BaseBlock> blocks);
+    @Binds @ElementsIntoSet Set<Item> bindItems(Set<BaseItem> items);
+    @Binds @ElementsIntoSet Set<Item> bindBlockItems(Set<BlockItem> blockItems);
 
     @Binds @IntoSet BaseBlock bindFormingBlock(FormingBlock formingBlock);
     @Binds @IntoSet BaseBlock bindDecayBlock(DecayBlock decayBlock);
@@ -241,7 +256,7 @@ public interface CommonModule {
     @Binds @IntoSet BaseBlock bindTubeAirBlock(TubeAirBlock tubeAirBlock);
     @Binds @IntoSet BaseBlock bindChallengeExitBlock(ChallengeExitBlock challengeExitBlock);
     @Binds @IntoSet BaseBlock bindChallengeEntranceBlock(ChallengeEntranceBlock challengeEntranceBlock);
-    @Binds @IntoSet BaseBlock bindTrophyBlock(TrophyBlock trophyBlock);
+    @Binds @ElementsIntoSet Set<BaseBlock> bindTrophyBlock(Set<TrophyBlock> trophyBlocks);
 
     @Binds @IntoSet BaseItem bindPinkSeedItem(PinkSeedItem pinkSeedItem);
     @Binds @IntoSet BaseItem bindPinkSeedItemRobust(PinkSeedItemRobust pinkSeedItemRobust);
@@ -269,7 +284,7 @@ public interface CommonModule {
     @Binds @IntoSet BaseItem bindArrowItem(ArrowItem arrowItem);
     @Binds @IntoSet BaseItem bindChallengeStarItem(ChallengeStarItem challengeStarItem);
 
-    @Binds @IntoSet BlockItem bindTrophyBlockItem(TrophyBlockItem trophyBlockItem);
+    @Binds @ElementsIntoSet Set<BlockItem> bindTrophyBlockItem(Set<TrophyBlockItem> trophyBlockItems);
 
     @Binds @IntoSet Listener bindRegistryListener(RegistryListener serverStartListener);
     @Binds @IntoSet Listener bindInitializationListener(InitializationListener initializationListener);
@@ -291,20 +306,19 @@ public interface CommonModule {
 
     @Binds @IntoSet EntityType<?> bindPickupEntityType(EntityType<PickupEntity> pickupEntityEntityType);
 
-    @Binds @IntoSet Set<SoundEvent> bindPinkSoundEvents(@Pink Set<SoundEvent> pinkSoundEvents);
-    @Binds @IntoSet Set<SoundEvent> bindRedSoundEvents(@Red Set<SoundEvent> redSoundEvents);
-    @Binds @IntoSet Set<SoundEvent> bindGreenSoundEvents(@Green Set<SoundEvent> greenSoundEvents);
-    @Binds @IntoSet Set<SoundEvent> bindBlueSoundEvents(@Blue Set<SoundEvent> blueSoundEvents);
-    @Binds @IntoSet Set<SoundEvent> bindPurpleSoundEvents(@Purple Set<SoundEvent> purpleSoundEvents);
-    @Binds @IntoSet Set<SoundEvent> bindBrownSoundEvents(@Brown Set<SoundEvent> brownSoundEvents);
-    @Binds @IntoSet Set<SoundEvent> bindYellowSoundEvents(@Yellow Set<SoundEvent> yellowSoundEvents);
-    @Binds @IntoSet Set<SoundEvent> bindCyanSoundEvents(@Cyan Set<SoundEvent> cyanSoundEvents);
-    @Binds @IntoSet Set<SoundEvent> bindTealSoundEvents(@Teal Set<SoundEvent> tealSoundEvents);
-    @Binds @IntoSet Set<SoundEvent> bindExplodeSoundEvents(@Explode Set<SoundEvent> explodeSoundEvents);
-    @Binds @IntoSet Set<SoundEvent> bindDarkSoundEvents(@Dark Set<SoundEvent> darkSoundEvents);
-    @Binds @IntoSet Set<SoundEvent> bindSeedSoundEvents(@Seed Set<SoundEvent> seedSoundEvents);
-    @Binds @IntoSet Set<SoundEvent> bindThunderSoundEvents(@Thunder Set<SoundEvent> thunderSoundEvents);
-    @Binds @IntoSet Set<SoundEvent> bindMiscSoundEvents(@Misc Set<SoundEvent> miscSoundEvents);
+    @Binds @ElementsIntoSet Set<SoundEvent> bindPinkSoundEvents(@Pink Set<SoundEvent> pinkSoundEvents);
+    @Binds @ElementsIntoSet Set<SoundEvent> bindRedSoundEvents(@Red Set<SoundEvent> redSoundEvents);
+    @Binds @ElementsIntoSet Set<SoundEvent> bindGreenSoundEvents(@Green Set<SoundEvent> greenSoundEvents);
+    @Binds @ElementsIntoSet Set<SoundEvent> bindBlueSoundEvents(@Blue Set<SoundEvent> blueSoundEvents);
+    @Binds @ElementsIntoSet Set<SoundEvent> bindPurpleSoundEvents(@Purple Set<SoundEvent> purpleSoundEvents);
+    @Binds @ElementsIntoSet Set<SoundEvent> bindBrownSoundEvents(@Brown Set<SoundEvent> brownSoundEvents);
+    @Binds @ElementsIntoSet Set<SoundEvent> bindYellowSoundEvents(@Yellow Set<SoundEvent> yellowSoundEvents);
+    @Binds @ElementsIntoSet Set<SoundEvent> bindCyanSoundEvents(@Cyan Set<SoundEvent> cyanSoundEvents);
+    @Binds @ElementsIntoSet Set<SoundEvent> bindTealSoundEvents(@Teal Set<SoundEvent> tealSoundEvents);
+    @Binds @ElementsIntoSet Set<SoundEvent> bindExplodeSoundEvents(@Explode Set<SoundEvent> explodeSoundEvents);
+    @Binds @ElementsIntoSet Set<SoundEvent> bindDarkSoundEvents(@Dark Set<SoundEvent> darkSoundEvents);
+    @Binds @ElementsIntoSet Set<SoundEvent> bindSeedSoundEvents(@Seed Set<SoundEvent> seedSoundEvents);
+    @Binds @ElementsIntoSet Set<SoundEvent> bindThunderSoundEvents(@Thunder Set<SoundEvent> thunderSoundEvents);
 
     @Binds @IntoSet Biome bindFleetingBiome(FleetingBiome fleetingBiome);
     @Binds @IntoSet Biome bindFleetingSolidBiome(FleetingSolidBiome fleetingSolidBiome);
@@ -317,6 +331,9 @@ public interface CommonModule {
     @Binds @IntoSet Feature<?> bindDecayBlobFeature(DecayBlobFeature decayBlobFeature);
     @Binds @IntoSet Feature<?> bindSolidDecayBlobFeature(SolidDecayBlobFeature decayBlobFeature);
     @Binds @IntoSet Placement<?> bindDecayBlobPlacement(DecayBlobPlacement decayBlobPlacement);
+
+    static @Provides @ElementsIntoSet @Singleton Set<TrophyBlock> bindTrophyBlocks(TrophyBlockFactory factory) { return Arrays.stream(TrophyVariant.values()).map(factory::create).collect(Collectors.toSet()); }
+    static @Provides @ElementsIntoSet @Singleton Set<TrophyBlockItem> bindTrophyItems(Set<TrophyBlock> blocks, TrophyBlockItemFactory factory) { return blocks.stream().map(factory::create).collect(Collectors.toSet()); }
 
     static @Provides Capability<GardenerCapability> provideGardenerCapability(UnfortunateForgeBlackMagic blackMagic) { return blackMagic.getGardenerCapability(); }
     static @Provides Capability<HubCapability> provideHubCapability(UnfortunateForgeBlackMagic blackMagic) { return blackMagic.getHubCapability(); }
@@ -409,14 +426,14 @@ public interface CommonModule {
     static @Provides @Singleton @Bubble SoundEvent provideBubbleSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("bubble")); }
     static @Provides @Singleton @Pop SoundEvent providePopSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("pop")); }
 
-    @Binds @IntoSet @Misc SoundEvent bindExplodeDarkSound(@ExplodeDark SoundEvent event);
-    @Binds @IntoSet @Misc SoundEvent bindDoorSound(@Door SoundEvent event);
-    @Binds @IntoSet @Misc SoundEvent bindTickingSound(@Ticking SoundEvent event);
-    @Binds @IntoSet @Misc SoundEvent bindEmptySound(@Empty SoundEvent event);
-    @Binds @IntoSet @Misc SoundEvent bindDarkAirSound(@DarkAir SoundEvent event);
-    @Binds @IntoSet @Misc SoundEvent bindKeySound(@Key SoundEvent event);
-    @Binds @IntoSet @Misc SoundEvent bindBubbleSound(@Bubble SoundEvent event);
-    @Binds @IntoSet @Misc SoundEvent bindPopSound(@Pop SoundEvent event);
+    @Binds @IntoSet SoundEvent bindExplodeDarkSound(@ExplodeDark SoundEvent event);
+    @Binds @IntoSet SoundEvent bindDoorSound(@Door SoundEvent event);
+    @Binds @IntoSet SoundEvent bindTickingSound(@Ticking SoundEvent event);
+    @Binds @IntoSet SoundEvent bindEmptySound(@Empty SoundEvent event);
+    @Binds @IntoSet SoundEvent bindDarkAirSound(@DarkAir SoundEvent event);
+    @Binds @IntoSet SoundEvent bindKeySound(@Key SoundEvent event);
+    @Binds @IntoSet SoundEvent bindBubbleSound(@Bubble SoundEvent event);
+    @Binds @IntoSet SoundEvent bindPopSound(@Pop SoundEvent event);
 
     // @formatter:on
 }
