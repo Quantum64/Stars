@@ -36,6 +36,9 @@ public class TrophyBlockRender extends TileEntityRenderer<TrophyTile> {
     }
 
     public void render(TrophyTile tile, double x, double y, double z, float partialTicks, int destroyStage) {
+        if (!tile.isHasBlock()) {
+            return;
+        }
         GlStateManager.disableLighting();
         GlStateManager.disableCull();
         if (Minecraft.isAmbientOcclusionEnabled()) {

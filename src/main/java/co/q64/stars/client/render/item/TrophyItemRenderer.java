@@ -37,10 +37,11 @@ public class TrophyItemRenderer extends ItemStackTileEntityRenderer {
         GlStateManager.translated(0.5, 0.5, 0.5);
         Minecraft.getInstance().getItemRenderer().renderItem(stack, Minecraft.getInstance().getModelManager().getBlockModelShapes().getModel(trophyBlock.getDefaultState()));
         GlStateManager.popMatrix();
-        ExtendedTag tag = extendedTagFactory.create(stack.getOrCreateTag());
+        ExtendedTag tag = extendedTagFactory.create(stack.getOrCreateChildTag("BlockEntityTag"));
         if (tag.getBoolean("hasBlock")) {
             TileEntityRendererDispatcher.instance.renderAsItem(cache.computeIfAbsent(formingBlockTypes.get(tag.getInt("forming", greyFormingBlockType.getId())), key -> {
                 TrophyTile result = tileProvider.get();
+                result.setHasBlock(true);
                 result.setForming(key);
                 return result;
             }));

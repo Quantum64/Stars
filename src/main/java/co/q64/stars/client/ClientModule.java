@@ -30,7 +30,7 @@ public interface ClientModule {
     @Binds ClientNetHandler bindClientEffects(ClientNetHandlerImpl clientEffects);
 
     static @Provides @TrophyItemProperties Item.Properties provideTrophyItemProperties(StarsGroup starsGroup, TrophyItemRenderer trophyItemRenderer) {
-        return new Properties().group(starsGroup).setTEISR(() -> () -> trophyItemRenderer);
+        return new Properties().group(starsGroup).maxStackSize(1).setTEISR(() -> () -> trophyItemRenderer);
     }
     static @Provides @Singleton @AmbientDark SoundEvent provideAmbientDarkSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("ambient_dark")); }
 

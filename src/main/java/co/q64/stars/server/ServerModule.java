@@ -13,6 +13,6 @@ public interface ServerModule {
     // @formatter:off
     @Binds ClientNetHandler bindClientEffects(MockClientNetHandler mockClientEffects);
 
-    static @Provides @TrophyItemProperties Properties provideTrophyItemProperties(StarsGroup starsGroup) { return new Properties().group(starsGroup); }
+    static @Provides @TrophyItemProperties Properties provideTrophyItemProperties(StarsGroup starsGroup) { return new Properties().maxStackSize(1).group(starsGroup); }
     // @formatter:on
 }

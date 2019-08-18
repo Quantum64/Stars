@@ -25,7 +25,7 @@ public class TrophyBlock extends BaseBlock {
     protected @Inject Provider<TrophyTile> tileFactory;
 
     protected @Inject TrophyBlock() {
-        super("trophy", Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(5f, 6f));
+        super("trophy", Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(5f, 6f).lightValue(15));
     }
 
     public boolean hasTileEntity(BlockState state) {
