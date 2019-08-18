@@ -1,5 +1,6 @@
 package co.q64.stars.level;
 
+import co.q64.stars.type.FormingBlockType;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -9,6 +10,8 @@ import java.util.List;
 
 public interface Level {
     public LevelType getType();
+
+    public FormingBlockType getSymbolicBlock();
 
     public List<BlockPos> getChallengeStars(BlockPos start);
 

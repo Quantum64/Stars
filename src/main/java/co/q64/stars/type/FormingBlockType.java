@@ -42,6 +42,8 @@ public interface FormingBlockType {
 
     public Provider<? extends Item> getItemProvider();
 
+    public Provider<? extends Item> getItemProviderRobust();
+
     public Direction getInitialDirection(World world, BlockPos position);
 
     public List<Direction> getNextDirections(World world, BlockPos position, Direction last, int iterations);

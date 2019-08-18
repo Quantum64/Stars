@@ -5,6 +5,7 @@ import co.q64.stars.client.render.tile.DecayingBlockRender;
 import co.q64.stars.client.render.tile.DoorBlockRender;
 import co.q64.stars.client.render.tile.FormingBlockRender;
 import co.q64.stars.client.render.tile.SeedBlockRender;
+import co.q64.stars.client.render.tile.TrophyBlockRender;
 import co.q64.stars.client.util.LoseWayKeyBinding;
 import co.q64.stars.entity.PickupEntity;
 import co.q64.stars.loader.CommonLoader;
@@ -12,6 +13,7 @@ import co.q64.stars.tile.DecayingTile;
 import co.q64.stars.tile.DoorTile;
 import co.q64.stars.tile.FormingTile;
 import co.q64.stars.tile.SeedTile;
+import co.q64.stars.tile.TrophyTile;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
@@ -26,6 +28,7 @@ public class ClientLoader {
     protected @Inject DecayingBlockRender decayingBlockRender;
     protected @Inject DoorBlockRender doorBlockRender;
     protected @Inject SeedBlockRender seedBlockRender;
+    protected @Inject TrophyBlockRender trophyBlockRender;
 
     protected @Inject PickupEntityRenderFactory pickupEntityRenderFactory;
     protected @Inject LoseWayKeyBinding loseWayKeyBinding;
@@ -37,6 +40,7 @@ public class ClientLoader {
         ClientRegistry.bindTileEntitySpecialRenderer(DecayingTile.class, decayingBlockRender);
         ClientRegistry.bindTileEntitySpecialRenderer(DoorTile.class, doorBlockRender);
         ClientRegistry.bindTileEntitySpecialRenderer(SeedTile.class, seedBlockRender);
+        ClientRegistry.bindTileEntitySpecialRenderer(TrophyTile.class, trophyBlockRender);
         ClientRegistry.registerKeyBinding(loseWayKeyBinding);
 
         RenderingRegistry.registerEntityRenderingHandler(PickupEntity.class, pickupEntityRenderFactory::create);

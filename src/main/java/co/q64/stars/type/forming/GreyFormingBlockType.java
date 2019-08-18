@@ -2,6 +2,7 @@ package co.q64.stars.type.forming;
 
 import co.q64.stars.block.GreyFormedBlock;
 import co.q64.stars.item.YellowSeedItem;
+import co.q64.stars.item.YellowSeedItem.YellowSeedItemRobust;
 import co.q64.stars.qualifier.SoundQualifiers.Dark;
 import co.q64.stars.type.FormingBlockType;
 import lombok.Getter;
@@ -28,6 +29,7 @@ public class GreyFormingBlockType implements FormingBlockType {
 
     protected @Getter @Inject GreyFormedBlock formedBlock;
     protected @Getter @Inject Provider<YellowSeedItem> itemProvider;
+    protected @Getter @Inject Provider<YellowSeedItemRobust> itemProviderRobust;
     protected @Getter @Inject @Dark Set<SoundEvent> sounds;
 
     protected @Inject GreyFormingBlockType() {}

@@ -7,8 +7,10 @@ import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.forming.BrownFormingBlockType;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.dimension.DimensionType;
 
 import javax.inject.Inject;
 import java.util.ArrayDeque;
@@ -21,11 +23,12 @@ import java.util.Set;
 public class GardenerCapabilityImpl implements GardenerCapability {
     private @Setter @Getter int seeds, keys, seedVisibility = 3, seedsSincePink, totalSeeds, hubIndex = -1;
     private @Setter @Getter long lastJumped;
-    private @Setter @Getter boolean openDoor, openChallengeDoor, enteringHub, enteringFleeting;
+    private @Setter @Getter boolean openDoor, openChallengeDoor, enteringHub, enteringFleeting, completeChallenge;
     private @Setter @Getter FleetingStage fleetingStage = FleetingStage.NONE;
     private @Setter @Getter FormingBlockType lastSeed;
     private @Setter @Getter LevelType levelType = LevelType.RED;
-    private @Setter @Getter BlockPos hubSpawn = BlockPos.ZERO;
+    private @Setter @Getter BlockPos hubSpawn = BlockPos.ZERO, hubEntryPosition = BlockPos.ZERO;
+    private @Setter @Getter ResourceLocation hubEntryDimension = DimensionType.OVERWORLD.getRegistryName();
     private @Getter Deque<FormingBlockType> nextSeeds = new ArrayDeque<>();
     private @Getter Set<SoundEvent> lastSounds = new HashSet<>();
     private Map<SoundEvent, Long> lastPlayed = new HashMap<>();

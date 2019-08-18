@@ -223,6 +223,34 @@
       "stars:grow_purple_4"
     ]
   },
+  "grow_teal_1": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_teal_1",
+    "sounds": [
+      "stars:grow_teal_1"
+    ]
+  },
+  "grow_teal_2": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_teal_2",
+    "sounds": [
+      "stars:grow_teal_2"
+    ]
+  },
+  "grow_teal_3": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_teal_3",
+    "sounds": [
+      "stars:grow_teal_3"
+    ]
+  },
+  "grow_teal_4": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_teal_4",
+    "sounds": [
+      "stars:grow_teal_4"
+    ]
+  },
   "explode_1": {
     "category": "master",
     "subtitle": "stars.subtitle.explode_1",
@@ -361,6 +389,27 @@
     "subtitle": "stars.subtitle.pop",
     "sounds": [
       "stars:pop"
+    ]
+  },
+  "thunder_1": {
+    "category": "master",
+    "subtitle": "stars.subtitle.thunder_1",
+    "sounds": [
+      "stars:thunder_1"
+    ]
+  },
+  "thunder_2": {
+    "category": "master",
+    "subtitle": "stars.subtitle.thunder_2",
+    "sounds": [
+      "stars:thunder_2"
+    ]
+  },
+  "thunder_3": {
+    "category": "master",
+    "subtitle": "stars.subtitle.thunder_3",
+    "sounds": [
+      "stars:thunder_3"
     ]
   },
   "ambient_dark": {

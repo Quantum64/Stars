@@ -8,7 +8,7 @@ import javax.inject.Singleton;
 @Singleton
 public class StarItem extends BaseItem {
     @Inject
-    protected StarItem(StarsGroup group) {
-        super("star", group);
+    protected StarItem() {
+        super("star");
     }
 }

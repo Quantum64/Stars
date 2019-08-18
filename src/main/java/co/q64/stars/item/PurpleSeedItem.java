@@ -12,4 +12,12 @@ public class PurpleSeedItem extends SeedItem {
     protected PurpleSeedItem(PurpleFormingBlockType type, StarsGroup group) {
         super("purple_seed", type, group);
     }
+
+    @Singleton
+    public static class PurpleSeedItemRobust extends BaseItem {
+        @Inject
+        protected PurpleSeedItemRobust(StarsGroup group) {
+            super("purple_seed_robust", group);
+        }
+    }
 }

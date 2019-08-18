@@ -18,7 +18,7 @@ public class ClientFadePacket {
     protected ClientFadePacket(@Provided ClientNetHandler clientNetHandler, PacketBuffer buffer) {
         CompoundNBT tag = buffer.readCompoundTag();
         this.clientNetHandler = clientNetHandler;
-        this.type = FadeMode.valueOf(tag.getString("type"));
+        this.type = FadeMode.valueOf(tag.getString("forming"));
         this.time = tag.getLong("time");
     }
 
@@ -30,7 +30,7 @@ public class ClientFadePacket {
 
     public void encode(PacketBuffer buffer) {
         CompoundNBT tag = new CompoundNBT();
-        tag.putString("type", type.name());
+        tag.putString("forming", type.name());
         tag.putLong("time", time);
         buffer.writeCompoundTag(tag);
     }

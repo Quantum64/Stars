@@ -2,6 +2,8 @@ package co.q64.stars.type.forming;
 
 import co.q64.stars.block.PinkFormedBlock;
 import co.q64.stars.item.PinkSeedItem;
+import co.q64.stars.item.PinkSeedItem.PinkSeedItemRobust;
+import co.q64.stars.item.YellowSeedItem.YellowSeedItemRobust;
 import co.q64.stars.qualifier.SoundQualifiers.Pink;
 import co.q64.stars.type.FormingBlockType;
 import lombok.Getter;
@@ -28,6 +30,7 @@ public class PinkFormingBlockType implements FormingBlockType {
 
     protected @Getter @Inject PinkFormedBlock formedBlock;
     protected @Getter @Inject Provider<PinkSeedItem> itemProvider;
+    protected @Getter @Inject Provider<PinkSeedItemRobust> itemProviderRobust;
     protected @Getter @Inject @Pink Set<SoundEvent> sounds;
 
     protected @Inject PinkFormingBlockType() {}

@@ -12,4 +12,12 @@ public class CyanSeedItem extends SeedItem {
     protected CyanSeedItem(CyanFormingBlockType type, StarsGroup group) {
         super("cyan_seed", type, group);
     }
+
+    @Singleton
+    public static class CyanSeedItemRobust extends BaseItem {
+        @Inject
+        protected CyanSeedItemRobust(StarsGroup group) {
+            super("cyan_seed_robust", group);
+        }
+    }
 }

@@ -12,4 +12,12 @@ public class BrownSeedItem extends SeedItem {
     protected BrownSeedItem(BrownFormingBlockType type, StarsGroup group) {
         super("brown_seed", type, group);
     }
+
+    @Singleton
+    public static class BrownSeedItemRobust extends BaseItem {
+        @Inject
+        protected BrownSeedItemRobust(StarsGroup group) {
+            super("brown_seed_robust", group);
+        }
+    }
 }

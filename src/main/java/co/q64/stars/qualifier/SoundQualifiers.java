@@ -14,6 +14,7 @@ public interface SoundQualifiers {
     public static @Qualifier @interface Purple {}
     public static @Qualifier @interface Brown {}
     public static @Qualifier @interface Pink {}
+    public static @Qualifier @interface Teal {}
     public static @Qualifier @interface Dark {}
     public static @Qualifier @interface Explode {}
     public static @Qualifier @interface Seed {}
@@ -24,6 +25,7 @@ public interface SoundQualifiers {
     public static @Qualifier @interface DarkAir {}
     public static @Qualifier @interface Key {}
     public static @Qualifier @interface Bubble {}
+    public static @Qualifier @interface Thunder {}
     public static @Qualifier @interface Pop {}
 
     // Client

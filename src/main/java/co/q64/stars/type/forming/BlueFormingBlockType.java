@@ -3,6 +3,7 @@ package co.q64.stars.type.forming;
 import co.q64.stars.block.BlueFormedBlock;
 import co.q64.stars.block.BlueFormedBlock.BlueFormedBlockHard;
 import co.q64.stars.item.BlueSeedItem;
+import co.q64.stars.item.BlueSeedItem.BlueSeedItemRobust;
 import co.q64.stars.qualifier.SoundQualifiers.Blue;
 import co.q64.stars.type.FormingBlockType;
 import lombok.Getter;
@@ -29,6 +30,7 @@ public class BlueFormingBlockType implements FormingBlockType {
     protected @Getter @Inject BlueFormedBlock formedBlock;
     protected @Getter @Inject BlueFormedBlockHard formedBlockHard;
     protected @Getter @Inject Provider<BlueSeedItem> itemProvider;
+    protected @Getter @Inject Provider<BlueSeedItemRobust> itemProviderRobust;
     protected @Getter @Inject @Blue Set<SoundEvent> sounds;
 
     protected @Inject BlueFormingBlockType() {}

@@ -111,6 +111,7 @@ public class Structures implements IFutureReloadListener {
         HUB_TEAL("hub_teal.dat"),
         HUB_RED("hub_red.dat"),
         HUB_PINK("hub_pink.dat"),
+        HUB_CYAN("hub_cyan.dat"),
 
         CHALLENGE_CYAN("challenge_cyan.dat");
 

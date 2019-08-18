@@ -1,13 +1,19 @@
 package co.q64.stars.util;
 
 import co.q64.stars.dimension.hub.HubDimension.HubDimensionTemplate;
+import co.q64.stars.level.LevelManager;
 import co.q64.stars.level.LevelType;
 import co.q64.stars.net.PacketManager;
 import co.q64.stars.net.packets.ClientFadePacket.FadeMode;
 import co.q64.stars.type.FleetingStage;
+import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.util.Structures.StructureType;
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.server.MinecraftServer;
@@ -30,6 +36,7 @@ public class HubManager {
     protected @Inject Structures structures;
     protected @Inject HubDimensionTemplate hubDimensionTemplate;
     protected @Inject Logger logger;
+    protected @Inject LevelManager levelManager;
 
     protected @Inject HubManager() {}
 
@@ -66,6 +73,7 @@ public class HubManager {
         ServerWorld spawnWorld = getWorld(player.getServer());
         capabilities.hub(spawnWorld, hub -> {
             capabilities.gardener(player, gardener -> {
+                LevelType previousLevel = gardener.getLevelType();
                 gardener.setLevelType(LevelType.WHITE); // No side effects
                 int index = gardener.getHubIndex();
                 boolean setup = false;
@@ -101,8 +109,19 @@ public class HubManager {
                     });
                     playerManager.syncCapability(player);
                     gardener.getNextSeeds().clear();
+                    boolean challenge = gardener.isCompleteChallenge();
+                    gardener.setCompleteChallenge(false);
                     if (!(gardener.isOpenDoor() || gardener.isOpenChallengeDoor())) {
                         gardener.setSeeds(0);
+                    } else {
+                        scheduler.run(() -> {
+                            ItemEntity entity = EntityType.ITEM.create(world);
+                            FormingBlockType type = levelManager.getLevel(previousLevel).getSymbolicBlock();
+                            Item drop = challenge ? type.getItemProviderRobust().get() : type.getItemProvider().get();
+                            entity.setItem(new ItemStack(drop));
+                            entity.setPosition(hubSpawn.getX() + 0.5, hubSpawn.getY() + 0.5, hubSpawn.getZ() + 0.5);
+                            world.addEntity(entity);
+                        }, 20);
                     }
                     playerManager.updateSeeds(player);
                     player.addPotionEffect(new EffectInstance(Effects.SLOW_FALLING, 60, 3, true, false));
@@ -124,7 +143,8 @@ public class HubManager {
         structures.get(StructureType.HUB_BLUE).place(world, spawn.add(-42, 0, -40), true);
         structures.get(StructureType.HUB_YELLOW).place(world, spawn.add(-42, 30, -70), true);
         structures.get(StructureType.HUB_TEAL).place(world, spawn.add(-65, 10, -85), true);
-        structures.get(StructureType.HUB_PINK).place(world, spawn.add(-22, 0, 30), true);
+        structures.get(StructureType.HUB_PINK).place(world, spawn.add(-22, 0, 25), true);
+        structures.get(StructureType.HUB_CYAN).place(world, spawn.add(-12, -8, 48), true);
         structures.get(StructureType.HUB_RED).place(world, spawn.add(80, -11, 0), true);
     }
 

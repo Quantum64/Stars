@@ -1,10 +1,11 @@
 package co.q64.stars.type.forming;
 
-import co.q64.stars.block.BlueFormedBlock.BlueFormedBlockHard;
 import co.q64.stars.block.BrownFormedBlock;
 import co.q64.stars.block.BrownFormedBlock.BrownFormedBlockHard;
 import co.q64.stars.block.FormingBlock;
 import co.q64.stars.item.BrownSeedItem;
+import co.q64.stars.item.BrownSeedItem.BrownSeedItemRobust;
+import co.q64.stars.item.YellowSeedItem.YellowSeedItemRobust;
 import co.q64.stars.qualifier.SoundQualifiers.Brown;
 import co.q64.stars.type.FormingBlockType;
 import lombok.Getter;
@@ -35,12 +36,13 @@ public class BrownFormingBlockType implements FormingBlockType {
     protected @Getter @Inject BrownFormedBlock formedBlock;
     protected @Getter @Inject BrownFormedBlockHard formedBlockHard;
     protected @Getter @Inject Provider<BrownSeedItem> itemProvider;
+    protected @Getter @Inject Provider<BrownSeedItemRobust> itemProviderRobust;
     protected @Getter @Inject @Brown Set<SoundEvent> sounds;
 
     protected @Inject BrownFormingBlockType() {}
 
     public int getIterations(long seed) {
-        return 100;
+        return 25;
     }
 
     public Direction getInitialDirection(World world, BlockPos position) {

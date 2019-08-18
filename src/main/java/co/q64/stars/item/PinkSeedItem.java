@@ -12,4 +12,12 @@ public class PinkSeedItem extends SeedItem {
     protected PinkSeedItem(PinkFormingBlockType type, StarsGroup group) {
         super("pink_seed", type, group);
     }
+
+    @Singleton
+    public static class PinkSeedItemRobust extends BaseItem {
+        @Inject
+        protected PinkSeedItemRobust(StarsGroup group) {
+            super("pink_seed_robust", group);
+        }
+    }
 }

@@ -12,6 +12,8 @@ import co.q64.stars.block.RedPrimedBlock.RedPrimedBlockHard;
 import co.q64.stars.dimension.fleeting.FleetingSolidDimension;
 import co.q64.stars.dimension.hub.HubDimension;
 import co.q64.stars.item.RedSeedItem;
+import co.q64.stars.item.RedSeedItem.RedSeedItemRobust;
+import co.q64.stars.item.YellowSeedItem.YellowSeedItemRobust;
 import co.q64.stars.level.LevelType;
 import co.q64.stars.qualifier.SoundQualifiers.Explode;
 import co.q64.stars.qualifier.SoundQualifiers.ExplodeDark;
@@ -56,6 +58,7 @@ public class RedFormingBlockType implements FormingBlockType {
     protected @Getter @Inject RedPrimedBlock formedBlock;
     protected @Getter @Inject RedPrimedBlockHard formedBlockHard;
     protected @Getter @Inject Provider<RedSeedItem> itemProvider;
+    protected @Getter @Inject Provider<RedSeedItemRobust> itemProviderRobust;
     protected @Getter @Inject @Red Set<SoundEvent> sounds;
 
     protected @Inject Provider<FleetingManager> entryManager;

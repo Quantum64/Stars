@@ -19,6 +19,7 @@ import co.q64.stars.net.packets.ClientFadePacket.FadeMode;
 import co.q64.stars.qualifier.SoundQualifiers.Bubble;
 import co.q64.stars.qualifier.SoundQualifiers.Key;
 import co.q64.stars.qualifier.SoundQualifiers.Pop;
+import co.q64.stars.qualifier.SoundQualifiers.Thunder;
 import co.q64.stars.tile.DecayEdgeTile;
 import co.q64.stars.type.FleetingStage;
 import co.q64.stars.type.FormingBlockType;
@@ -68,6 +69,7 @@ public class FleetingManager {
     protected @Inject @Key SoundEvent keySound;
     protected @Inject @Bubble SoundEvent bubbleSound;
     protected @Inject @Pop SoundEvent popSound;
+    protected @Inject @Thunder Set<SoundEvent> thunderSounds;
     protected @Inject FleetingDimensionTemplate fleetingDimensionTemplate;
     protected @Inject FleetingSolidDimensionTemplate fleetingSolidDimensionTemplate;
 
@@ -214,6 +216,7 @@ public class FleetingManager {
             }
             setStage(player, FleetingStage.DARK);
             ServerWorld world = player.getServerWorld();
+            sounds.playSound(world, player.getPosition(), thunderSounds, 1f);
             world.getEntities()
                     .filter(entity -> entity.getPosition().distanceSq(player.getPosition()) < 1000 * 1000)
                     .filter(entity -> entity instanceof PickupEntity)

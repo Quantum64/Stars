@@ -43,6 +43,8 @@ import co.q64.stars.block.SeedBlock.SeedBlockHard;
 import co.q64.stars.block.SpecialAirBlock;
 import co.q64.stars.block.SpecialDecayBlock;
 import co.q64.stars.block.SpecialDecayEdgeBlock;
+import co.q64.stars.block.TealFormedBlock;
+import co.q64.stars.block.TrophyBlock;
 import co.q64.stars.block.TubeAirBlock;
 import co.q64.stars.block.TubeDarknessBlock;
 import co.q64.stars.block.YellowFormedBlock;
@@ -65,18 +67,29 @@ import co.q64.stars.entity.PickupEntityFactory;
 import co.q64.stars.item.ArrowItem;
 import co.q64.stars.item.BaseItem;
 import co.q64.stars.item.BlueSeedItem;
+import co.q64.stars.item.BlueSeedItem.BlueSeedItemRobust;
 import co.q64.stars.item.BrownSeedItem;
+import co.q64.stars.item.BrownSeedItem.BrownSeedItemRobust;
 import co.q64.stars.item.ChallengeStarItem;
 import co.q64.stars.item.CyanSeedItem;
+import co.q64.stars.item.CyanSeedItem.CyanSeedItemRobust;
 import co.q64.stars.item.GreenSeedItem;
+import co.q64.stars.item.GreenSeedItem.GreenSeedItemRobust;
 import co.q64.stars.item.HeartItem;
 import co.q64.stars.item.KeyItem;
+import co.q64.stars.item.OrangeSeedItem;
+import co.q64.stars.item.OrangeSeedItem.OrangeSeedItemRobust;
 import co.q64.stars.item.PinkSeedItem;
+import co.q64.stars.item.PinkSeedItem.PinkSeedItemRobust;
 import co.q64.stars.item.PurpleSeedItem;
+import co.q64.stars.item.PurpleSeedItem.PurpleSeedItemRobust;
 import co.q64.stars.item.RedSeedItem;
-import co.q64.stars.item.SeedPouchItem;
+import co.q64.stars.item.RedSeedItem.RedSeedItemRobust;
 import co.q64.stars.item.StarItem;
+import co.q64.stars.item.TealSeedItem;
+import co.q64.stars.item.TealSeedItem.TealSeedItemRobust;
 import co.q64.stars.item.YellowSeedItem;
+import co.q64.stars.item.YellowSeedItem.YellowSeedItemRobust;
 import co.q64.stars.level.Level;
 import co.q64.stars.level.levels.CyanLevel;
 import co.q64.stars.level.levels.RedLevel;
@@ -107,6 +120,8 @@ import co.q64.stars.qualifier.SoundQualifiers.Pop;
 import co.q64.stars.qualifier.SoundQualifiers.Purple;
 import co.q64.stars.qualifier.SoundQualifiers.Red;
 import co.q64.stars.qualifier.SoundQualifiers.Seed;
+import co.q64.stars.qualifier.SoundQualifiers.Teal;
+import co.q64.stars.qualifier.SoundQualifiers.Thunder;
 import co.q64.stars.qualifier.SoundQualifiers.Ticking;
 import co.q64.stars.qualifier.SoundQualifiers.Yellow;
 import co.q64.stars.tile.type.AirDecayEdgeTileType;
@@ -119,6 +134,7 @@ import co.q64.stars.tile.type.ForceRenderCullTileType;
 import co.q64.stars.tile.type.FormingTileType;
 import co.q64.stars.tile.type.SeedTileType;
 import co.q64.stars.tile.type.SpecialDecayEdgeTileType;
+import co.q64.stars.tile.type.TrophyTileType;
 import co.q64.stars.tile.type.TubeTileType;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.forming.BlueFormingBlockType;
@@ -130,6 +146,7 @@ import co.q64.stars.type.forming.OrangeFormingBlockType;
 import co.q64.stars.type.forming.PinkFormingBlockType;
 import co.q64.stars.type.forming.PurpleFormingBlockType;
 import co.q64.stars.type.forming.RedFormingBlockType;
+import co.q64.stars.type.forming.TealFormingBlockType;
 import co.q64.stars.type.forming.YellowFormingBlockType;
 import co.q64.stars.util.Identifiers;
 import co.q64.stars.util.UnfortunateForgeBlackMagic;
@@ -170,6 +187,7 @@ public interface CommonModule {
     @Binds @IntoSet FormingBlockType bindBrownFormingBlockType(BrownFormingBlockType type);
     @Binds @IntoSet FormingBlockType bindOrangeFormingBlockType(OrangeFormingBlockType type);
     @Binds @IntoSet FormingBlockType bindGreyFormingBlockType(GreyFormingBlockType type);
+    @Binds @IntoSet FormingBlockType bindTealFormingBlockType(TealFormingBlockType type);
 
     @Binds @IntoSet Level bindRedLevel(RedLevel redLevel);
     @Binds @IntoSet Level bindCyanLevel(CyanLevel cyanLevel);
@@ -214,22 +232,35 @@ public interface CommonModule {
     @Binds @IntoSet BaseBlock bindOrangeFormedBlock(OrangeFormedBlock orangeFormedBlock);
     @Binds @IntoSet BaseBlock bindOrangeFormedBlockHard(OrangeFormedBlockHard orangeFormedBlockHard);
     @Binds @IntoSet BaseBlock bindGreyFormedBlock(GreyFormedBlock orangeFormedBlock);
+    @Binds @IntoSet BaseBlock bindTealFormedBlock(TealFormedBlock tealFormedBlock);
     @Binds @IntoSet BaseBlock bindChallengeDoorBlock(ChallengeDoorBlock challengeDoorBlock);
     @Binds @IntoSet BaseBlock bindGatewayBlock(GatewayBlock gatewayBlock);
     @Binds @IntoSet BaseBlock bindTubeDarknessBlock(TubeDarknessBlock tubeDarknessBlock);
     @Binds @IntoSet BaseBlock bindTubeAirBlock(TubeAirBlock tubeAirBlock);
     @Binds @IntoSet BaseBlock bindChallengeExitBlock(ChallengeExitBlock challengeExitBlock);
     @Binds @IntoSet BaseBlock bindChallengeEntranceBlock(ChallengeEntranceBlock challengeEntranceBlock);
+    @Binds @IntoSet BaseBlock bindTrophyBlock(TrophyBlock trophyBlock);
 
     @Binds @IntoSet BaseItem bindPinkSeedItem(PinkSeedItem pinkSeedItem);
+    @Binds @IntoSet BaseItem bindPinkSeedItemRobust(PinkSeedItemRobust pinkSeedItemRobust);
     @Binds @IntoSet BaseItem bindBlueSeedItem(BlueSeedItem blueSeedItem);
+    @Binds @IntoSet BaseItem bindBlueSeedItemRobust(BlueSeedItemRobust blueSeedItemRobust);
     @Binds @IntoSet BaseItem bindPurpleSeedItem(PurpleSeedItem purpleSeedItem);
+    @Binds @IntoSet BaseItem bindPurpleSeedItemRobust(PurpleSeedItemRobust purpleSeedItemRobust);
     @Binds @IntoSet BaseItem bindYellowSeedItem(YellowSeedItem yellowSeedItem);
+    @Binds @IntoSet BaseItem bindYellowSeedItemRobust(YellowSeedItemRobust yellowSeedItemRobust);
     @Binds @IntoSet BaseItem bindCyanSeedItem(CyanSeedItem cyanSeedItem);
+    @Binds @IntoSet BaseItem bindCyanSeedItemRobust(CyanSeedItemRobust cyanSeedItemRobust);
     @Binds @IntoSet BaseItem bindGreenSeedItem(GreenSeedItem greenSeedItem);
+    @Binds @IntoSet BaseItem bindGreenSeedItemRobust(GreenSeedItemRobust greenSeedItemRobust);
     @Binds @IntoSet BaseItem bindBrownSeedItem(BrownSeedItem brownSeedItem);
+    @Binds @IntoSet BaseItem bindBrownSeedItemRobust(BrownSeedItemRobust brownSeedItemRobust);
+    @Binds @IntoSet BaseItem bindTealSeedItem(TealSeedItem tealSeedItem);
+    @Binds @IntoSet BaseItem bindTealSeedItemRobust(TealSeedItemRobust tealSeedItemRobust);
     @Binds @IntoSet BaseItem bindRedSeedItem(RedSeedItem redSeedItem);
-    @Binds @IntoSet BaseItem bindSeedPouchItem(SeedPouchItem seedPouchItem);
+    @Binds @IntoSet BaseItem bindRedSeedItemRobust(RedSeedItemRobust redSeedItemRobust);
+    @Binds @IntoSet BaseItem bindOrangeSeedItem(OrangeSeedItem orangeSeedItem);
+    @Binds @IntoSet BaseItem bindOrangeSeedItemRobust(OrangeSeedItemRobust orangeSeedItemRobust);
     @Binds @IntoSet BaseItem bindHeartItem(HeartItem heartItem);
     @Binds @IntoSet BaseItem bindKeyItem(KeyItem keyItem);
     @Binds @IntoSet BaseItem bindStarItem(StarItem starItem);
@@ -252,6 +283,7 @@ public interface CommonModule {
     @Binds @IntoSet TileEntityType<?> bindSeedTileType(SeedTileType type);
     @Binds @IntoSet TileEntityType<?> bindTubeTileType(TubeTileType type);
     @Binds @IntoSet TileEntityType<?> bindChallengeExitTileType(ChallengeExitTileType type);
+    @Binds @IntoSet TileEntityType<?> bindTrophyTileType(TrophyTileType type);
 
     @Binds @IntoSet EntityType<?> bindPickupEntityType(EntityType<PickupEntity> pickupEntityEntityType);
 
@@ -263,9 +295,11 @@ public interface CommonModule {
     @Binds @IntoSet Set<SoundEvent> bindBrownSoundEvents(@Brown Set<SoundEvent> brownSoundEvents);
     @Binds @IntoSet Set<SoundEvent> bindYellowSoundEvents(@Yellow Set<SoundEvent> yellowSoundEvents);
     @Binds @IntoSet Set<SoundEvent> bindCyanSoundEvents(@Cyan Set<SoundEvent> cyanSoundEvents);
+    @Binds @IntoSet Set<SoundEvent> bindTealSoundEvents(@Teal Set<SoundEvent> tealSoundEvents);
     @Binds @IntoSet Set<SoundEvent> bindExplodeSoundEvents(@Explode Set<SoundEvent> explodeSoundEvents);
     @Binds @IntoSet Set<SoundEvent> bindDarkSoundEvents(@Dark Set<SoundEvent> darkSoundEvents);
-    @Binds @IntoSet Set<SoundEvent> bindSeedSoundEvents(@Seed Set<SoundEvent> darkSoundEvents);
+    @Binds @IntoSet Set<SoundEvent> bindSeedSoundEvents(@Seed Set<SoundEvent> seedSoundEvents);
+    @Binds @IntoSet Set<SoundEvent> bindThunderSoundEvents(@Thunder Set<SoundEvent> thunderSoundEvents);
     @Binds @IntoSet Set<SoundEvent> bindMiscSoundEvents(@Misc Set<SoundEvent> miscSoundEvents);
 
     @Binds @IntoSet Biome bindFleetingBiome(FleetingBiome fleetingBiome);
@@ -337,6 +371,11 @@ public interface CommonModule {
     static @Provides @IntoSet @Singleton @Brown SoundEvent provideBrownSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_brown_2")); }
     static @Provides @IntoSet @Singleton @Brown SoundEvent provideBrownSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_brown_3")); }
     static @Provides @IntoSet @Singleton @Brown SoundEvent provideBrownSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_brown_4")); }
+
+    static @Provides @IntoSet @Singleton @Teal SoundEvent provideTealSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_teal_1")); }
+    static @Provides @IntoSet @Singleton @Teal SoundEvent provideTealSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_teal_2")); }
+    static @Provides @IntoSet @Singleton @Teal SoundEvent provideTealSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_teal_3")); }
+    static @Provides @IntoSet @Singleton @Teal SoundEvent provideTealSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_teal_4")); }
     
     static @Provides @IntoSet @Singleton @Explode SoundEvent provideExplodeSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("explode_1")); }
     static @Provides @IntoSet @Singleton @Explode SoundEvent provideExplodeSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("explode_2")); }
@@ -352,6 +391,10 @@ public interface CommonModule {
     static @Provides @IntoSet @Singleton @Seed SoundEvent provideSeedSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("seed_2")); }
     static @Provides @IntoSet @Singleton @Seed SoundEvent provideSeedSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("seed_3")); }
     static @Provides @IntoSet @Singleton @Seed SoundEvent provideSeedSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("seed_4")); }
+    
+    static @Provides @IntoSet @Singleton @Thunder SoundEvent provideThunderSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("thunder_1")); }
+    static @Provides @IntoSet @Singleton @Thunder SoundEvent provideThunderSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("thunder_2")); }
+    static @Provides @IntoSet @Singleton @Thunder SoundEvent provideThunderSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("thunder_3")); }
 
     static @Provides @Singleton @ExplodeDark SoundEvent provideExplodeDarkSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("explode_dark")); }
     static @Provides @Singleton @Door SoundEvent provideDoorSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("door")); }

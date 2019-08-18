@@ -6,6 +6,7 @@ import co.q64.stars.block.DecayBlock;
 import co.q64.stars.block.GreyFormedBlock;
 import co.q64.stars.level.Level;
 import co.q64.stars.level.LevelType;
+import co.q64.stars.type.forming.RedFormingBlockType;
 import lombok.Getter;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -24,6 +25,7 @@ public class RedLevel implements Level {
     protected @Inject DecayBlock decayBlock;
     protected @Inject DarknessBlock darknessBlock;
     protected @Inject ChallengeExitBlock challengeExitBlock;
+    protected @Inject @Getter RedFormingBlockType symbolicBlock;
 
     private final @Getter LevelType type = LevelType.RED;
 

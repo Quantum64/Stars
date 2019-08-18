@@ -1,9 +1,11 @@
 package co.q64.stars.type.forming;
 
-import co.q64.stars.block.GreenFormedBlock.GreenFormedBlockHard;
 import co.q64.stars.block.OrangeFormedBlock;
 import co.q64.stars.block.OrangeFormedBlock.OrangeFormedBlockHard;
+import co.q64.stars.item.OrangeSeedItem;
+import co.q64.stars.item.OrangeSeedItem.OrangeSeedItemRobust;
 import co.q64.stars.item.YellowSeedItem;
+import co.q64.stars.item.YellowSeedItem.YellowSeedItemRobust;
 import co.q64.stars.qualifier.SoundQualifiers.Dark;
 import co.q64.stars.type.FormingBlockType;
 import lombok.Getter;
@@ -25,11 +27,12 @@ public class OrangeFormingBlockType implements FormingBlockType {
     private final @Getter String name = "orange";
     private final @Getter int buildTime = 0;
     private final @Getter int buildTimeOffset = 0;
-    private final @Getter float r = 0, g = 0, b = 0;
+    private final @Getter float r = 172, g = 72, b = 6;
 
     protected @Getter @Inject OrangeFormedBlock formedBlock;
     protected @Getter @Inject OrangeFormedBlockHard formedBlockHard;
-    protected @Getter @Inject Provider<YellowSeedItem> itemProvider;
+    protected @Getter @Inject Provider<OrangeSeedItem> itemProvider;
+    protected @Getter @Inject Provider<OrangeSeedItemRobust> itemProviderRobust;
     protected @Getter @Inject @Dark Set<SoundEvent> sounds;
 
     protected @Inject OrangeFormingBlockType() {}
@@ -39,7 +42,7 @@ public class OrangeFormingBlockType implements FormingBlockType {
     }
 
     public Direction getInitialDirection(World world, BlockPos position) {
-        return null;
+        return hasBlock(world, position, Direction.UP) ? null : Direction.UP;
     }
 
     public List<Direction> getNextDirections(World world, BlockPos position, Direction last, int iterations) {

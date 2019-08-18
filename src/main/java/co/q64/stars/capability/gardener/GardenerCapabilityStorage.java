@@ -10,6 +10,7 @@ import co.q64.stars.util.nbt.NBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 
@@ -35,6 +36,8 @@ public class GardenerCapabilityStorage implements IStorage<GardenerCapability> {
         tag.putInt("hubIndex", instance.getHubIndex());
         tag.putString("levelType", instance.getLevelType().name());
         tag.put("hubSpawn", NBTUtil.writeBlockPos(instance.getHubSpawn()));
+        tag.put("hubEntryPosition", NBTUtil.writeBlockPos(instance.getHubEntryPosition()));
+        tag.putString("hubEntryDimension", instance.getHubEntryDimension().toString());
         return tag.compound();
     }
 
@@ -48,5 +51,7 @@ public class GardenerCapabilityStorage implements IStorage<GardenerCapability> {
         tag.ifInt("hubIndex", instance::setHubIndex);
         tag.ifString("levelType", value -> instance.setLevelType(LevelType.valueOf(value)));
         tag.ifCompound("hubSpawn", value -> instance.setHubSpawn(NBTUtil.readBlockPos(value)));
+        tag.ifCompound("hubEntryPosition", value -> instance.setHubEntryPosition(NBTUtil.readBlockPos(value)));
+        tag.ifString("hubEntryDimension", value -> instance.setHubEntryDimension(new ResourceLocation(value)));
     }
 }

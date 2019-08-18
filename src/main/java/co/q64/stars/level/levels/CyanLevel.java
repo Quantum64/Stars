@@ -2,6 +2,7 @@ package co.q64.stars.level.levels;
 
 import co.q64.stars.level.Level;
 import co.q64.stars.level.LevelType;
+import co.q64.stars.type.forming.CyanFormingBlockType;
 import co.q64.stars.util.Structures;
 import co.q64.stars.util.Structures.StructureType;
 import lombok.Getter;
@@ -19,6 +20,7 @@ public class CyanLevel implements Level {
     private static final int DISTANCE = 35;
 
     protected @Inject Structures structures;
+    protected @Inject @Getter CyanFormingBlockType symbolicBlock;
 
     private final @Getter LevelType type = LevelType.CYAN;
 
