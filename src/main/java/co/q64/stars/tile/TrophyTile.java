@@ -13,6 +13,7 @@ import javax.inject.Inject;
 public class TrophyTile extends SyncTileEntity {
     protected @Inject FormingBlockTypes types;
 
+    private @Setter @Getter boolean hasBlock = false;
     private @Setter @Getter FormingBlockType forming;
 
     @Inject
@@ -23,11 +24,13 @@ public class TrophyTile extends SyncTileEntity {
 
     public void read(CompoundNBT compound) {
         this.forming = types.get(compound.getInt("forming"));
+        this.hasBlock = compound.getBoolean("hasBlock");
         super.read(compound);
     }
 
     public CompoundNBT write(CompoundNBT compound) {
         compound.putInt("forming", forming.getId());
+        compound.putBoolean("hasBlock", hasBlock);
         return super.write(compound);
     }
 }

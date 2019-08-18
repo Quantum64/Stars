@@ -4,6 +4,7 @@ import co.q64.stars.block.BaseBlock;
 import co.q64.stars.item.BaseItem;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.SoundEvent;
@@ -27,6 +28,7 @@ import java.util.Set;
 public class RegistryListener implements Listener {
     protected @Inject Provider<Set<BaseBlock>> blocks;
     protected @Inject Provider<Set<BaseItem>> items;
+    protected @Inject Provider<Set<BlockItem>> blockItems;
     protected @Inject Provider<Set<TileEntityType<?>>> tileEntityTypes;
     protected @Inject Provider<Set<EntityType<?>>> entityTypes;
     protected @Inject Provider<Set<Feature<?>>> features;
@@ -45,6 +47,7 @@ public class RegistryListener implements Listener {
     @SubscribeEvent
     public void onItemRegistry(Register<Item> event) {
         event.getRegistry().registerAll(items.get().toArray(new Item[0]));
+        event.getRegistry().registerAll(blockItems.get().toArray(new Item[0]));
     }
 
     @SubscribeEvent

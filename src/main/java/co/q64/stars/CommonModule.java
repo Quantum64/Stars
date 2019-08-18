@@ -88,6 +88,7 @@ import co.q64.stars.item.RedSeedItem.RedSeedItemRobust;
 import co.q64.stars.item.StarItem;
 import co.q64.stars.item.TealSeedItem;
 import co.q64.stars.item.TealSeedItem.TealSeedItemRobust;
+import co.q64.stars.item.TrophyBlockItem;
 import co.q64.stars.item.YellowSeedItem;
 import co.q64.stars.item.YellowSeedItem.YellowSeedItemRobust;
 import co.q64.stars.level.Level;
@@ -156,6 +157,7 @@ import dagger.Provides;
 import dagger.multibindings.IntoSet;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
+import net.minecraft.item.BlockItem;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
@@ -266,6 +268,8 @@ public interface CommonModule {
     @Binds @IntoSet BaseItem bindStarItem(StarItem starItem);
     @Binds @IntoSet BaseItem bindArrowItem(ArrowItem arrowItem);
     @Binds @IntoSet BaseItem bindChallengeStarItem(ChallengeStarItem challengeStarItem);
+
+    @Binds @IntoSet BlockItem bindTrophyBlockItem(TrophyBlockItem trophyBlockItem);
 
     @Binds @IntoSet Listener bindRegistryListener(RegistryListener serverStartListener);
     @Binds @IntoSet Listener bindInitializationListener(InitializationListener initializationListener);
