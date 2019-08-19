@@ -8,5 +8,6 @@ public class ChallengeStarItem extends BaseItem {
     @Inject
     protected ChallengeStarItem() {
         super("challenge_star");
+        setHideJEI(true);
     }
 }

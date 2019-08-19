@@ -7,6 +7,7 @@ import co.q64.stars.item.OrangeSeedItem.OrangeSeedItemRobust;
 import co.q64.stars.item.YellowSeedItem;
 import co.q64.stars.item.YellowSeedItem.YellowSeedItemRobust;
 import co.q64.stars.qualifier.SoundQualifiers.Dark;
+import co.q64.stars.qualifier.SoundQualifiers.Orange;
 import co.q64.stars.type.FormingBlockType;
 import lombok.Getter;
 import net.minecraft.util.Direction;
@@ -25,7 +26,7 @@ import java.util.Set;
 public class OrangeFormingBlockType implements FormingBlockType {
     private final @Getter int id = 8;
     private final @Getter String name = "orange";
-    private final @Getter int buildTime = 0;
+    private final @Getter int buildTime = 150;
     private final @Getter int buildTimeOffset = 0;
     private final @Getter float r = 172, g = 72, b = 6;
 
@@ -33,7 +34,7 @@ public class OrangeFormingBlockType implements FormingBlockType {
     protected @Getter @Inject OrangeFormedBlockHard formedBlockHard;
     protected @Getter @Inject Provider<OrangeSeedItem> itemProvider;
     protected @Getter @Inject Provider<OrangeSeedItemRobust> itemProviderRobust;
-    protected @Getter @Inject @Dark Set<SoundEvent> sounds;
+    protected @Getter @Inject @Orange Set<SoundEvent> sounds;
 
     protected @Inject OrangeFormingBlockType() {}
 

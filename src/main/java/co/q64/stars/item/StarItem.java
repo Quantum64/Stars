@@ -10,5 +10,6 @@ public class StarItem extends BaseItem {
     @Inject
     protected StarItem() {
         super("star");
+        setHideJEI(true);
     }
 }

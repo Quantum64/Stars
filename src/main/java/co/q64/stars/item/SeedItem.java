@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 import javax.inject.Inject;
 import java.util.Optional;
 
-public abstract class SeedItem extends BaseItem {
+public abstract class SeedItem extends BaseItem implements SeedDescription {
     protected @Inject FormingBlock formingBlock;
 
     private FormingBlockType type;

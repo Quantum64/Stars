@@ -8,5 +8,6 @@ public class ArrowItem extends BaseItem {
     @Inject
     protected ArrowItem() {
         super("arrow");
+        setHideJEI(true);
     }
 }

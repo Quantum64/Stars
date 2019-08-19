@@ -9,11 +9,11 @@ import co.q64.stars.block.RedFormedBlock;
 import co.q64.stars.block.RedFormedBlock.RedFormedBlockHard;
 import co.q64.stars.block.RedPrimedBlock;
 import co.q64.stars.block.RedPrimedBlock.RedPrimedBlockHard;
+import co.q64.stars.dimension.fleeting.FleetingDimension;
 import co.q64.stars.dimension.fleeting.FleetingSolidDimension;
 import co.q64.stars.dimension.hub.HubDimension;
 import co.q64.stars.item.RedSeedItem;
 import co.q64.stars.item.RedSeedItem.RedSeedItemRobust;
-import co.q64.stars.item.YellowSeedItem.YellowSeedItemRobust;
 import co.q64.stars.level.LevelType;
 import co.q64.stars.qualifier.SoundQualifiers.Explode;
 import co.q64.stars.qualifier.SoundQualifiers.ExplodeDark;
@@ -143,7 +143,14 @@ public class RedFormingBlockType implements FormingBlockType {
                 player.connection.sendPacket(new SStopSoundPacket(tickingSound.getName(), SoundCategory.MASTER));
             }
             if (player.getPosition().distanceSq(pos) < 2.9 * 2.9) {
-                entryManager.get().createDarkness(player);
+                if (player.getEntityWorld().getDimension() instanceof FleetingDimension) {
+                    entryManager.get().createDarkness(player);
+                } else if (player.getEntityWorld().getDimension() instanceof HubDimension) {
+                    capabilities.gardener(player, gardener -> {
+                        BlockPos to = gardener.getHubSpawn();
+                        player.teleport(player.getServerWorld(), to.getX(), to.getY(), to.getZ(), player.rotationYaw, player.rotationPitch);
+                    });
+                }
             }
         }
     }

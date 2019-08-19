@@ -49,6 +49,7 @@ import co.q64.stars.block.TrophyBlock.TrophyVariant;
 import co.q64.stars.block.TrophyBlockFactory;
 import co.q64.stars.block.TubeAirBlock;
 import co.q64.stars.block.TubeDarknessBlock;
+import co.q64.stars.block.WhiteFormedBlock;
 import co.q64.stars.block.YellowFormedBlock;
 import co.q64.stars.block.YellowFormedBlock.YellowFormedBlockHard;
 import co.q64.stars.capability.GardenerCapability;
@@ -92,6 +93,8 @@ import co.q64.stars.item.TealSeedItem;
 import co.q64.stars.item.TealSeedItem.TealSeedItemRobust;
 import co.q64.stars.item.TrophyBlockItem;
 import co.q64.stars.item.TrophyBlockItemFactory;
+import co.q64.stars.item.WhiteSeedItem;
+import co.q64.stars.item.WhiteSeedItem.WhiteSeedItemRobust;
 import co.q64.stars.item.YellowSeedItem;
 import co.q64.stars.item.YellowSeedItem.YellowSeedItemRobust;
 import co.q64.stars.level.Level;
@@ -120,6 +123,7 @@ import co.q64.stars.qualifier.SoundQualifiers.Explode;
 import co.q64.stars.qualifier.SoundQualifiers.ExplodeDark;
 import co.q64.stars.qualifier.SoundQualifiers.Green;
 import co.q64.stars.qualifier.SoundQualifiers.Key;
+import co.q64.stars.qualifier.SoundQualifiers.Orange;
 import co.q64.stars.qualifier.SoundQualifiers.Pink;
 import co.q64.stars.qualifier.SoundQualifiers.Pop;
 import co.q64.stars.qualifier.SoundQualifiers.Purple;
@@ -128,6 +132,7 @@ import co.q64.stars.qualifier.SoundQualifiers.Seed;
 import co.q64.stars.qualifier.SoundQualifiers.Teal;
 import co.q64.stars.qualifier.SoundQualifiers.Thunder;
 import co.q64.stars.qualifier.SoundQualifiers.Ticking;
+import co.q64.stars.qualifier.SoundQualifiers.White;
 import co.q64.stars.qualifier.SoundQualifiers.Yellow;
 import co.q64.stars.tile.type.AirDecayEdgeTileType;
 import co.q64.stars.tile.type.ChallengeExitTileType;
@@ -152,6 +157,7 @@ import co.q64.stars.type.forming.PinkFormingBlockType;
 import co.q64.stars.type.forming.PurpleFormingBlockType;
 import co.q64.stars.type.forming.RedFormingBlockType;
 import co.q64.stars.type.forming.TealFormingBlockType;
+import co.q64.stars.type.forming.WhiteFormingBlockType;
 import co.q64.stars.type.forming.YellowFormingBlockType;
 import co.q64.stars.util.Identifiers;
 import co.q64.stars.util.UnfortunateForgeBlackMagic;
@@ -180,6 +186,7 @@ import javax.inject.Singleton;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Module
 public interface CommonModule {
@@ -201,6 +208,7 @@ public interface CommonModule {
     @Binds @IntoSet FormingBlockType bindOrangeFormingBlockType(OrangeFormingBlockType type);
     @Binds @IntoSet FormingBlockType bindGreyFormingBlockType(GreyFormingBlockType type);
     @Binds @IntoSet FormingBlockType bindTealFormingBlockType(TealFormingBlockType type);
+    @Binds @IntoSet FormingBlockType bindWhiteFormingBlockType(WhiteFormingBlockType type);
 
     @Binds @IntoSet Level bindRedLevel(RedLevel redLevel);
     @Binds @IntoSet Level bindCyanLevel(CyanLevel cyanLevel);
@@ -250,6 +258,7 @@ public interface CommonModule {
     @Binds @IntoSet BaseBlock bindOrangeFormedBlockHard(OrangeFormedBlockHard orangeFormedBlockHard);
     @Binds @IntoSet BaseBlock bindGreyFormedBlock(GreyFormedBlock orangeFormedBlock);
     @Binds @IntoSet BaseBlock bindTealFormedBlock(TealFormedBlock tealFormedBlock);
+    @Binds @IntoSet BaseBlock bindWhiteFormedBlock(WhiteFormedBlock whiteFormedBlock);
     @Binds @IntoSet BaseBlock bindChallengeDoorBlock(ChallengeDoorBlock challengeDoorBlock);
     @Binds @IntoSet BaseBlock bindGatewayBlock(GatewayBlock gatewayBlock);
     @Binds @IntoSet BaseBlock bindTubeDarknessBlock(TubeDarknessBlock tubeDarknessBlock);
@@ -278,6 +287,8 @@ public interface CommonModule {
     @Binds @IntoSet BaseItem bindRedSeedItemRobust(RedSeedItemRobust redSeedItemRobust);
     @Binds @IntoSet BaseItem bindOrangeSeedItem(OrangeSeedItem orangeSeedItem);
     @Binds @IntoSet BaseItem bindOrangeSeedItemRobust(OrangeSeedItemRobust orangeSeedItemRobust);
+    @Binds @IntoSet BaseItem bindWhiteSeedItem(WhiteSeedItem whiteSeedItem);
+    @Binds @IntoSet BaseItem bindWhiteSeedItemRobust(WhiteSeedItemRobust whiteSeedItemRobust);
     @Binds @IntoSet BaseItem bindHeartItem(HeartItem heartItem);
     @Binds @IntoSet BaseItem bindKeyItem(KeyItem keyItem);
     @Binds @IntoSet BaseItem bindStarItem(StarItem starItem);
@@ -353,69 +364,21 @@ public interface CommonModule {
         return result;
     }
 
-    static @Provides @IntoSet @Singleton @Pink SoundEvent providePinkSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_pink_1")); }
-    static @Provides @IntoSet @Singleton @Pink SoundEvent providePinkSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_pink_2")); }
-    static @Provides @IntoSet @Singleton @Pink SoundEvent providePinkSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_pink_3")); }
-    static @Provides @IntoSet @Singleton @Pink SoundEvent providePinkSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_pink_4")); }
-    
-    static @Provides @IntoSet @Singleton @Red SoundEvent provideRedSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_red_1")); }
-    static @Provides @IntoSet @Singleton @Red SoundEvent provideRedSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_red_2")); }
-    static @Provides @IntoSet @Singleton @Red SoundEvent provideRedSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_red_3")); }
-    static @Provides @IntoSet @Singleton @Red SoundEvent provideRedSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_red_4")); }
-    
-    static @Provides @IntoSet @Singleton @Blue SoundEvent provideBlueSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_blue_1")); }
-    static @Provides @IntoSet @Singleton @Blue SoundEvent provideBlueSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_blue_2")); }
-    static @Provides @IntoSet @Singleton @Blue SoundEvent provideBlueSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_blue_3")); }
-    static @Provides @IntoSet @Singleton @Blue SoundEvent provideBlueSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_blue_4")); }
-    
-    static @Provides @IntoSet @Singleton @Cyan SoundEvent provideCyanSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_cyan_1")); }
-    static @Provides @IntoSet @Singleton @Cyan SoundEvent provideCyanSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_cyan_2")); }
-    static @Provides @IntoSet @Singleton @Cyan SoundEvent provideCyanSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_cyan_3")); }
-    static @Provides @IntoSet @Singleton @Cyan SoundEvent provideCyanSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_cyan_4")); }
-    
-    static @Provides @IntoSet @Singleton @Green SoundEvent provideGreenSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_green_1")); }
-    static @Provides @IntoSet @Singleton @Green SoundEvent provideGreenSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_green_2")); }
-    static @Provides @IntoSet @Singleton @Green SoundEvent provideGreenSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_green_3")); }
-    static @Provides @IntoSet @Singleton @Green SoundEvent provideGreenSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_green_4")); }
-    
-    static @Provides @IntoSet @Singleton @Purple SoundEvent providePurpleSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_purple_1")); }
-    static @Provides @IntoSet @Singleton @Purple SoundEvent providePurpleSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_purple_2")); }
-    static @Provides @IntoSet @Singleton @Purple SoundEvent providePurpleSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_purple_3")); }
-    static @Provides @IntoSet @Singleton @Purple SoundEvent providePurpleSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_purple_4")); }
-    
-    static @Provides @IntoSet @Singleton @Yellow SoundEvent provideYellowSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_yellow_1")); }
-    static @Provides @IntoSet @Singleton @Yellow SoundEvent provideYellowSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_yellow_2")); }
-    static @Provides @IntoSet @Singleton @Yellow SoundEvent provideYellowSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_yellow_3")); }
-    static @Provides @IntoSet @Singleton @Yellow SoundEvent provideYellowSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_yellow_4")); }
-    
-    static @Provides @IntoSet @Singleton @Brown SoundEvent provideBrownSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_brown_1")); }
-    static @Provides @IntoSet @Singleton @Brown SoundEvent provideBrownSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_brown_2")); }
-    static @Provides @IntoSet @Singleton @Brown SoundEvent provideBrownSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_brown_3")); }
-    static @Provides @IntoSet @Singleton @Brown SoundEvent provideBrownSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_brown_4")); }
-
-    static @Provides @IntoSet @Singleton @Teal SoundEvent provideTealSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_teal_1")); }
-    static @Provides @IntoSet @Singleton @Teal SoundEvent provideTealSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_teal_2")); }
-    static @Provides @IntoSet @Singleton @Teal SoundEvent provideTealSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_teal_3")); }
-    static @Provides @IntoSet @Singleton @Teal SoundEvent provideTealSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("grow_teal_4")); }
-    
-    static @Provides @IntoSet @Singleton @Explode SoundEvent provideExplodeSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("explode_1")); }
-    static @Provides @IntoSet @Singleton @Explode SoundEvent provideExplodeSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("explode_2")); }
-    static @Provides @IntoSet @Singleton @Explode SoundEvent provideExplodeSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("explode_3")); }
-    static @Provides @IntoSet @Singleton @Explode SoundEvent provideExplodeSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("explode_4")); }
-    
-    static @Provides @IntoSet @Singleton @Dark SoundEvent provideDarkSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("dark_1")); }
-    static @Provides @IntoSet @Singleton @Dark SoundEvent provideDarkSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("dark_2")); }
-    static @Provides @IntoSet @Singleton @Dark SoundEvent provideDarkSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("dark_3")); }
-    static @Provides @IntoSet @Singleton @Dark SoundEvent provideDarkSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("dark_4")); }
-    
-    static @Provides @IntoSet @Singleton @Seed SoundEvent provideSeedSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("seed_1")); }
-    static @Provides @IntoSet @Singleton @Seed SoundEvent provideSeedSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("seed_2")); }
-    static @Provides @IntoSet @Singleton @Seed SoundEvent provideSeedSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("seed_3")); }
-    static @Provides @IntoSet @Singleton @Seed SoundEvent provideSeedSound4(Identifiers identifiers) { return new SoundEvent(identifiers.get("seed_4")); }
-    
-    static @Provides @IntoSet @Singleton @Thunder SoundEvent provideThunderSound1(Identifiers identifiers) { return new SoundEvent(identifiers.get("thunder_1")); }
-    static @Provides @IntoSet @Singleton @Thunder SoundEvent provideThunderSound2(Identifiers identifiers) { return new SoundEvent(identifiers.get("thunder_2")); }
-    static @Provides @IntoSet @Singleton @Thunder SoundEvent provideThunderSound3(Identifiers identifiers) { return new SoundEvent(identifiers.get("thunder_3")); }
+    static @Provides @ElementsIntoSet @Singleton @Pink Set<SoundEvent> providePinkSounds(Identifiers identifiers) { return indexedSounds(identifiers, "grow_pink", 4); }
+    static @Provides @ElementsIntoSet @Singleton @Red Set<SoundEvent> provideRedSounds(Identifiers identifiers) { return indexedSounds(identifiers, "grow_red", 4); }
+    static @Provides @ElementsIntoSet @Singleton @Blue Set<SoundEvent> provideBlueSounds(Identifiers identifiers) { return indexedSounds(identifiers, "grow_blue", 4); }
+    static @Provides @ElementsIntoSet @Singleton @Cyan Set<SoundEvent> provideCyanSounds(Identifiers identifiers) { return indexedSounds(identifiers, "grow_cyan", 4); }
+    static @Provides @ElementsIntoSet @Singleton @Green Set<SoundEvent> provideGreenSounds(Identifiers identifiers) { return indexedSounds(identifiers, "grow_green", 4); }
+    static @Provides @ElementsIntoSet @Singleton @Purple Set<SoundEvent> providePurpleSounds(Identifiers identifiers) { return indexedSounds(identifiers, "grow_purple", 4); }
+    static @Provides @ElementsIntoSet @Singleton @Yellow Set<SoundEvent> provideYellowSounds(Identifiers identifiers) { return indexedSounds(identifiers, "grow_yellow", 4); }
+    static @Provides @ElementsIntoSet @Singleton @Brown Set<SoundEvent> provideBrownSounds(Identifiers identifiers) { return indexedSounds(identifiers, "grow_brown", 4); }
+    static @Provides @ElementsIntoSet @Singleton @Teal Set<SoundEvent> provideTealSounds(Identifiers identifiers) { return indexedSounds(identifiers, "grow_teal", 4); }
+    static @Provides @ElementsIntoSet @Singleton @Orange Set<SoundEvent> provideOrangeSounds(Identifiers identifiers) { return indexedSounds(identifiers, "grow_orange", 4); }
+    static @Provides @ElementsIntoSet @Singleton @White Set<SoundEvent> provideWhiteSounds(Identifiers identifiers) { return indexedSounds(identifiers, "grow_white", 4); }
+    static @Provides @ElementsIntoSet @Singleton @Explode Set<SoundEvent> provideExplodeSounds(Identifiers identifiers) { return indexedSounds(identifiers, "explode", 4); }
+    static @Provides @ElementsIntoSet @Singleton @Dark Set<SoundEvent> provideDarkSounds(Identifiers identifiers) { return indexedSounds(identifiers, "dark", 4); }
+    static @Provides @ElementsIntoSet @Singleton @Seed Set<SoundEvent> provideSeedSounds(Identifiers identifiers) { return indexedSounds(identifiers, "seed", 4); }
+    static @Provides @ElementsIntoSet @Singleton @Thunder Set<SoundEvent> provideThunderSounds(Identifiers identifiers) { return indexedSounds(identifiers, "thunder", 3); }
 
     static @Provides @Singleton @ExplodeDark SoundEvent provideExplodeDarkSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("explode_dark")); }
     static @Provides @Singleton @Door SoundEvent provideDoorSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("door")); }
@@ -436,4 +399,12 @@ public interface CommonModule {
     @Binds @IntoSet SoundEvent bindPopSound(@Pop SoundEvent event);
 
     // @formatter:on
+
+    public static Set<SoundEvent> indexedSounds(Identifiers identifiers, String name, int count) {
+        return sounds(identifiers, IntStream.rangeClosed(1, count).mapToObj(index -> name + "_" + index).toArray(String[]::new));
+    }
+
+    public static Set<SoundEvent> sounds(Identifiers identifiers, String... sounds) {
+        return Arrays.stream(sounds).map(name -> new SoundEvent(identifiers.get(name))).collect(Collectors.toSet());
+    }
 }

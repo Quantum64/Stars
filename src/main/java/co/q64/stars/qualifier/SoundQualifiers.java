@@ -15,6 +15,8 @@ public interface SoundQualifiers {
     public static @Qualifier @interface Brown {}
     public static @Qualifier @interface Pink {}
     public static @Qualifier @interface Teal {}
+    public static @Qualifier @interface Orange {}
+    public static @Qualifier @interface White {}
     public static @Qualifier @interface Dark {}
     public static @Qualifier @interface Explode {}
     public static @Qualifier @interface Seed {}

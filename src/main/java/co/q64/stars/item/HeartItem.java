@@ -10,5 +10,6 @@ public class HeartItem extends BaseItem {
     @Inject
     protected HeartItem() {
         super("heart");
+        setHideJEI(true);
     }
 }

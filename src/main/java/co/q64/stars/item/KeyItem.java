@@ -8,5 +8,6 @@ public class KeyItem extends BaseItem {
     @Inject
     protected KeyItem() {
         super("key");
+        setHideJEI(true);
     }
 }

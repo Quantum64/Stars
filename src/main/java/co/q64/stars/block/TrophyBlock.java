@@ -74,7 +74,8 @@ public class TrophyBlock extends BaseBlock {
         PURPLE(LevelType.PURPLE),
         TEAL(LevelType.TEAL),
         WHITE(LevelType.WHITE),
-        YELLOW(LevelType.YELLOW);
+        YELLOW(LevelType.YELLOW),
+        RED(LevelType.RED);
 
         private @Getter Optional<LevelType> type;
 

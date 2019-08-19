@@ -251,6 +251,62 @@
       "stars:grow_teal_4"
     ]
   },
+  "grow_orange_1": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_orange_1",
+    "sounds": [
+      "stars:grow_orange_1"
+    ]
+  },
+  "grow_orange_2": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_orange_2",
+    "sounds": [
+      "stars:grow_orange_2"
+    ]
+  },
+  "grow_orange_3": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_orange_3",
+    "sounds": [
+      "stars:grow_orange_3"
+    ]
+  },
+  "grow_orange_4": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_orange_4",
+    "sounds": [
+      "stars:grow_orange_4"
+    ]
+  },
+  "grow_white_1": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_white_1",
+    "sounds": [
+      "stars:grow_white_1"
+    ]
+  },
+  "grow_white_2": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_white_2",
+    "sounds": [
+      "stars:grow_white_2"
+    ]
+  },
+  "grow_white_3": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_white_3",
+    "sounds": [
+      "stars:grow_white_3"
+    ]
+  },
+  "grow_white_4": {
+    "category": "master",
+    "subtitle": "stars.subtitle.grow_white_4",
+    "sounds": [
+      "stars:grow_white_4"
+    ]
+  },
   "explode_1": {
     "category": "master",
     "subtitle": "stars.subtitle.explode_1",

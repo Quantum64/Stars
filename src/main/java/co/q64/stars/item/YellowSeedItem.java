@@ -14,7 +14,7 @@ public class YellowSeedItem extends SeedItem {
     }
 
     @Singleton
-    public static class YellowSeedItemRobust extends BaseItem {
+    public static class YellowSeedItemRobust extends RobustSeed {
         @Inject
         protected YellowSeedItemRobust(StarsGroup group) {
             super("yellow_seed_robust", group);
