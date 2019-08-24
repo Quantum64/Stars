@@ -2,7 +2,7 @@ package co.q64.stars.level.levels;
 
 import co.q64.stars.level.Level;
 import co.q64.stars.level.LevelType;
-import co.q64.stars.type.forming.CyanFormingBlockType;
+import co.q64.stars.type.forming.TealFormingBlockType;
 import co.q64.stars.util.Structures;
 import co.q64.stars.util.Structures.StructureType;
 import lombok.Getter;
@@ -13,15 +13,15 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class CyanLevel implements Level {
+public class TealLevel implements Level {
     protected @Inject Structures structures;
-    protected @Inject @Getter CyanFormingBlockType symbolicBlock;
+    protected @Inject @Getter TealFormingBlockType symbolicBlock;
 
-    private final @Getter LevelType type = LevelType.CYAN;
+    private final @Getter LevelType type = LevelType.TEAL;
 
-    protected @Inject CyanLevel() {}
+    protected @Inject TealLevel() {}
 
     public BlockPos createChallenge(ServerWorld world, BlockPos start) {
-        return structures.get(StructureType.CHALLENGE_CYAN).placeChallenge(world, start);
+        return structures.get(StructureType.CHALLENGE_TEAL).placeChallenge(world, start);
     }
 }

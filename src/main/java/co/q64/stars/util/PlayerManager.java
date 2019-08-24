@@ -73,9 +73,9 @@ public class PlayerManager {
     public void updateSeeds(ServerPlayerEntity player) {
         capabilities.gardener(player, c -> {
             int seeds = getSeeds(player);
-            boolean hub = player.getServerWorld().getDimension() instanceof HubDimension || c.isEnteringHub();
+            boolean hub = player.getServerWorld().getDimension() instanceof HubDimension || c.isEnteringHub() || c.isOpenChallengeDoor() || c.isOpenDoor();
             if (c.getFleetingStage() == FleetingStage.LIGHT || hub) {
-                List<FormingBlockType> types = (hub || c.isOpenChallengeDoor() || c.isOpenDoor()) ? hubFormingBlocks : formingBlockTypes;
+                List<FormingBlockType> types = (hub) ? hubFormingBlocks : formingBlockTypes;
                 while (c.getNextSeeds().size() < c.getSeedVisibility() && seeds > 0) {
                     FormingBlockType offering = pinkFormingBlockType;
                     if (hub || c.getSeedsSincePink() < 5 + ThreadLocalRandom.current().nextInt(2)) {
@@ -91,7 +91,7 @@ public class PlayerManager {
                             offering = cyanFormingBlockType;
                         }
                     }
-                    if (c.getFleetingStage() == FleetingStage.LIGHT) {
+                    if (c.getFleetingStage() == FleetingStage.LIGHT && (!hub)) {
                         if (c.getLevelType() == LevelType.CYAN) {
                             if (c.getTotalSeeds() == 0) {
                                 offering = cyanFormingBlockType;

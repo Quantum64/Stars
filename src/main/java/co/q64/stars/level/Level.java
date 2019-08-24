@@ -13,7 +13,7 @@ public interface Level {
 
     public FormingBlockType getSymbolicBlock();
 
-    public List<BlockPos> getChallengeStars(BlockPos start);
+    //public List<BlockPos> getChallengeStars(BlockPos start);
 
     public BlockPos createChallenge(ServerWorld world, BlockPos start);
 

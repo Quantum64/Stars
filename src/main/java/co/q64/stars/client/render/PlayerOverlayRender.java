@@ -155,13 +155,13 @@ public class PlayerOverlayRender {
             x = x + 18 + 1;
             RenderHelper.disableStandardItemLighting();
         }
-        Minecraft.getInstance().getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
         String number = String.valueOf(gardenerCapability.getSeeds());
         float scale = 2.4f;
         GlStateManager.pushMatrix();
         GlStateManager.scalef(scale, scale, scale);
         mc.fontRenderer.drawString(number, (startX / scale) - mc.fontRenderer.getStringWidth(number) - 1, 1, color);
         GlStateManager.popMatrix();
+        mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
     }
 
     public void fade(FadeMode mode, long time) {

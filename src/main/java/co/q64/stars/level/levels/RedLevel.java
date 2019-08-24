@@ -8,19 +8,14 @@ import co.q64.stars.level.Level;
 import co.q64.stars.level.LevelType;
 import co.q64.stars.type.forming.RedFormingBlockType;
 import lombok.Getter;
-import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.ArrayList;
-import java.util.List;
 
 @Singleton
 public class RedLevel implements Level {
-    private static final int DISTANCE = 35;
-
     protected @Inject GreyFormedBlock greyFormedBlock;
     protected @Inject DecayBlock decayBlock;
     protected @Inject DarknessBlock darknessBlock;
@@ -30,17 +25,6 @@ public class RedLevel implements Level {
     private final @Getter LevelType type = LevelType.RED;
 
     protected @Inject RedLevel() {}
-
-    public List<BlockPos> getChallengeStars(BlockPos start) {
-        List<BlockPos> result = new ArrayList<>();
-        for (Direction direction : Direction.values()) {
-            if (direction == Direction.UP || direction == Direction.DOWN) {
-                continue;
-            }
-            result.add(start.offset(direction, DISTANCE));
-        }
-        return result;
-    }
 
     public BlockPos createChallenge(ServerWorld world, BlockPos start) {
         box(world, decayBlock, start.add(-7, -8, -7), start.add(7, 20, 7));

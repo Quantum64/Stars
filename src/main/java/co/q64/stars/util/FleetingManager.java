@@ -120,7 +120,7 @@ public class FleetingManager {
                 gardener.setOpenDoor(gardener.isOpenChallengeDoor());
                 gardener.setOpenChallengeDoor(false);
                 gardener.setEnteringHub(false);
-                playerManager.setSeeds(player, gardener.isOpenDoor() ? gardener.getSeeds() : 13);
+                playerManager.setSeeds(player, gardener.isOpenDoor() ? gardener.getSeeds() : gardener.getSeeds() > 13 ? gardener.getSeeds() : 13);
                 setKeys(player, 0);
                 playerManager.updateSeeds(player);
                 playerManager.syncCapability(player);
@@ -177,6 +177,7 @@ public class FleetingManager {
     public void touchHeart(ServerPlayerEntity player) {
         capabilities.gardener(player, gardener -> {
             if (gardener.isOpenDoor()) {
+                gardener.setCompleteChallenge(true);
                 hubManager.enter(player);
             } else {
                 playerManager.pickupSeed(player);
@@ -209,6 +210,9 @@ public class FleetingManager {
 
     public void createDarkness(ServerPlayerEntity player) {
         capabilities.gardener(player, gardener -> {
+            if (gardener.isCompleteChallenge()) {
+                return;
+            }
             if (gardener.isOpenDoor()) {
                 playerManager.setSeeds(player, 0);
                 hubManager.enter(player);
@@ -273,6 +277,7 @@ public class FleetingManager {
                     tile.setMultiplier(0.5);
                 }
             });
+            /*
             for (BlockPos challenge : level.getChallengeStars(pos)) {
                 for (int y = challenge.getY() - 1; y <= challenge.getY() + 1; y++) {
                     for (int x = challenge.getX() - 1; x <= challenge.getX() + 1; x++) {
@@ -283,6 +288,7 @@ public class FleetingManager {
                 }
                 decayManager.createSpecialDecay(world, challenge, SpecialDecayType.CHALLENGE_DOOR);
             }
+             */
         });
     }
 

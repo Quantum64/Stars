@@ -98,8 +98,16 @@ import co.q64.stars.item.WhiteSeedItem.WhiteSeedItemRobust;
 import co.q64.stars.item.YellowSeedItem;
 import co.q64.stars.item.YellowSeedItem.YellowSeedItemRobust;
 import co.q64.stars.level.Level;
+import co.q64.stars.level.levels.BlueLevel;
 import co.q64.stars.level.levels.CyanLevel;
+import co.q64.stars.level.levels.GreenLevel;
+import co.q64.stars.level.levels.OrangeLevel;
+import co.q64.stars.level.levels.PinkLevel;
+import co.q64.stars.level.levels.PurpleLevel;
 import co.q64.stars.level.levels.RedLevel;
+import co.q64.stars.level.levels.TealLevel;
+import co.q64.stars.level.levels.WhiteLevel;
+import co.q64.stars.level.levels.YellowLevel;
 import co.q64.stars.link.LinkInformation;
 import co.q64.stars.link.jei.JEILinkInformation;
 import co.q64.stars.listener.InitializationListener;
@@ -212,6 +220,14 @@ public interface CommonModule {
 
     @Binds @IntoSet Level bindRedLevel(RedLevel redLevel);
     @Binds @IntoSet Level bindCyanLevel(CyanLevel cyanLevel);
+    @Binds @IntoSet Level bindPurpleLevel(PurpleLevel purpleLevel);
+    @Binds @IntoSet Level bindBlueLevel(BlueLevel redLevel);
+    @Binds @IntoSet Level bindGreenLevel(GreenLevel redLevel);
+    @Binds @IntoSet Level bindYellowLevel(YellowLevel redLevel);
+    @Binds @IntoSet Level bindPinkLevel(PinkLevel redLevel);
+    @Binds @IntoSet Level bindTealLevel(TealLevel redLevel);
+    @Binds @IntoSet Level bindWhiteLevel(WhiteLevel redLevel);
+    @Binds @IntoSet Level bindOrangeLevel(OrangeLevel redLevel);
 
     @Binds @ElementsIntoSet Set<Block> bindBlocks(Set<BaseBlock> blocks);
     @Binds @ElementsIntoSet Set<Item> bindItems(Set<BaseItem> items);
@@ -378,7 +394,7 @@ public interface CommonModule {
     static @Provides @ElementsIntoSet @Singleton @Explode Set<SoundEvent> provideExplodeSounds(Identifiers identifiers) { return indexedSounds(identifiers, "explode", 4); }
     static @Provides @ElementsIntoSet @Singleton @Dark Set<SoundEvent> provideDarkSounds(Identifiers identifiers) { return indexedSounds(identifiers, "dark", 4); }
     static @Provides @ElementsIntoSet @Singleton @Seed Set<SoundEvent> provideSeedSounds(Identifiers identifiers) { return indexedSounds(identifiers, "seed", 4); }
-    static @Provides @ElementsIntoSet @Singleton @Thunder Set<SoundEvent> provideThunderSounds(Identifiers identifiers) { return indexedSounds(identifiers, "thunder", 3); }
+    static @Provides @ElementsIntoSet @Singleton @Thunder Set<SoundEvent> provideThunderSounds(Identifiers identifiers) { return indexedSounds(identifiers, "thunder", 2); }
 
     static @Provides @Singleton @ExplodeDark SoundEvent provideExplodeDarkSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("explode_dark")); }
     static @Provides @Singleton @Door SoundEvent provideDoorSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("door")); }

@@ -29,6 +29,8 @@ import java.util.stream.LongStream;
 
 @Singleton
 public class DecayingBlockRender extends TileEntityRenderer<DecayingTile> {
+    private static final boolean RENDER_OPTIMIZATON = true;
+
     private static final Direction[] DIRECTIONS = Direction.values();
     private static final int COUNTS_PER_SIDE = 20;
     private static final int ANIMATION_TIME = 150;
@@ -51,6 +53,14 @@ public class DecayingBlockRender extends TileEntityRenderer<DecayingTile> {
     }
 
     public void render(DecayingTile tile, double x, double y, double z, float partialTicks, int destroyStage) {
+        Direction[] renderable = new Direction[DIRECTIONS.length];
+        if (RENDER_OPTIMIZATON) {
+            for (int index = 0; index < DIRECTIONS.length; index++) {
+                if (!tile.getWorld().getBlockState(tile.getPos().offset(DIRECTIONS[index])).isOpaqueCube(tile.getWorld(), tile.getPos())) {
+                    renderable[index] = DIRECTIONS[index];
+                }
+            }
+        }
         GlStateManager.disableLighting();
         GlStateManager.disableCull();
         GlStateManager.enableBlend();
@@ -107,7 +117,10 @@ public class DecayingBlockRender extends TileEntityRenderer<DecayingTile> {
                     }
                     double animationScale = msAnimationRemaining / Double.valueOf(ANIMATION_TIME);
                     animationScale *= 0.1;
-                    for (Direction direction : DIRECTIONS) {
+                    for (Direction direction : RENDER_OPTIMIZATON ? renderable : DIRECTIONS) {
+                        if (direction == null) {
+                            continue;
+                        }
                         long seed = Math.abs(position) ^ salts.get(direction)[index];
                         long seed2 = Math.abs(position) ^ salts.get(direction)[COUNTS_PER_SIDE + index];
                         double decaySize = 0.1 + (((Math.abs(position) ^ (seed ^ seed2)) % 1000) / 12000.0);

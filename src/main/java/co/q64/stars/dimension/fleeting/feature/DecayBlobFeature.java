@@ -20,6 +20,7 @@ import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Singleton
 public class DecayBlobFeature extends Feature<NoFeatureConfig> {
@@ -52,7 +53,7 @@ public class DecayBlobFeature extends Feature<NoFeatureConfig> {
         if (dist < 35) {
             dist = rand.nextInt(dist + 1);
             if (dist < 16) {
-                if (pos.getY() < 130) {
+                if (pos.getY() < 115) {
                     return false;
                 }
             }
@@ -61,11 +62,7 @@ public class DecayBlobFeature extends Feature<NoFeatureConfig> {
             dist = dist > 5000 ? 5000 : dist;
         }
 
-        if (rand.nextInt(3) < 2) {
-            decayManager.createSpecialDecay(world, pos, SpecialDecayType.KEY, false);
-        } else {
-            world.setBlockState(pos, decayBlock.getDefaultState(), 2);
-        }
+        decayManager.createSpecialDecay(world, pos, ThreadLocalRandom.current().nextInt(10) == 0 ? SpecialDecayType.CHALLENGE_DOOR : SpecialDecayType.KEY, false);
         List<BlockPos> placedBlocks = new ArrayList<>();
         placedBlocks.add(pos);
         for (int i = 0; i < dist; ++i) {
