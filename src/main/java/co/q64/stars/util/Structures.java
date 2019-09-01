@@ -121,7 +121,8 @@ public class Structures implements IFutureReloadListener {
 
         CHALLENGE_CYAN("challenge_cyan.dat"),
         CHALLENGE_TEAL("challenge_teal.dat"),
-        CHALLENGE_WHITE("challenge_white.dat");
+        CHALLENGE_WHITE("challenge_white.dat"),
+        CHALLENGE_ORANGE("challenge_orange.dat");
 
         private @Getter String name;
 

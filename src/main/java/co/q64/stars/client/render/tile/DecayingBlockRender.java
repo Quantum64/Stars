@@ -29,7 +29,7 @@ import java.util.stream.LongStream;
 
 @Singleton
 public class DecayingBlockRender extends TileEntityRenderer<DecayingTile> {
-    private static final boolean RENDER_OPTIMIZATON = true;
+    private static final boolean RENDER_OPTIMIZATON = false;
 
     private static final Direction[] DIRECTIONS = Direction.values();
     private static final int COUNTS_PER_SIDE = 20;
@@ -111,7 +111,7 @@ public class DecayingBlockRender extends TileEntityRenderer<DecayingTile> {
                 float cutoff = cutoffs[index];
                 if (progress > cutoff) {
                     long timeAtCutoff = (tile.getPlaced() + (long) (cutoff * tile.getExpectedDecayTime()));
-                    long msAnimationRemaining = timeAtCutoff - now + ANIMATION_TIME;
+                    long msAnimationRemaining = timeAtCutoff - noWow + ANIMATION_TIME;
                     if (msAnimationRemaining < 0) {
                         msAnimationRemaining = 0;
                     }
