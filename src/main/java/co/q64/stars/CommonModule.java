@@ -374,12 +374,7 @@ public interface CommonModule {
     static @Provides @Version String provideAuthor() { return ModInformation.VERSION; }
     static @Provides @Author String provideVersion() { return ModInformation.AUTHOR; }
 
-    static @Provides @Singleton EntityType<PickupEntity> providePickupEntityType(PickupEntityFactory pickupEntityFactory, Identifiers identifiers) {
-        EntityType<PickupEntity> result = EntityType.Builder.<PickupEntity>create((type, world) -> pickupEntityFactory.create(world), EntityClassification.MISC)
-                .disableSerialization().size(0.5f, 0.5f).setCustomClientFactory((packet, world) -> pickupEntityFactory.create(world)).build("pickup");
-        result.setRegistryName(identifiers.get("pickup"));
-        return result;
-    }
+    static @Provides @Singleton EntityType<PickupEntity> providePickupEntityType(PickupEntityFactory pickupEntityFactory, Identifiers identifiers) { return (EntityType<PickupEntity>) EntityType.Builder.<PickupEntity>create((type, world) -> pickupEntityFactory.create(world), EntityClassification.MISC).disableSerialization().size(0.5f, 0.5f).setCustomClientFactory((packet, world) -> pickupEntityFactory.create(world)).build("pickup").setRegistryName(identifiers.get("pickup")); }
 
     @Binds TileEntityType<? extends SeedTile> bindSeedTileTypeErasure(TileEntityType<SeedTile> type);
     @Binds TileEntityType<? extends DecayEdgeTile> bindDecayEdgeTypeErasure(TileEntityType<DecayEdgeTile> type);
