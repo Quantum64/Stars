@@ -142,18 +142,18 @@ import co.q64.stars.qualifier.SoundQualifiers.Thunder;
 import co.q64.stars.qualifier.SoundQualifiers.Ticking;
 import co.q64.stars.qualifier.SoundQualifiers.White;
 import co.q64.stars.qualifier.SoundQualifiers.Yellow;
-import co.q64.stars.tile.type.AirDecayEdgeTileType;
-import co.q64.stars.tile.type.ChallengeExitTileType;
-import co.q64.stars.tile.type.DarknessEdgeTileType;
-import co.q64.stars.tile.type.DecayEdgeTileType;
-import co.q64.stars.tile.type.DecayingTileType;
-import co.q64.stars.tile.type.DoorTileType;
-import co.q64.stars.tile.type.ForceRenderCullTileType;
-import co.q64.stars.tile.type.FormingTileType;
-import co.q64.stars.tile.type.SeedTileType;
-import co.q64.stars.tile.type.SpecialDecayEdgeTileType;
-import co.q64.stars.tile.type.TrophyTileType;
-import co.q64.stars.tile.type.TubeTileType;
+import co.q64.stars.tile.AirDecayEdgeTile;
+import co.q64.stars.tile.ChallengeExitTile;
+import co.q64.stars.tile.DarknessEdgeTile;
+import co.q64.stars.tile.DecayEdgeTile;
+import co.q64.stars.tile.DecayingTile;
+import co.q64.stars.tile.DoorTile;
+import co.q64.stars.tile.ForceRenderCullTile;
+import co.q64.stars.tile.FormingTile;
+import co.q64.stars.tile.SeedTile;
+import co.q64.stars.tile.SpecialDecayEdgeTile;
+import co.q64.stars.tile.TrophyTile;
+import co.q64.stars.tile.TubeTile;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.forming.BlueFormingBlockType;
 import co.q64.stars.type.forming.BrownFormingBlockType;
@@ -190,6 +190,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.util.Arrays;
 import java.util.Set;
@@ -318,18 +319,18 @@ public interface CommonModule {
     @Binds @IntoSet Listener bindPlayerLoadListener(PlayerListener playerLoadListener);
     @Binds @IntoSet Listener bindWorldUnloadListener(WorldUnloadListener worldUnloadListener);
 
-    @Binds @IntoSet TileEntityType<?> bindFormingTileType(FormingTileType type);
-    @Binds @IntoSet TileEntityType<?> bindDecayEdgeTileType(DecayEdgeTileType type);
-    @Binds @IntoSet TileEntityType<?> bindDecayingTileType(DecayingTileType type);
-    @Binds @IntoSet TileEntityType<?> bindAirDecayEdgeTileType(AirDecayEdgeTileType type);
-    @Binds @IntoSet TileEntityType<?> bindDarknessEdgeTileType(DarknessEdgeTileType type);
-    @Binds @IntoSet TileEntityType<?> bindForceRenderCullTileType(ForceRenderCullTileType type);
-    @Binds @IntoSet TileEntityType<?> bindSpecialDecayEdgeTileType(SpecialDecayEdgeTileType type);
-    @Binds @IntoSet TileEntityType<?> bindDoorTileType(DoorTileType type);
-    @Binds @IntoSet TileEntityType<?> bindSeedTileType(SeedTileType type);
-    @Binds @IntoSet TileEntityType<?> bindTubeTileType(TubeTileType type);
-    @Binds @IntoSet TileEntityType<?> bindChallengeExitTileType(ChallengeExitTileType type);
-    @Binds @IntoSet TileEntityType<?> bindTrophyTileType(TrophyTileType type);
+    @Binds @IntoSet TileEntityType<?> bindFormingTileType(TileEntityType<FormingTile> type);
+    @Binds @IntoSet TileEntityType<?> bindDecayEdgeTileType(TileEntityType<DecayEdgeTile> type);
+    @Binds @IntoSet TileEntityType<?> bindDecayingTileType(TileEntityType<DecayingTile> type);
+    @Binds @IntoSet TileEntityType<?> bindAirDecayEdgeTileType(TileEntityType<AirDecayEdgeTile> type);
+    @Binds @IntoSet TileEntityType<?> bindDarknessEdgeTileType(TileEntityType<DarknessEdgeTile> type);
+    @Binds @IntoSet TileEntityType<?> bindForceRenderCullTileType(TileEntityType<ForceRenderCullTile> type);
+    @Binds @IntoSet TileEntityType<?> bindSpecialDecayEdgeTileType(TileEntityType<SpecialDecayEdgeTile> type);
+    @Binds @IntoSet TileEntityType<?> bindDoorTileType(TileEntityType<DoorTile> type);
+    @Binds @IntoSet TileEntityType<?> bindSeedTileType(TileEntityType<SeedTile> type);
+    @Binds @IntoSet TileEntityType<?> bindTubeTileType(TileEntityType<TubeTile> type);
+    @Binds @IntoSet TileEntityType<?> bindChallengeExitTileType(TileEntityType<ChallengeExitTile> type);
+    @Binds @IntoSet TileEntityType<?> bindTrophyTileType(TileEntityType<TrophyTile> type);
 
     @Binds @IntoSet EntityType<?> bindPickupEntityType(EntityType<PickupEntity> pickupEntityEntityType);
 
@@ -379,6 +380,22 @@ public interface CommonModule {
         result.setRegistryName(identifiers.get("pickup"));
         return result;
     }
+
+    @Binds TileEntityType<? extends SeedTile> bindSeedTileTypeErasure(TileEntityType<SeedTile> type);
+    @Binds TileEntityType<? extends DecayEdgeTile> bindDecayEdgeTypeErasure(TileEntityType<DecayEdgeTile> type);
+
+    static @Provides @Singleton TileEntityType<AirDecayEdgeTile> provideAirDecayEdgeTileType(Provider<AirDecayEdgeTile> provider, AirDecayEdgeBlock block, Identifiers identifiers) { return (TileEntityType<AirDecayEdgeTile>) TileEntityType.Builder.create(provider::get, block).build(null).setRegistryName(identifiers.get("air_decay_edge")); }
+    static @Provides @Singleton TileEntityType<ChallengeExitTile> provideChallengeExitTileType(Provider<ChallengeExitTile> provider, ChallengeExitBlock block, Identifiers identifiers) { return (TileEntityType<ChallengeExitTile>) TileEntityType.Builder.create(provider::get, block).build(null).setRegistryName(identifiers.get("challenge_exit")); }
+    static @Provides @Singleton TileEntityType<DarknessEdgeTile> provideDarknessEdgeTileType(Provider<DarknessEdgeTile> provider, DarknessEdgeBlock block, Identifiers identifiers) { return (TileEntityType<DarknessEdgeTile>) TileEntityType.Builder.create(provider::get, block).build(null).setRegistryName(identifiers.get("darkness_edge")); }
+    static @Provides @Singleton TileEntityType<DecayEdgeTile> provideDecayEdgeTileType(Provider<DecayEdgeTile> provider, DecayEdgeBlock decayEdgeBlock, DecayEdgeBlockSolid decayEdgeBlockSolid, Identifiers identifiers) { return (TileEntityType<DecayEdgeTile>) TileEntityType.Builder.create(provider::get, decayEdgeBlock, decayEdgeBlockSolid).build(null).setRegistryName(identifiers.get("decay_edge")); }
+    static @Provides @Singleton TileEntityType<DecayingTile> provideDecayingTileType(Provider<DecayingTile> provider, DecayingBlock decayingBlock, DecayingBlockHard decayingBlockHard, Identifiers identifiers) { return (TileEntityType<DecayingTile>) TileEntityType.Builder.create(provider::get, decayingBlock, decayingBlockHard).build(null).setRegistryName(identifiers.get("decaying")); }
+    static @Provides @Singleton TileEntityType<DoorTile> provideDoorTileType(Provider<DoorTile> provider, DoorBlock doorBlock, ChallengeDoorBlock challengeDoorBlock, Identifiers identifiers) { return (TileEntityType<DoorTile>) TileEntityType.Builder.create(provider::get, doorBlock, challengeDoorBlock).build(null).setRegistryName(identifiers.get("door")); }
+    static @Provides @Singleton TileEntityType<ForceRenderCullTile> provideForceRenderCullTileType(Provider<ForceRenderCullTile> provider, DarkAirBlock darkAirBlock, AirDecayBlock airDecayBlock, Identifiers identifiers) { return (TileEntityType<ForceRenderCullTile>) TileEntityType.Builder.create(provider::get, darkAirBlock, airDecayBlock).build(null).setRegistryName(identifiers.get("force_render_cull")); }
+    static @Provides @Singleton TileEntityType<FormingTile> provideFormingTileType(Provider<FormingTile> provider, FormingBlock block, Identifiers identifiers) { return (TileEntityType<FormingTile>) TileEntityType.Builder.create(provider::get, block).build(null).setRegistryName(identifiers.get("forming")); }
+    static @Provides @Singleton TileEntityType<SeedTile> provideSeedTileType(Provider<SeedTile> provider, SeedBlock seedBlock, SeedBlockHard seedBlockHard, Identifiers identifiers) { return (TileEntityType<SeedTile>) TileEntityType.Builder.create(provider::get, seedBlock, seedBlockHard).build(null).setRegistryName(identifiers.get("seed")); }
+    static @Provides @Singleton TileEntityType<SpecialDecayEdgeTile> provideSpecialDecayEdgeTileType(Provider<SpecialDecayEdgeTile> provider, SpecialDecayEdgeBlock block, Identifiers identifiers) { return (TileEntityType<SpecialDecayEdgeTile>) TileEntityType.Builder.create(provider::get, block).build(null).setRegistryName(identifiers.get("air_decay_edge")); }
+    static @Provides @Singleton TileEntityType<TrophyTile> provideTrophyTileType(Provider<TrophyTile> provider, Set<TrophyBlock> blocks, Identifiers identifiers) { return (TileEntityType<TrophyTile>) TileEntityType.Builder.create(provider::get, blocks.stream().toArray(Block[]::new)).build(null).setRegistryName(identifiers.get("trophy")); }
+    static @Provides @Singleton TileEntityType<TubeTile> provideTubeTileType(Provider<TubeTile> provider, TubeDarknessBlock tubeDarknessBlock, TubeAirBlock tubeAirBlock, Identifiers identifiers) { return (TileEntityType<TubeTile>) TileEntityType.Builder.create(provider::get, tubeAirBlock, tubeDarknessBlock).build(null).setRegistryName(identifiers.get("tube")); }
 
     static @Provides @ElementsIntoSet @Singleton @Pink Set<SoundEvent> providePinkSounds(Identifiers identifiers) { return indexedSounds(identifiers, "grow_pink", 4); }
     static @Provides @ElementsIntoSet @Singleton @Red Set<SoundEvent> provideRedSounds(Identifiers identifiers) { return indexedSounds(identifiers, "grow_red", 4); }

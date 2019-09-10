@@ -1,7 +1,7 @@
 package co.q64.stars.tile;
 
-import co.q64.stars.tile.type.ForceRenderCullTileType;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 
@@ -9,7 +9,7 @@ import javax.inject.Inject;
 
 public class ForceRenderCullTile extends TileEntity {
     @Inject
-    protected ForceRenderCullTile(ForceRenderCullTileType type) {
+    protected ForceRenderCullTile(TileEntityType<ForceRenderCullTile> type) {
         super(type);
     }
 

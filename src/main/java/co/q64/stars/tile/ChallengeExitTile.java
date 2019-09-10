@@ -2,11 +2,11 @@ package co.q64.stars.tile;
 
 import co.q64.stars.block.SpecialAirBlock;
 import co.q64.stars.entity.PickupEntity;
-import co.q64.stars.tile.type.ChallengeExitTileType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.world.server.ServerWorld;
 
 import javax.inject.Inject;
@@ -18,7 +18,7 @@ public class ChallengeExitTile extends TileEntity implements ITickableTileEntity
     private int ticks = 0;
 
     @Inject
-    protected ChallengeExitTile(ChallengeExitTileType type) {
+    protected ChallengeExitTile(TileEntityType<ChallengeExitTile> type) {
         super(type);
     }
 

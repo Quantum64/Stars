@@ -3,12 +3,12 @@ package co.q64.stars.tile;
 import co.q64.stars.block.DarknessBlock;
 import co.q64.stars.block.SpecialAirBlock;
 import co.q64.stars.entity.PickupEntity;
-import co.q64.stars.tile.type.DoorTileType;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 
@@ -26,7 +26,7 @@ public class DoorTile extends SyncTileEntity implements ITickableTileEntity {
     private int ticks;
 
     @Inject
-    public DoorTile(DoorTileType type) {
+    public DoorTile(TileEntityType<DoorTile> type) {
         super(type);
     }
 

@@ -5,7 +5,6 @@ import co.q64.stars.block.HardBlock;
 import co.q64.stars.block.RedFormedBlock;
 import co.q64.stars.block.RedFormedBlock.RedFormedBlockHard;
 import co.q64.stars.qualifier.SoundQualifiers.Ticking;
-import co.q64.stars.tile.type.SeedTileType;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.FormingBlockTypes;
 import co.q64.stars.type.forming.RedFormingBlockType;
@@ -41,11 +40,7 @@ public class SeedTile extends SyncTileEntity implements ITickableTileEntity {
     private @Getter @Setter double multiplier = 1;
 
     @Inject
-    protected SeedTile(SeedTileType type) {
-        super(type);
-    }
-
-    protected SeedTile(TileEntityType<?> type) {
+    protected SeedTile(TileEntityType<? extends SeedTile> type) {
         super(type);
     }
 

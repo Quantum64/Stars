@@ -2,10 +2,10 @@ package co.q64.stars.tile;
 
 import co.q64.stars.block.DarknessBlock;
 import co.q64.stars.block.SpecialAirBlock;
-import co.q64.stars.tile.type.TubeTileType;
 import lombok.Setter;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 
 import javax.inject.Inject;
@@ -18,7 +18,7 @@ public class TubeTile extends TileEntity implements ITickableTileEntity {
     private @Setter boolean air;
 
     @Inject
-    public TubeTile(TubeTileType type) {
+    public TubeTile(TileEntityType<TubeTile> type) {
         super(type);
     }
 

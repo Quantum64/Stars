@@ -111,7 +111,7 @@ public class DecayingBlockRender extends TileEntityRenderer<DecayingTile> {
                 float cutoff = cutoffs[index];
                 if (progress > cutoff) {
                     long timeAtCutoff = (tile.getPlaced() + (long) (cutoff * tile.getExpectedDecayTime()));
-                    long msAnimationRemaining = timeAtCutoff - noWow + ANIMATION_TIME;
+                    long msAnimationRemaining = timeAtCutoff - now + ANIMATION_TIME;
                     if (msAnimationRemaining < 0) {
                         msAnimationRemaining = 0;
                     }

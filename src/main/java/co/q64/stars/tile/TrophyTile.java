@@ -3,13 +3,13 @@ package co.q64.stars.tile;
 import co.q64.stars.block.TrophyBlock;
 import co.q64.stars.block.TrophyBlock.TrophyVariant;
 import co.q64.stars.level.LevelManager;
-import co.q64.stars.tile.type.TrophyTileType;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.FormingBlockTypes;
 import co.q64.stars.type.forming.GreyFormingBlockType;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.TileEntityType;
 
 import javax.inject.Inject;
 
@@ -22,7 +22,7 @@ public class TrophyTile extends SyncTileEntity {
     private @Setter @Getter FormingBlockType forming;
 
     @Inject
-    public TrophyTile(TrophyTileType type, GreyFormingBlockType defaultType) {
+    public TrophyTile(TileEntityType<TrophyTile> type, GreyFormingBlockType defaultType) {
         super(type);
         this.forming = defaultType;
     }

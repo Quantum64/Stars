@@ -3,7 +3,6 @@ package co.q64.stars.tile;
 import co.q64.stars.block.DecayBlock;
 import co.q64.stars.block.SpecialDecayBlock;
 import co.q64.stars.entity.PickupEntity;
-import co.q64.stars.tile.type.SpecialDecayEdgeTileType;
 import co.q64.stars.util.DecayManager.SpecialDecayType;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +10,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.AxisAlignedBB;
 
 import javax.inject.Inject;
@@ -22,7 +22,7 @@ public class SpecialDecayEdgeTile extends DecayEdgeTile implements ITickableTile
     private boolean first = true;
 
     @Inject
-    protected SpecialDecayEdgeTile(SpecialDecayEdgeTileType type) {
+    protected SpecialDecayEdgeTile(TileEntityType<SpecialDecayEdgeTile> type) {
         super(type);
     }
 

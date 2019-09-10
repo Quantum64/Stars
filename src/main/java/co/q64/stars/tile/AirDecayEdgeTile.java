@@ -1,15 +1,15 @@
 package co.q64.stars.tile;
 
 import co.q64.stars.block.AirDecayBlock;
-import co.q64.stars.tile.type.AirDecayEdgeTileType;
 import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.tileentity.TileEntityType;
 
 import javax.inject.Inject;
 
 public class AirDecayEdgeTile extends DecayEdgeTile implements ITickableTileEntity {
 
     @Inject
-    protected AirDecayEdgeTile(AirDecayEdgeTileType type) {
+    protected AirDecayEdgeTile(TileEntityType<AirDecayEdgeTile> type) {
         super(type);
     }
 

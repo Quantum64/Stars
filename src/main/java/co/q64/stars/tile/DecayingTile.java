@@ -1,11 +1,11 @@
 package co.q64.stars.tile;
 
-import co.q64.stars.tile.type.DecayingTileType;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.FormingBlockTypes;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.TileEntityType;
 
 import javax.inject.Inject;
 
@@ -18,7 +18,7 @@ public class DecayingTile extends SeedTile {
     private @Getter @Setter long placed = System.currentTimeMillis();
 
     @Inject
-    protected DecayingTile(DecayingTileType type) {
+    protected DecayingTile(TileEntityType<DecayingTile> type) {
         super(type);
     }
 

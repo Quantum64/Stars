@@ -19,7 +19,6 @@ import co.q64.stars.dimension.fleeting.FleetingSolidDimension;
 import co.q64.stars.level.LevelType;
 import co.q64.stars.qualifier.SoundQualifiers.Dark;
 import co.q64.stars.qualifier.SoundQualifiers.DarkAir;
-import co.q64.stars.tile.type.DecayEdgeTileType;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.FormingBlockTypes;
 import co.q64.stars.type.forming.RedFormingBlockType;
@@ -77,11 +76,7 @@ public class DecayEdgeTile extends SyncTileEntity implements ITickableTileEntity
     private int ticks = 0;
 
     @Inject
-    protected DecayEdgeTile(DecayEdgeTileType type) {
-        super(type);
-    }
-
-    protected DecayEdgeTile(TileEntityType<?> type) {
+    protected DecayEdgeTile(TileEntityType<? extends DecayEdgeTile> type) {
         super(type);
     }
 

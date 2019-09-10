@@ -17,7 +17,6 @@ import co.q64.stars.block.SpecialAirBlock;
 import co.q64.stars.block.SpecialDecayBlock;
 import co.q64.stars.block.SpecialDecayEdgeBlock;
 import co.q64.stars.entity.PickupEntity;
-import co.q64.stars.tile.type.DarknessEdgeTileType;
 import co.q64.stars.util.DecayManager.SpecialDecayType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -25,6 +24,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 
@@ -41,7 +41,7 @@ public class DarknessEdgeTile extends TileEntity implements ITickableTileEntity 
     protected @Inject EntityType<PickupEntity> pickupEntityType;
 
     @Inject
-    protected DarknessEdgeTile(DarknessEdgeTileType type) {
+    protected DarknessEdgeTile(TileEntityType<DarknessEdgeTile> type) {
         super(type);
     }
 
