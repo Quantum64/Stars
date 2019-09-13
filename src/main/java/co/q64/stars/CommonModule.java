@@ -43,6 +43,7 @@ import co.q64.stars.block.SeedBlock.SeedBlockHard;
 import co.q64.stars.block.SpecialAirBlock;
 import co.q64.stars.block.SpecialDecayBlock;
 import co.q64.stars.block.SpecialDecayEdgeBlock;
+import co.q64.stars.block.StarboundGatewayBlock;
 import co.q64.stars.block.TealFormedBlock;
 import co.q64.stars.block.TrophyBlock;
 import co.q64.stars.block.TrophyBlock.TrophyVariant;
@@ -69,6 +70,7 @@ import co.q64.stars.entity.PickupEntity;
 import co.q64.stars.entity.PickupEntityFactory;
 import co.q64.stars.item.ArrowItem;
 import co.q64.stars.item.BaseItem;
+import co.q64.stars.item.BasicBlockItemFactory;
 import co.q64.stars.item.BlueSeedItem;
 import co.q64.stars.item.BlueSeedItem.BlueSeedItemRobust;
 import co.q64.stars.item.BrownSeedItem;
@@ -282,6 +284,7 @@ public interface CommonModule {
     @Binds @IntoSet BaseBlock bindTubeAirBlock(TubeAirBlock tubeAirBlock);
     @Binds @IntoSet BaseBlock bindChallengeExitBlock(ChallengeExitBlock challengeExitBlock);
     @Binds @IntoSet BaseBlock bindChallengeEntranceBlock(ChallengeEntranceBlock challengeEntranceBlock);
+    @Binds @IntoSet BaseBlock bindStarboundGatewayBlock(StarboundGatewayBlock starboundGatewayBlock);
     @Binds @ElementsIntoSet Set<BaseBlock> bindTrophyBlock(Set<TrophyBlock> trophyBlocks);
 
     @Binds @IntoSet BaseItem bindPinkSeedItem(PinkSeedItem pinkSeedItem);
@@ -313,6 +316,8 @@ public interface CommonModule {
     @Binds @IntoSet BaseItem bindChallengeStarItem(ChallengeStarItem challengeStarItem);
 
     @Binds @ElementsIntoSet Set<BlockItem> bindTrophyBlockItem(Set<TrophyBlockItem> trophyBlockItems);
+
+    static @Provides @IntoSet @Singleton BlockItem provideStarboundGatewayBlockItem(StarboundGatewayBlock block, BasicBlockItemFactory factory) { return factory.create(block); }
 
     @Binds @IntoSet Listener bindRegistryListener(RegistryListener serverStartListener);
     @Binds @IntoSet Listener bindInitializationListener(InitializationListener initializationListener);

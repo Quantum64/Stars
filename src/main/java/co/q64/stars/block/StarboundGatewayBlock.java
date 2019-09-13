@@ -27,10 +27,10 @@ import javax.inject.Singleton;
 import java.util.Optional;
 
 @Singleton
-public class StarboundGateway extends BaseBlock {
+public class StarboundGatewayBlock extends BaseBlock {
 
     @Inject
-    protected StarboundGateway() {
+    protected StarboundGatewayBlock() {
         super("starbound_gateway");
     }
 }
