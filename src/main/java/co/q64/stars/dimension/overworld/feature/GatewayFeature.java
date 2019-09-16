@@ -4,6 +4,7 @@ import co.q64.stars.block.FormedBlock;
 import co.q64.stars.block.StarboundGatewayBlock;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.type.FormingBlockTypes;
+import co.q64.stars.type.forming.GreyFormingBlockType;
 import co.q64.stars.util.Identifiers;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -19,13 +20,17 @@ import net.minecraft.world.gen.placement.NoPlacementConfig;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Singleton
 public class GatewayFeature extends Feature<NoFeatureConfig> {
-    private static final int RADIUS = 20;
+    private static final Collection<Direction> NOT_UP = Stream.of(Direction.values()).filter(d -> d != Direction.UP).collect(Collectors.toList());
+    private static final int RADIUS = 10;
 
     protected @Inject Set<FormingBlockType> formingTypes;
     protected @Inject StarboundGatewayBlock starboundGatewayBlock;
@@ -45,16 +50,19 @@ public class GatewayFeature extends Feature<NoFeatureConfig> {
                 for (int y = pos.getY() - RADIUS; y <= pos.getY(); y++) {
                     BlockPos target = new BlockPos(x, y, z);
                     if (target.distanceSq(pos) < RADIUS * RADIUS) {
-                        world.setBlockState(pos, Blocks.AIR.getDefaultState(), 0);
+                        world.setBlockState(target, Blocks.AIR.getDefaultState(), 0);
                     }
                 }
             }
         }
-        BlockState edge = null;
+        BlockState edge = formingTypes.iterator().next().getFormedBlock().getDefaultState();
         int index = 0, typeIndex = rand.nextInt(formingTypes.size());
         for (FormingBlockType type : formingTypes) {
+            if (type instanceof GreyFormingBlockType) {
+                continue;
+            }
             edge = type.getFormedBlock().getDefaultState();
-            if (index == typeIndex) {
+            if (index >= typeIndex) {
                 break;
             }
             index++;
@@ -64,33 +72,44 @@ public class GatewayFeature extends Feature<NoFeatureConfig> {
                 for (int y = pos.getY() - RADIUS; y <= pos.getY(); y++) {
                     BlockPos target = new BlockPos(x, y, z);
                     if (target.distanceSq(pos) < RADIUS * RADIUS) {
-                        BlockState test = world.getBlockState(target.down());
-                        if (!test.isAir(world, target.down()) && !(test.getBlock() instanceof FormedBlock)) {
-                            List<BlockPos> placed = new ArrayList<>();
-                            world.setBlockState(pos, edge, 0);
-                            placed.add(pos);
-                            int count = 0;
-                            for (int i = 0; i < 16; i++) {
-                                BlockPos bp = placed.get(rand.nextInt(placed.size()));
-                                for (Direction direction : Direction.values()) {
-                                    if (world.getBlockState(bp.offset(direction)).getBlock() == edge.getBlock()) {
-                                        count++;
-                                        if (count > 1) {
-                                            break;
+                        for (Direction dir : NOT_UP) {
+                            BlockPos place = target.offset(dir);
+                            BlockState test = world.getBlockState(place);
+                            if (!test.isAir(world, target.offset(dir)) && !(test.getBlock() instanceof FormedBlock)) {
+                                List<BlockPos> placed = new ArrayList<>();
+                                world.setBlockState(place, edge, 0);
+                                placed.add(place);
+                                int count = 0;
+                                for (int i = 0; i < 16; i++) {
+                                    BlockPos bp = placed.get(rand.nextInt(placed.size())).offset(Direction.values()[rand.nextInt(Direction.values().length)]);
+                                    for (Direction direction : Direction.values()) {
+                                        if (world.getBlockState(bp.offset(direction)).getBlock() == edge.getBlock()) {
+                                            count++;
+                                            if (count > 1) {
+                                                break;
+                                            }
                                         }
                                     }
+                                    if (count == 1) {
+                                        world.setBlockState(bp, edge, 0);
+                                        placed.add(bp);
+                                    }
                                 }
-                                if (count == 1) {
-                                    world.setBlockState(bp, edge, 0);
-                                    placed.add(bp);
-                                }
+                                break;
                             }
                         }
                     }
                 }
             }
         }
-        world.setBlockState(pos, starboundGatewayBlock.getDefaultState(), 0);
+        BlockPos gateway = pos.down(5);
+        for (int i = 0; i < 5; i++) {
+            gateway = pos.down();
+            if (!world.getBlockState(gateway).isAir(world, gateway)) {
+                break;
+            }
+        }
+        world.setBlockState(gateway, starboundGatewayBlock.getDefaultState(), 0);
         return false;
     }
 }

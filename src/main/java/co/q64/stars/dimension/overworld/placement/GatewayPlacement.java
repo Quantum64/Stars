@@ -19,6 +19,9 @@ public class GatewayPlacement extends SimplePlacement<NoPlacementConfig> {
     }
 
     protected Stream<BlockPos> getPositions(Random random, NoPlacementConfig config, BlockPos pos) {
+        if (random.nextInt(16) != 0) {
+            return Stream.empty();
+        }
         pos = new BlockPos(pos.getX(), 255, pos.getZ());
         return Stream.of(pos);
     }
