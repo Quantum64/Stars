@@ -19,6 +19,7 @@ import net.minecraft.potion.Effects;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -132,6 +133,24 @@ public class HubManager {
                     packetManager.getChannel().send(PacketDistributor.PLAYER.with(() -> player), packetManager.getClientFadePacketFactory().create(FadeMode.FADE_FROM_WHITE, 3000));
                 }, delay);
             });
+        });
+    }
+
+    public void exit(ServerPlayerEntity player) {
+        capabilities.gardener(player, gardener -> {
+            ServerWorld world = DimensionManager.getWorld(player.getServer(),  DimensionType.byName(gardener.getHubEntryDimension()), false, true);
+            BlockPos pos = gardener.getHubEntryPosition();
+            player.setMotion(0, 0, 0);
+            player.teleport(world, pos.getX() + 0.5, pos.getY() + 5, pos.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
+            gardener.setFleetingStage(FleetingStage.NONE);
+            gardener.getNextSeeds().clear();
+            gardener.setCompleteChallenge(false);
+            gardener.setOpenChallengeDoor(false);
+            gardener.setOpenDoor(false);
+            gardener.setSeeds(0);
+            playerManager.updateSeeds(player);
+            player.addPotionEffect(new EffectInstance(Effects.SLOW_FALLING, 60, 3, true, false));
+            packetManager.getChannel().send(PacketDistributor.PLAYER.with(() -> player), packetManager.getClientFadePacketFactory().create(FadeMode.FADE_FROM_WHITE, 3000));
         });
     }
 

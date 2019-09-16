@@ -7,6 +7,7 @@ import co.q64.stars.block.OrangeFormedBlock;
 import co.q64.stars.block.OrangeFormedBlock.OrangeFormedBlockHard;
 import co.q64.stars.block.SpecialDecayBlock;
 import co.q64.stars.block.SpecialDecayEdgeBlock;
+import co.q64.stars.block.StarboundGatewayBlock;
 import co.q64.stars.capability.GardenerCapability;
 import co.q64.stars.dimension.fleeting.FleetingDimension.FleetingDimensionTemplate;
 import co.q64.stars.dimension.fleeting.FleetingSolidDimension.FleetingSolidDimensionTemplate;
@@ -143,6 +144,10 @@ public class FleetingManager {
                     gardener.setLevelType(state.get(GatewayBlock.TYPE));
                     gardener.setHubSpawn(target.offset(Direction.UP));
                     enter(player, true);
+                } else if (state.getBlock() instanceof StarboundGatewayBlock) {
+                    gardener.setHubEntryPosition(player.getPosition());
+                    gardener.setHubEntryDimension(player.getServerWorld().getDimension().getType().getRegistryName());
+                    hubManager.enter(player);
                 }
             }
         });

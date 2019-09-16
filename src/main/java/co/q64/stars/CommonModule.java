@@ -66,6 +66,8 @@ import co.q64.stars.dimension.fleeting.feature.SolidDecayBlobFeature;
 import co.q64.stars.dimension.fleeting.placement.DecayBlobPlacement;
 import co.q64.stars.dimension.hub.HubBiome;
 import co.q64.stars.dimension.hub.HubDimension.HubDimensionTemplate;
+import co.q64.stars.dimension.overworld.feature.GatewayFeature;
+import co.q64.stars.dimension.overworld.placement.GatewayPlacement;
 import co.q64.stars.entity.PickupEntity;
 import co.q64.stars.entity.PickupEntityFactory;
 import co.q64.stars.item.ArrowItem;
@@ -363,7 +365,9 @@ public interface CommonModule {
 
     @Binds @IntoSet Feature<?> bindDecayBlobFeature(DecayBlobFeature decayBlobFeature);
     @Binds @IntoSet Feature<?> bindSolidDecayBlobFeature(SolidDecayBlobFeature decayBlobFeature);
+    @Binds @IntoSet Feature<?> bindGatewayFeature(GatewayFeature gatewayFeature);
     @Binds @IntoSet Placement<?> bindDecayBlobPlacement(DecayBlobPlacement decayBlobPlacement);
+    @Binds @IntoSet Placement<?> bindGatewayPlacement(GatewayPlacement gatewayPlacement);
 
     static @Provides @ElementsIntoSet @Singleton Set<TrophyBlock> bindTrophyBlocks(TrophyBlockFactory factory) { return Arrays.stream(TrophyVariant.values()).map(factory::create).collect(Collectors.toSet()); }
     static @Provides @ElementsIntoSet @Singleton Set<TrophyBlockItem> bindTrophyItems(Set<TrophyBlock> blocks, TrophyBlockItemFactory factory) { return blocks.stream().map(factory::create).collect(Collectors.toSet()); }

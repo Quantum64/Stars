@@ -139,15 +139,19 @@ public class PlayerListener implements Listener {
             World world = event.player.getEntityWorld();
             ServerPlayerEntity player = (ServerPlayerEntity) event.player;
             if (world.getDimension() instanceof StarsDimension) {
-                if (player.posY < 20) {
+                if (player.posY < 25) {
                     capabilities.gardener(player, gardener -> {
-                        if (!gardener.isEnteringHub()) {
-                            if (gardener.isOpenChallengeDoor()) {
-                                gardener.setEnteringHub(true);
-                                fleetingManager.enter(player, true);
-                            } else {
-                                hubManager.fall(player);
+                        if(world.getDimension() instanceof FleetingDimension) {
+                            if (!gardener.isEnteringHub()) {
+                                if (gardener.isOpenChallengeDoor()) {
+                                    gardener.setEnteringHub(true);
+                                    fleetingManager.enter(player, true);
+                                } else {
+                                    hubManager.fall(player);
+                                }
                             }
+                        } else {
+                            hubManager.exit(player);
                         }
                     });
                     return;

@@ -1,6 +1,7 @@
 package co.q64.stars.client.render;
 
 import co.q64.stars.block.GatewayBlock;
+import co.q64.stars.block.StarboundGatewayBlock;
 import co.q64.stars.capability.GardenerCapability;
 import co.q64.stars.dimension.StarsDimension;
 import co.q64.stars.dimension.hub.HubDimension;
@@ -265,7 +266,7 @@ public class PlayerOverlayRender {
                     World world = Minecraft.getInstance().player.getEntityWorld();
                     if (world.getDimension() instanceof HubDimension) {
                         BlockState state = world.getBlockState(Minecraft.getInstance().player.getPosition().offset(Direction.DOWN));
-                        if (state.getBlock() instanceof GatewayBlock && !state.get(GatewayBlock.COMPLETE)) {
+                        if ((state.getBlock() instanceof GatewayBlock && !state.get(GatewayBlock.COMPLETE)) || state.getBlock() instanceof StarboundGatewayBlock) {
                             Minecraft.getInstance().ingameGUI.addChatMessage(ChatType.GAME_INFO, new StringTextComponent(TextFormatting.GRAY + "Touch " + keyName.get()));
                         }
                     }
