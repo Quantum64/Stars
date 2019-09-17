@@ -75,7 +75,7 @@ public class ClientPlayerListener implements Listener {
     @SubscribeEvent
     public void onClientTick(ClientTickEvent event) {
         clientSound.tick();
-        if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.getEntityWorld().getDimension() instanceof StarsDimension) {
+        if (Minecraft.getInstance().player != null /*&& Minecraft.getInstance().player.getEntityWorld().getDimension() instanceof StarsDimension*/) {
             playerOverlayRender.tick();
         }
     }
@@ -84,6 +84,9 @@ public class ClientPlayerListener implements Listener {
     public void onKeyInput(KeyInputEvent event) {
         if (Minecraft.getInstance().player == null || Minecraft.getInstance().player.getEntityWorld() == null || Minecraft.getInstance().gameSettings == null) {
             return;
+        }
+        if (Minecraft.getInstance().gameSettings.keyBindSneak.isPressed()) {
+            packetManager.getChannel().sendToServer(packetManager.getPlantSeedPacketFactory().create());
         }
         if (Minecraft.getInstance().player.getEntityWorld().getDimension() instanceof StarsDimension) {
             if (Minecraft.getInstance().gameSettings.keyBindJump.isKeyDown()) {
@@ -96,9 +99,6 @@ public class ClientPlayerListener implements Listener {
                     pressingJump = false;
                     packetManager.getChannel().sendToServer(packetManager.getUpdateJumpPacketFactory().create(false));
                 }
-            }
-            if (Minecraft.getInstance().gameSettings.keyBindSneak.isPressed()) {
-                packetManager.getChannel().sendToServer(packetManager.getPlantSeedPacketFactory().create());
             }
             if (playerOverlayRender.getLastStage() == FleetingStage.DARK && loseWayKeyBinding.isKeyDown()) {
                 long now = System.currentTimeMillis();

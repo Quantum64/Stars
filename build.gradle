@@ -109,8 +109,8 @@ dependencies {
     annotationProcessor 'com.google.guava:failureaccess:1.0.1'
 
     // Dev environment
-    compileOnly fg.deobf("mezz.jei:jei-1.14.4:6.0.0.10:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.14.4:6.0.0.10")
+    compileOnly fg.deobf("mezz.jei:jei-1.14.4:6.0.0.11:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.14.4:6.0.0.11")
 }
 
 repositories {

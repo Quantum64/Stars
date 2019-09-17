@@ -136,19 +136,19 @@ public class FleetingManager {
 
     public void tryEnter(ServerPlayerEntity player) {
         capabilities.gardener(player, gardener -> {
-            if (gardener.getFleetingStage() == FleetingStage.NONE) {
-                ServerWorld world = player.getServerWorld();
-                BlockPos target = player.getPosition().offset(Direction.DOWN);
-                BlockState state = world.getBlockState(target);
-                if (state.getBlock() instanceof GatewayBlock) {
+            ServerWorld world = player.getServerWorld();
+            BlockPos target = player.getPosition().offset(Direction.DOWN);
+            BlockState state = world.getBlockState(target);
+            if (state.getBlock() instanceof GatewayBlock) {
+                if (gardener.getFleetingStage() == FleetingStage.NONE) {
                     gardener.setLevelType(state.get(GatewayBlock.TYPE));
                     gardener.setHubSpawn(target.offset(Direction.UP));
                     enter(player, true);
-                } else if (state.getBlock() instanceof StarboundGatewayBlock) {
-                    gardener.setHubEntryPosition(player.getPosition());
-                    gardener.setHubEntryDimension(player.getServerWorld().getDimension().getType().getRegistryName());
-                    hubManager.enter(player);
                 }
+            } else if (state.getBlock() instanceof StarboundGatewayBlock) {
+                gardener.setHubEntryPosition(player.getPosition());
+                gardener.setHubEntryDimension(player.getServerWorld().getDimension().getType().getRegistryName());
+                hubManager.enter(player);
             }
         });
     }

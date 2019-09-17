@@ -5,6 +5,7 @@ import co.q64.stars.block.DoorBlock;
 import co.q64.stars.block.TubeAirBlock;
 import co.q64.stars.block.TubeDarknessBlock;
 import co.q64.stars.capability.GardenerCapability;
+import co.q64.stars.dimension.StarsDimension;
 import co.q64.stars.dimension.hub.HubDimension;
 import co.q64.stars.level.LevelType;
 import co.q64.stars.net.PacketManager;
@@ -128,6 +129,9 @@ public class PlayerManager {
     }
 
     public void grow(ServerPlayerEntity player) {
+        if (!(player.getEntityWorld().getDimension() instanceof StarsDimension)) {
+            return;
+        }
         capabilities.gardener(player, c -> {
             if (c.getFleetingStage() != FleetingStage.DARK && !c.getNextSeeds().isEmpty()) {
                 if (seedManager.tryGrow(player, player.getPosition().offset(Direction.DOWN), c.getNextSeeds().peek())) {
