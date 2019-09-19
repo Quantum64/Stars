@@ -33,6 +33,10 @@ public class Scheduler {
     }
 
     public void run(Runnable task, int delay) {
+        if (delay <= 0) {
+            task.run();
+            return;
+        }
         added.add(new Task(task, tick.get() + delay));
     }
 

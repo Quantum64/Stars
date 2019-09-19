@@ -2,7 +2,7 @@ package co.q64.stars.client.listener;
 
 import co.q64.stars.client.render.ExtraWorldRender;
 import co.q64.stars.client.render.PlayerOverlayRender;
-import co.q64.stars.client.util.ClientSound;
+import co.q64.stars.client.sound.ClientSound;
 import co.q64.stars.client.util.LoseWayKeyBinding;
 import co.q64.stars.dimension.StarsDimension;
 import co.q64.stars.dimension.fleeting.FleetingDimension;

@@ -119,10 +119,16 @@ public class Structures implements IFutureReloadListener {
         HUB_PINK("hub_pink.dat"),
         HUB_CYAN("hub_cyan.dat"),
 
-        CHALLENGE_CYAN("challenge_cyan.dat"),
-        CHALLENGE_TEAL("challenge_teal.dat"),
         CHALLENGE_WHITE("challenge_white.dat"),
-        CHALLENGE_ORANGE("challenge_orange.dat");
+        CHALLENGE_GREEN("challenge_green.dat"),
+        CHALLENGE_ORANGE("challenge_orange.dat"),
+        CHALLENGE_BLUE("challenge_blue.dat"),
+        CHALLENGE_PURPLE("challenge_purple.dat"),
+        CHALLENGE_YELLOW("challenge_yellow.dat"),
+        CHALLENGE_TEAL("challenge_teal.dat"),
+        CHALLENGE_RED("challenge_red.dat"),
+        CHALLENGE_PINK("challenge_pink.dat"),
+        CHALLENGE_CYAN("challenge_cyan.dat");
 
         private @Getter String name;
 

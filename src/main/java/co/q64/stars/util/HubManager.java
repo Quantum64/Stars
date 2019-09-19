@@ -5,6 +5,10 @@ import co.q64.stars.level.LevelManager;
 import co.q64.stars.level.LevelType;
 import co.q64.stars.net.PacketManager;
 import co.q64.stars.net.packets.ClientFadePacket.FadeMode;
+import co.q64.stars.qualifier.SoundQualifiers.Complete;
+import co.q64.stars.qualifier.SoundQualifiers.Exit;
+import co.q64.stars.qualifier.SoundQualifiers.Fall;
+import co.q64.stars.qualifier.SoundQualifiers.Wind;
 import co.q64.stars.type.FleetingStage;
 import co.q64.stars.type.FormingBlockType;
 import co.q64.stars.util.Structures.StructureType;
@@ -17,6 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
@@ -26,6 +31,7 @@ import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.Set;
 
 @Singleton
 public class HubManager {
@@ -38,32 +44,30 @@ public class HubManager {
     protected @Inject HubDimensionTemplate hubDimensionTemplate;
     protected @Inject Logger logger;
     protected @Inject LevelManager levelManager;
+    protected @Inject @Fall Set<SoundEvent> fallSounds;
+    protected @Inject @Wind SoundEvent windSound;
+    protected @Inject @Complete SoundEvent completeSound;
+    protected @Inject @Exit SoundEvent exitSound;
+    protected @Inject Sounds sounds;
 
     protected @Inject HubManager() {}
 
     public void fall(ServerPlayerEntity player) {
         capabilities.gardener(player, gardener -> {
-            if (gardener.isOpenDoor() || gardener.isOpenChallengeDoor()) {
-                // TODO sound
-            } else {
-
+            if (!(gardener.isOpenDoor() || gardener.isOpenChallengeDoor())) {
+                sounds.playSound(player.getServerWorld(), player.getPosition(), fallSounds, 1f);
             }
             enter(player);
         });
     }
 
     public void lost(ServerPlayerEntity player) {
-        // TODO sound
         enterNoFade(player, 0);
+        sounds.playSound(player.getServerWorld(), player.getPosition(), windSound, 1f);
     }
 
     public void enter(ServerPlayerEntity player) {
         capabilities.gardener(player, gardener -> {
-            if (gardener.isOpenDoor() || gardener.isOpenChallengeDoor()) {
-
-            } else {
-                // TODO sound
-            }
             packetManager.getChannel().send(PacketDistributor.PLAYER.with(() -> player), packetManager.getClientFadePacketFactory().create(FadeMode.FADE_TO_WHITE, 3000));
             player.addPotionEffect(new EffectInstance(Effects.LEVITATION, 60, 1, true, false));
             enterNoFade(player, 60);
@@ -122,6 +126,7 @@ public class HubManager {
                             entity.setItem(new ItemStack(drop));
                             entity.setPosition(hubSpawn.getX() + 0.5, hubSpawn.getY() + 0.5, hubSpawn.getZ() + 0.5);
                             world.addEntity(entity);
+                            sounds.playSound(world, hubSpawn, challenge ? completeSound : exitSound, 1f);
                         }, 20);
                     }
                     playerManager.updateSeeds(player);
@@ -138,7 +143,7 @@ public class HubManager {
 
     public void exit(ServerPlayerEntity player) {
         capabilities.gardener(player, gardener -> {
-            ServerWorld world = DimensionManager.getWorld(player.getServer(),  DimensionType.byName(gardener.getHubEntryDimension()), false, true);
+            ServerWorld world = DimensionManager.getWorld(player.getServer(), DimensionType.byName(gardener.getHubEntryDimension()), false, true);
             BlockPos pos = gardener.getHubEntryPosition();
             player.setMotion(0, 0, 0);
             player.teleport(world, pos.getX() + 0.5, pos.getY() + 5, pos.getZ() + 0.5, player.rotationYaw, player.rotationPitch);

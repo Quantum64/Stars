@@ -126,13 +126,16 @@ import co.q64.stars.qualifier.ConstantQualifiers.Version;
 import co.q64.stars.qualifier.SoundQualifiers.Blue;
 import co.q64.stars.qualifier.SoundQualifiers.Brown;
 import co.q64.stars.qualifier.SoundQualifiers.Bubble;
+import co.q64.stars.qualifier.SoundQualifiers.Complete;
 import co.q64.stars.qualifier.SoundQualifiers.Cyan;
 import co.q64.stars.qualifier.SoundQualifiers.Dark;
 import co.q64.stars.qualifier.SoundQualifiers.DarkAir;
 import co.q64.stars.qualifier.SoundQualifiers.Door;
 import co.q64.stars.qualifier.SoundQualifiers.Empty;
+import co.q64.stars.qualifier.SoundQualifiers.Exit;
 import co.q64.stars.qualifier.SoundQualifiers.Explode;
 import co.q64.stars.qualifier.SoundQualifiers.ExplodeDark;
+import co.q64.stars.qualifier.SoundQualifiers.Fall;
 import co.q64.stars.qualifier.SoundQualifiers.Green;
 import co.q64.stars.qualifier.SoundQualifiers.Key;
 import co.q64.stars.qualifier.SoundQualifiers.Orange;
@@ -145,6 +148,7 @@ import co.q64.stars.qualifier.SoundQualifiers.Teal;
 import co.q64.stars.qualifier.SoundQualifiers.Thunder;
 import co.q64.stars.qualifier.SoundQualifiers.Ticking;
 import co.q64.stars.qualifier.SoundQualifiers.White;
+import co.q64.stars.qualifier.SoundQualifiers.Wind;
 import co.q64.stars.qualifier.SoundQualifiers.Yellow;
 import co.q64.stars.tile.AirDecayEdgeTile;
 import co.q64.stars.tile.ChallengeExitTile;
@@ -353,6 +357,7 @@ public interface CommonModule {
     @Binds @ElementsIntoSet Set<SoundEvent> bindExplodeSoundEvents(@Explode Set<SoundEvent> explodeSoundEvents);
     @Binds @ElementsIntoSet Set<SoundEvent> bindDarkSoundEvents(@Dark Set<SoundEvent> darkSoundEvents);
     @Binds @ElementsIntoSet Set<SoundEvent> bindSeedSoundEvents(@Seed Set<SoundEvent> seedSoundEvents);
+    @Binds @ElementsIntoSet Set<SoundEvent> bindFallSoundEvents(@Seed Set<SoundEvent> fallSoundEvents);
     @Binds @ElementsIntoSet Set<SoundEvent> bindThunderSoundEvents(@Thunder Set<SoundEvent> thunderSoundEvents);
 
     @Binds @IntoSet Biome bindFleetingBiome(FleetingBiome fleetingBiome);
@@ -415,6 +420,7 @@ public interface CommonModule {
     static @Provides @ElementsIntoSet @Singleton @Explode Set<SoundEvent> provideExplodeSounds(Identifiers identifiers) { return indexedSounds(identifiers, "explode", 4); }
     static @Provides @ElementsIntoSet @Singleton @Dark Set<SoundEvent> provideDarkSounds(Identifiers identifiers) { return indexedSounds(identifiers, "dark", 4); }
     static @Provides @ElementsIntoSet @Singleton @Seed Set<SoundEvent> provideSeedSounds(Identifiers identifiers) { return indexedSounds(identifiers, "seed", 4); }
+    static @Provides @ElementsIntoSet @Singleton @Fall Set<SoundEvent> provideFallSounds(Identifiers identifiers) { return indexedSounds(identifiers, "fall", 4); }
     static @Provides @ElementsIntoSet @Singleton @Thunder Set<SoundEvent> provideThunderSounds(Identifiers identifiers) { return indexedSounds(identifiers, "thunder", 2); }
 
     static @Provides @Singleton @ExplodeDark SoundEvent provideExplodeDarkSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("explode_dark")); }
@@ -425,6 +431,9 @@ public interface CommonModule {
     static @Provides @Singleton @Key SoundEvent provideKeySound(Identifiers identifiers) { return new SoundEvent(identifiers.get("key")); }
     static @Provides @Singleton @Bubble SoundEvent provideBubbleSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("bubble")); }
     static @Provides @Singleton @Pop SoundEvent providePopSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("pop")); }
+    static @Provides @Singleton @Complete SoundEvent provideCompleteSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("complete")); }
+    static @Provides @Singleton @Exit SoundEvent provideExitSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("exit")); }
+    static @Provides @Singleton @Wind SoundEvent provideWindSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("wind")); }
 
     @Binds @IntoSet SoundEvent bindExplodeDarkSound(@ExplodeDark SoundEvent event);
     @Binds @IntoSet SoundEvent bindDoorSound(@Door SoundEvent event);
@@ -434,6 +443,9 @@ public interface CommonModule {
     @Binds @IntoSet SoundEvent bindKeySound(@Key SoundEvent event);
     @Binds @IntoSet SoundEvent bindBubbleSound(@Bubble SoundEvent event);
     @Binds @IntoSet SoundEvent bindPopSound(@Pop SoundEvent event);
+    @Binds @IntoSet SoundEvent bindCompleteSound(@Complete SoundEvent event);
+    @Binds @IntoSet SoundEvent bindExitSound(@Exit SoundEvent event);
+    @Binds @IntoSet SoundEvent bindWindSound(@Wind SoundEvent event);
 
     // @formatter:on
 

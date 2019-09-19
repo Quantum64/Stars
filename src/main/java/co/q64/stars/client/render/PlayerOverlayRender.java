@@ -102,18 +102,27 @@ public class PlayerOverlayRender {
             drawScreenColorOverlay(r, g, b, a * a);
         }
         if (lostTime > 0) {
-            double progress = (lostTime - now + 10000) / Double.valueOf(LOST_TIME);
-            if (progress > 1.0f) {
-                progress = 1.0f;
-            }
-            if (progress < 0f) {
-                progress = 0f;
-            }
-            double a = 1f - progress;
+            double a = getLostOverlayProgress(now);
             a = a * 0.75;
             a = a * a;
             drawScreenColorOverlay(1, 1, 1, a);
         }
+    }
+
+    public double getLostOverlayProgress() {
+        return getLostOverlayProgress(System.currentTimeMillis());
+    }
+
+    public double getLostOverlayProgress(long now) {
+        double progress = (lostTime - now + 10000) / Double.valueOf(LOST_TIME);
+        if (progress > 1.0f) {
+            progress = 1.0f;
+        }
+        if (progress < 0f) {
+            progress = 0f;
+        }
+        double a = 1f - progress;
+        return a;
     }
 
     private void renderHud() {

@@ -412,6 +412,34 @@
       "stars:seed_4"
     ]
   },
+  "fall_1": {
+    "category": "master",
+    "subtitle": "stars.subtitle.fall_1",
+    "sounds": [
+      "stars:fall_1"
+    ]
+  },
+  "fall_2": {
+    "category": "master",
+    "subtitle": "stars.subtitle.fall_2",
+    "sounds": [
+      "stars:fall_2"
+    ]
+  },
+  "fall_3": {
+    "category": "master",
+    "subtitle": "stars.subtitle.fall_3",
+    "sounds": [
+      "stars:fall_3"
+    ]
+  },
+  "fall_4": {
+    "category": "master",
+    "subtitle": "stars.subtitle.fall_4",
+    "sounds": [
+      "stars:fall_4"
+    ]
+  },
   "door": {
     "category": "master",
     "subtitle": "stars.subtitle.door",
@@ -447,6 +475,27 @@
       "stars:pop"
     ]
   },
+  "complete": {
+    "category": "master",
+    "subtitle": "stars.subtitle.complete",
+    "sounds": [
+      "stars:complete"
+    ]
+  },
+  "exit": {
+    "category": "master",
+    "subtitle": "stars.subtitle.exit",
+    "sounds": [
+      "stars:exit"
+    ]
+  },
+  "wind": {
+    "category": "master",
+    "subtitle": "stars.subtitle.wind",
+    "sounds": [
+      "stars:wind"
+    ]
+  },
   "thunder_1": {
     "category": "master",
     "subtitle": "stars.subtitle.thunder_1",
@@ -474,6 +523,36 @@
     "sounds": [
       {
         "name": "stars:ambient_dark",
+        "stream": true
+      }
+    ]
+  },
+  "ambient_light": {
+    "category": "master",
+    "subtitle": "stars.subtitle.ambient_light",
+    "sounds": [
+      {
+        "name": "stars:ambient_light",
+        "stream": true
+      }
+    ]
+  },
+  "ambient_hub": {
+    "category": "master",
+    "subtitle": "stars.subtitle.ambient_hub",
+    "sounds": [
+      {
+        "name": "stars:ambient_hub",
+        "stream": true
+      }
+    ]
+  },
+  "lost": {
+    "category": "master",
+    "subtitle": "stars.subtitle.lost",
+    "sounds": [
+      {
+        "name": "stars:lost",
         "stream": true
       }
     ]
