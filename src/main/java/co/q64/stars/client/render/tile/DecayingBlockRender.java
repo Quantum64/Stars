@@ -53,6 +53,7 @@ public class DecayingBlockRender extends TileEntityRenderer<DecayingTile> {
     }
 
     public void render(DecayingTile tile, double x, double y, double z, float partialTicks, int destroyStage) {
+        /*
         Direction[] renderable = new Direction[DIRECTIONS.length];
         if (RENDER_OPTIMIZATON) {
             for (int index = 0; index < DIRECTIONS.length; index++) {
@@ -61,6 +62,7 @@ public class DecayingBlockRender extends TileEntityRenderer<DecayingTile> {
                 }
             }
         }
+         */
         GlStateManager.disableLighting();
         GlStateManager.disableCull();
         GlStateManager.enableBlend();
@@ -117,7 +119,7 @@ public class DecayingBlockRender extends TileEntityRenderer<DecayingTile> {
                     }
                     double animationScale = msAnimationRemaining / Double.valueOf(ANIMATION_TIME);
                     animationScale *= 0.1;
-                    for (Direction direction : RENDER_OPTIMIZATON ? renderable : DIRECTIONS) {
+                    for (Direction direction : /*RENDER_OPTIMIZATON ? renderable :*/ DIRECTIONS) {
                         if (direction == null) {
                             continue;
                         }

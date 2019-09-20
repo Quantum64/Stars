@@ -10,8 +10,11 @@ import co.q64.stars.dimension.hub.HubDimension;
 import co.q64.stars.listener.Listener;
 import co.q64.stars.net.PacketManager;
 import co.q64.stars.type.FleetingStage;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.platform.GlStateManager.FogMode;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.ForgeIngameGui;
+import net.minecraftforge.client.event.EntityViewRenderEvent.FogDensity;
 import net.minecraftforge.client.event.InputEvent.KeyInputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -33,7 +36,6 @@ public class ClientPlayerListener implements Listener {
     protected @Inject ClientSound clientSound;
 
     private Boolean autoJump;
-    private Integer renderDistance;
     private boolean pressingJump;
 
     protected @Inject ClientPlayerListener() {}
@@ -44,30 +46,13 @@ public class ClientPlayerListener implements Listener {
             if (event.getWorld().getDimension() instanceof StarsDimension) {
                 ForgeIngameGui.renderVignette = false;
                 autoJump = Minecraft.getInstance().gameSettings.autoJump;
-                renderDistance = Minecraft.getInstance().gameSettings.renderDistanceChunks;
                 Minecraft.getInstance().gameSettings.autoJump = false;
-                Minecraft.getInstance().gameSettings.renderDistanceChunks = 2;
             } else {
                 ForgeIngameGui.renderVignette = true;
                 if (autoJump != null) {
                     Minecraft.getInstance().gameSettings.autoJump = autoJump;
                     autoJump = null;
                 }
-                if (renderDistance != null) {
-                    Minecraft.getInstance().gameSettings.renderDistanceChunks = renderDistance;
-                    renderDistance = null;
-                }
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public void onPlayerTick(PlayerTickEvent event) {
-        if (event.phase == Phase.END && event.player == Minecraft.getInstance().player) {
-            if (event.player.world.getDimension() instanceof HubDimension || (event.player.world.getDimension() instanceof FleetingDimension && playerOverlayRender.getLastStage() == FleetingStage.LIGHT)) {
-                //Minecraft.getInstance().gameSettings.renderDistanceChunks = 2; // No cheating
-            } else if ((event.player.world.getDimension() instanceof FleetingDimension)) {
-                Minecraft.getInstance().gameSettings.renderDistanceChunks = 6;
             }
         }
     }
@@ -120,5 +105,20 @@ public class ClientPlayerListener implements Listener {
     @SubscribeEvent
     public void onWorldRender(RenderWorldLastEvent event) {
         extraWorldRender.render();
+    }
+
+    private static final float DISTANCE = 1.5f;
+
+    @SubscribeEvent
+    public void onFogDensity(FogDensity fogDensity) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null || mc.player.getEntityWorld() == null || !(mc.player.getEntityWorld().getDimension() instanceof StarsDimension)) {
+            return;
+        }
+        GlStateManager.fogMode(FogMode.LINEAR);
+        GlStateManager.fogStart(DISTANCE * 16f - 0.1f);
+        GlStateManager.fogEnd(DISTANCE * 16f);
+        fogDensity.setCanceled(true);
+        fogDensity.setDensity(0f);
     }
 }

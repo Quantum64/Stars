@@ -47,14 +47,6 @@ public class PickupEntityRender extends EntityRenderer<PickupEntity> {
     }
 
     public void doRender(PickupEntity entity, double x, double y, double z, float yaw, float partialTicks) {
-        GlStateManager.enableRescaleNormal();
-        GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
-        GlStateManager.enableBlend();
-        RenderHelper.enableStandardItemLighting();
-        GlStateManager.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ZERO);
-        GlStateManager.pushMatrix();
-        GlStateManager.translated(x, y + 0.5, z);
-        GlStateManager.rotatef((entity.getAge() + partialTicks) * 5, 0.0F, 1.0F, 0.0F);
         ItemStack stack = heart;
         switch (entity.getVariant()) {
             case PickupEntity.VARIANT_KEY:
@@ -70,11 +62,24 @@ public class PickupEntityRender extends EntityRenderer<PickupEntity> {
                 stack = challenge;
                 break;
         }
+        PlayerEntity player = Minecraft.getInstance().player;
+        double dx = player.posX, dy = player.posY, dz = player.posZ;
+        if (!(stack == arrow || stack == key)) {
+            if (((entity.posX - dx) * (entity.posX - dx)) + ((entity.posY - dy) * (entity.posY - dy) + ((entity.posZ - dz) * (entity.posZ - dz))) > 32 * 32) {
+                return;
+            }
+        }
+        GlStateManager.enableRescaleNormal();
+        GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
+        GlStateManager.enableBlend();
+        RenderHelper.enableStandardItemLighting();
+        GlStateManager.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ZERO);
+        GlStateManager.pushMatrix();
+        GlStateManager.translated(x, y + 0.5, z);
+        GlStateManager.rotatef((entity.getAge() + partialTicks) * 5, 0.0F, 1.0F, 0.0F);
         if (stack != arrow) {
             Minecraft.getInstance().getItemRenderer().renderItem(stack, TransformType.NONE);
         } else {
-            PlayerEntity player = Minecraft.getInstance().player;
-            double dx = player.posX, dy = player.posY, dz = player.posZ;
             double dist = Math.sqrt(((entity.posX - dx) * (entity.posX - dx)) + ((entity.posY - dy) * (entity.posY - dy) + ((entity.posZ - dz) * (entity.posZ - dz)))) - 1;
             int color = (int) (Math.min((Math.max(dist, 0) / 10.0), 1) * 255);
             int result = 0xFFFFFF + (color << 24);

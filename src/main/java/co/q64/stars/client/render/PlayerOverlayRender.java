@@ -273,11 +273,9 @@ public class PlayerOverlayRender {
             } else if (lastStage == FleetingStage.NONE) {
                 if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.getEntityWorld() != null) {
                     World world = Minecraft.getInstance().player.getEntityWorld();
-                    if (world.getDimension() instanceof HubDimension) {
-                        BlockState state = world.getBlockState(Minecraft.getInstance().player.getPosition().offset(Direction.DOWN));
-                        if ((state.getBlock() instanceof GatewayBlock && !state.get(GatewayBlock.COMPLETE)) || state.getBlock() instanceof StarboundGatewayBlock) {
-                            Minecraft.getInstance().ingameGUI.addChatMessage(ChatType.GAME_INFO, new StringTextComponent(TextFormatting.GRAY + "Touch " + keyName.get()));
-                        }
+                    BlockState state = world.getBlockState(Minecraft.getInstance().player.getPosition().offset(Direction.DOWN));
+                    if ((world.getDimension() instanceof HubDimension && state.getBlock() instanceof GatewayBlock && !state.get(GatewayBlock.COMPLETE)) || state.getBlock() instanceof StarboundGatewayBlock) {
+                        Minecraft.getInstance().ingameGUI.addChatMessage(ChatType.GAME_INFO, new StringTextComponent(TextFormatting.GRAY + "Touch " + keyName.get()));
                     }
                 }
             }
