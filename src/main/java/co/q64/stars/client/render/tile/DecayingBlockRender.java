@@ -29,8 +29,6 @@ import java.util.stream.LongStream;
 
 @Singleton
 public class DecayingBlockRender extends TileEntityRenderer<DecayingTile> {
-    private static final boolean RENDER_OPTIMIZATON = false;
-
     private static final Direction[] DIRECTIONS = Direction.values();
     private static final int COUNTS_PER_SIDE = 20;
     private static final int ANIMATION_TIME = 150;
@@ -53,16 +51,6 @@ public class DecayingBlockRender extends TileEntityRenderer<DecayingTile> {
     }
 
     public void render(DecayingTile tile, double x, double y, double z, float partialTicks, int destroyStage) {
-        /*
-        Direction[] renderable = new Direction[DIRECTIONS.length];
-        if (RENDER_OPTIMIZATON) {
-            for (int index = 0; index < DIRECTIONS.length; index++) {
-                if (!tile.getWorld().getBlockState(tile.getPos().offset(DIRECTIONS[index])).isOpaqueCube(tile.getWorld(), tile.getPos())) {
-                    renderable[index] = DIRECTIONS[index];
-                }
-            }
-        }
-         */
         GlStateManager.disableLighting();
         GlStateManager.disableCull();
         GlStateManager.enableBlend();
@@ -119,7 +107,7 @@ public class DecayingBlockRender extends TileEntityRenderer<DecayingTile> {
                     }
                     double animationScale = msAnimationRemaining / Double.valueOf(ANIMATION_TIME);
                     animationScale *= 0.1;
-                    for (Direction direction : /*RENDER_OPTIMIZATON ? renderable :*/ DIRECTIONS) {
+                    for (Direction direction : DIRECTIONS) {
                         if (direction == null) {
                             continue;
                         }
@@ -174,10 +162,8 @@ public class DecayingBlockRender extends TileEntityRenderer<DecayingTile> {
                     }
                 }
             }
-
-            tessellator.draw();
         }
-
+        tessellator.draw();
         GlStateManager.popMatrix();
         GlStateManager.enableCull();
         GlStateManager.enableTexture();
