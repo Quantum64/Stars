@@ -471,7 +471,7 @@
   "pop": {
     "category": "master",
     "subtitle": "stars.subtitle.pop",
-    "sounds": [
+    "sounds": [ 
       "stars:pop"
     ]
   },

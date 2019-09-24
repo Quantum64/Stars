@@ -1,12 +1,12 @@
 {
-  "type": "stars:trophy_purple",
+  "type": "stars:trophy_base",
   "pools": [
     {
       "rolls": 1,
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "stars:trophy_purple"
+          "name": "stars:trophy_base"
         }
       ],
       "conditions": [
