@@ -3,7 +3,6 @@ package co.q64.stars.dimension.overworld.feature;
 import co.q64.stars.block.FormedBlock;
 import co.q64.stars.block.StarboundGatewayBlock;
 import co.q64.stars.type.FormingBlockType;
-import co.q64.stars.type.FormingBlockTypes;
 import co.q64.stars.type.forming.GreyFormingBlockType;
 import co.q64.stars.util.Identifiers;
 import net.minecraft.block.BlockState;
@@ -15,7 +14,6 @@ import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.GenerationSettings;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
-import net.minecraft.world.gen.placement.NoPlacementConfig;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

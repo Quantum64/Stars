@@ -20,7 +20,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.0'
+version = '1.0.1'
 group = 'co.q64.stars' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'stars'
 
@@ -127,7 +127,7 @@ repositories {
 }
 
 shadowJar {
-    archiveName = "stars-1.0.jar"
+    archiveName = "stars-${version}.jar"
 
     dependencies {
         include dependency('javax.inject:javax.inject')

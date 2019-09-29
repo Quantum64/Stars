@@ -7,7 +7,7 @@
   ],
   "key": {
     "S": {
-      "item": "minecraft:cobblestone"
+      "item": "minecraft:beacon"
     },
     "G": {
       "item": "minecraft:glass"
@@ -17,6 +17,6 @@
     }
   },
   "result": {
-    "item": "minecraft:beacon"
+    "item": "stars:starbound_gateway"
   }
 }

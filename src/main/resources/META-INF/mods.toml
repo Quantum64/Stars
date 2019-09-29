@@ -18,11 +18,11 @@ version="${file.jarVersion}" #mandatory
  # A display name for the mod
 displayName="Stars" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification <here>
-updateJSONURL="http://myurl.me/" #optional
+#updateJSONURL="http://myurl.me/" #optional
 # A URL for the "homepage" for this mod, displayed in the mod UI
 displayURL="https://github.com/Quantum64/Stars/" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
-logoFile="examplemod.png" #optional
+#logoFile="examplemod.png" #optional
 # A text field displayed in the mod UI
 credits="Thanks to Droqen for inspiration and for answering all my questions about his game" #optional
 # A text field displayed in the mod UI
