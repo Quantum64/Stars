@@ -1,23 +1,34 @@
 package co.q64.stars.util;
 
 import co.q64.stars.block.BlueFormedBlock;
+import co.q64.stars.block.BlueFormedBlock.BlueFormedBlockHard;
 import co.q64.stars.block.BrownFormedBlock;
+import co.q64.stars.block.BrownFormedBlock.BrownFormedBlockHard;
 import co.q64.stars.block.ChallengeEntranceBlock;
 import co.q64.stars.block.ChallengeExitBlock;
 import co.q64.stars.block.CyanFormedBlock;
+import co.q64.stars.block.CyanFormedBlock.CyanFormedBlockHard;
 import co.q64.stars.block.DarknessBlock;
 import co.q64.stars.block.DecayBlock;
 import co.q64.stars.block.DecayBlock.DecayBlockSolid;
 import co.q64.stars.block.DecayEdgeBlock;
 import co.q64.stars.block.GatewayBlock;
 import co.q64.stars.block.GreenFormedBlock;
+import co.q64.stars.block.GreenFormedBlock.GreenFormedBlockHard;
 import co.q64.stars.block.GreyFormedBlock;
 import co.q64.stars.block.OrangeFormedBlock;
+import co.q64.stars.block.OrangeFormedBlock.OrangeFormedBlockHard;
 import co.q64.stars.block.PinkFormedBlock;
 import co.q64.stars.block.PurpleFormedBlock;
+import co.q64.stars.block.PurpleFormedBlock.PurpleFormedBlockHard;
 import co.q64.stars.block.RedFormedBlock;
+import co.q64.stars.block.RedFormedBlock.RedFormedBlockHard;
 import co.q64.stars.block.RedPrimedBlock;
+import co.q64.stars.block.RedPrimedBlock.RedPrimedBlockHard;
+import co.q64.stars.block.TealFormedBlock;
+import co.q64.stars.block.WhiteFormedBlock;
 import co.q64.stars.block.YellowFormedBlock;
+import co.q64.stars.block.YellowFormedBlock.YellowFormedBlockHard;
 import co.q64.stars.level.LevelType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +68,19 @@ public class Structures implements IFutureReloadListener {
     protected @Inject CyanFormedBlock cyanFormedBlock;
     protected @Inject GreyFormedBlock greyFormedBlock;
     protected @Inject RedPrimedBlock redPrimedBlock;
+    protected @Inject WhiteFormedBlock whiteFormedBlock;
+    protected @Inject TealFormedBlock tealFormedBlock;
+
+    protected @Inject RedFormedBlockHard redFormedBlockHard;
+    protected @Inject BlueFormedBlockHard blueFormedBlockHard;
+    protected @Inject OrangeFormedBlockHard orangeFormedBlockHard;
+    protected @Inject PurpleFormedBlockHard purpleFormedBlockHard;
+    protected @Inject BrownFormedBlockHard brownFormedBlockHard;
+    protected @Inject GreenFormedBlockHard greenFormedBlockHard;
+    protected @Inject YellowFormedBlockHard yellowFormedBlockHard;
+    protected @Inject CyanFormedBlockHard cyanFormedBlockHard;
+    protected @Inject RedPrimedBlockHard redPrimedBlockHard;
+
     protected @Inject DecayBlock decayBlock;
     protected @Inject DecayBlockSolid decayBlockSolid;
     protected @Inject DecayEdgeBlock decayEdgeBlock;
@@ -212,6 +236,7 @@ public class Structures implements IFutureReloadListener {
         DIRT(3),
         COBBLESTONE(4),
         BEDROCK(7),
+        WOOL(35),
         BARRIER(166),
         LAPIS(22),
         SPONGE(19),
@@ -274,6 +299,18 @@ public class Structures implements IFutureReloadListener {
         put(ids, Block.STAINED_CLAY, Color.YELLOW, yellowFormedBlock.getDefaultState());
         put(ids, Block.STAINED_CLAY, Color.CYAN, cyanFormedBlock.getDefaultState());
         put(ids, Block.STAINED_CLAY, Color.GRAY, greyFormedBlock.getDefaultState());
+        put(ids, Block.STAINED_CLAY, Color.LIGHT_BLUE, tealFormedBlock.getDefaultState());
+        put(ids, Block.STAINED_CLAY, Color.WHITE, whiteFormedBlock.getDefaultState());
+
+        put(ids, Block.WOOL, Color.RED, redFormedBlockHard.getDefaultState());
+        put(ids, Block.WOOL, Color.MAGENTA, redPrimedBlockHard.getDefaultState());
+        put(ids, Block.WOOL, Color.BLUE, blueFormedBlockHard.getDefaultState());
+        put(ids, Block.WOOL, Color.ORANGE, orangeFormedBlockHard.getDefaultState());
+        put(ids, Block.WOOL, Color.PURPLE, purpleFormedBlockHard.getDefaultState());
+        put(ids, Block.WOOL, Color.BROWN, brownFormedBlockHard.getDefaultState());
+        put(ids, Block.WOOL, Color.GREEN, greenFormedBlockHard.getDefaultState());
+        put(ids, Block.WOOL, Color.YELLOW, yellowFormedBlockHard.getDefaultState());
+        put(ids, Block.WOOL, Color.CYAN, cyanFormedBlockHard.getDefaultState());
 
         put(ids, Block.STAINED_GLASS, Color.WHITE, gatewayBlock.getDefaultState().with(GatewayBlock.TYPE, LevelType.WHITE));
         put(ids, Block.STAINED_GLASS, Color.RED, gatewayBlock.getDefaultState().with(GatewayBlock.TYPE, LevelType.RED));

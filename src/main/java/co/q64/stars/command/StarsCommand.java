@@ -12,6 +12,7 @@ public class StarsCommand {
     protected @Inject TpxCommand tpxCommand;
     protected @Inject EnterCommand enterCommand;
     protected @Inject HubCommand hubCommand;
+    protected @Inject ChallengeCommand challengeCommand;
 
     protected @Inject StarsCommand() {}
 
@@ -19,6 +20,7 @@ public class StarsCommand {
         dispatcher.register(LiteralArgumentBuilder.<CommandSource>literal("stars")
                 .then(tpxCommand.register())
                 .then(enterCommand.register())
-                .then(hubCommand.register()));
+                .then(hubCommand.register())
+                .then(challengeCommand.register()));
     }
 }

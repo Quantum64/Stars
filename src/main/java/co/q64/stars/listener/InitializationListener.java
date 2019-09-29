@@ -7,6 +7,7 @@ import co.q64.stars.capability.gardener.GardenerCapabilityStorage;
 import co.q64.stars.capability.hub.HubCapabilityFactory;
 import co.q64.stars.capability.hub.HubCapabilityStorage;
 import co.q64.stars.command.StarsCommand;
+import co.q64.stars.dimension.fleeting.ChallengeDimension.ChallengeDimensionTemplate;
 import co.q64.stars.dimension.fleeting.FleetingDimension.FleetingDimensionTemplate;
 import co.q64.stars.dimension.fleeting.FleetingSolidDimension.FleetingSolidDimensionTemplate;
 import co.q64.stars.net.PacketManager;
@@ -40,6 +41,7 @@ public class InitializationListener implements Listener {
     protected @Inject HubCapabilityFactory hubCapabilityFactory;
     protected @Inject FleetingDimensionTemplate fleetingDimensionTemplate;
     protected @Inject FleetingSolidDimensionTemplate fleetingSolidDimensionTemplate;
+    protected @Inject ChallengeDimensionTemplate challengeDimensionTemplate;
     protected @Inject Scheduler scheduler;
     protected @Inject PlayerManager playerManager;
     protected @Inject Structures structures;
@@ -55,7 +57,7 @@ public class InitializationListener implements Listener {
 
     @SubscribeEvent
     public void onServerPreInit(FMLServerStartedEvent event) {
-        for (DimensionType type : Arrays.asList(fleetingDimensionTemplate.getType(), fleetingSolidDimensionTemplate.getType())) {
+        for (DimensionType type : Arrays.asList(fleetingDimensionTemplate.getType(), fleetingSolidDimensionTemplate.getType(), challengeDimensionTemplate.getType())) {
             try {
                 Files.walk(type.getDirectory(event.getServer().getWorld(type).getSaveHandler().getWorldDirectory()).toPath())
                         .sorted(Comparator.reverseOrder())

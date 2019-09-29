@@ -57,6 +57,9 @@ import co.q64.stars.capability.GardenerCapability;
 import co.q64.stars.capability.HubCapability;
 import co.q64.stars.capability.gardener.GardenerCapabilityImpl;
 import co.q64.stars.capability.hub.HubCapabilityImpl;
+import co.q64.stars.dimension.fleeting.ChallengeBiome;
+import co.q64.stars.dimension.fleeting.ChallengeDimension;
+import co.q64.stars.dimension.fleeting.ChallengeDimension.ChallengeDimensionTemplate;
 import co.q64.stars.dimension.fleeting.FleetingBiome;
 import co.q64.stars.dimension.fleeting.FleetingDimension.FleetingDimensionTemplate;
 import co.q64.stars.dimension.fleeting.FleetingSolidBiome;
@@ -362,10 +365,12 @@ public interface CommonModule {
 
     @Binds @IntoSet Biome bindFleetingBiome(FleetingBiome fleetingBiome);
     @Binds @IntoSet Biome bindFleetingSolidBiome(FleetingSolidBiome fleetingSolidBiome);
+    @Binds @IntoSet Biome bindChallengeBiome(ChallengeBiome challengeBiome);
     @Binds @IntoSet Biome bindHubBiome(HubBiome hubBiome);
 
     @Binds @IntoSet ModDimension bindFleetingModDimension(FleetingDimensionTemplate fleetingDimensionTemplate);
     @Binds @IntoSet ModDimension bindFleetingSolidModDimension(FleetingSolidDimensionTemplate fleetingSolidDimensionTemplate);
+    @Binds @IntoSet ModDimension bindChallengeDimension(ChallengeDimensionTemplate challengeDimensionTemplate);
     @Binds @IntoSet ModDimension bindHubModDimension(HubDimensionTemplate hubDimensionTemplate);
 
     @Binds @IntoSet Feature<?> bindDecayBlobFeature(DecayBlobFeature decayBlobFeature);

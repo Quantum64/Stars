@@ -103,13 +103,13 @@ public class GatewayFeature extends Feature<NoFeatureConfig> {
             }
         }
         BlockPos gateway = pos.down(5);
-        for (int i = 0; i < 5; i++) {
-            gateway = pos.down();
+        for (int i = 0; i < 25; i++) {
+            gateway = gateway.down();
             if (!world.getBlockState(gateway).isAir(world, gateway)) {
                 break;
             }
         }
         world.setBlockState(gateway, starboundGatewayBlock.getDefaultState(), 0);
-        return false;
+        return true;
     }
 }

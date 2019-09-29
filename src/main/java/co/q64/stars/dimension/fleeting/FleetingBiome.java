@@ -36,7 +36,8 @@ public class FleetingBiome extends Biome {
 
     @Inject
     protected void setup() {
-        if (this instanceof FleetingSolidBiome) {
+        if (this instanceof FleetingSolidBiome || this instanceof ChallengeBiome) {
+            System.out.println("hacky thing");
             return; // TODO extremely hacky?
         }
         addFeature(Decoration.UNDERGROUND_DECORATION, Biome.createDecoratedFeature(decayBlobFeature, IFeatureConfig.NO_FEATURE_CONFIG, decayBlobPlacement, IPlacementConfig.NO_PLACEMENT_CONFIG));

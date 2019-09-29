@@ -12,17 +12,17 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public abstract class StarsDimension extends Dimension {
-    private static final Vec3d fogColor = new Vec3d(1, 1, 1);
-
     private ChunkGeneratorFactory generatorFactory;
     private World world;
     private Biome biome;
+    private Vec3d color;
 
-    protected StarsDimension(World world, DimensionType type, ChunkGeneratorFactory generatorFactory, Biome biome) {
+    protected StarsDimension(World world, DimensionType type, ChunkGeneratorFactory generatorFactory, Biome biome, Vec3d color) {
         super(world, type);
         this.world = world;
         this.biome = biome;
         this.generatorFactory = generatorFactory;
+        this.color = color;
     }
 
     @Override
@@ -59,11 +59,11 @@ public abstract class StarsDimension extends Dimension {
     @OnlyIn(Dist.CLIENT)
     @Override
     public Vec3d getSkyColor(BlockPos cameraPos, float partialTicks) {
-        return fogColor;
+        return color;
     }
 
     public Vec3d getFogColor(float celestialAngle, float partialTicks) {
-        return fogColor;
+        return color;
     }
 
     public boolean canRespawnHere() {

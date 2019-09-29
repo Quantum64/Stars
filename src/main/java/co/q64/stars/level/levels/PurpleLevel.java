@@ -4,6 +4,7 @@ import co.q64.stars.level.Level;
 import co.q64.stars.level.LevelType;
 import co.q64.stars.type.forming.PurpleFormingBlockType;
 import co.q64.stars.util.Structures;
+import co.q64.stars.util.Structures.StructureType;
 import lombok.Getter;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
@@ -21,6 +22,6 @@ public class PurpleLevel implements Level {
     protected @Inject PurpleLevel() {}
 
     public BlockPos createChallenge(ServerWorld world, BlockPos start) {
-        return start;
+        return structures.get(StructureType.CHALLENGE_PURPLE).placeChallenge(world, start);
     }
 }

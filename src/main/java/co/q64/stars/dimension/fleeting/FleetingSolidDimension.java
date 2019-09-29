@@ -6,6 +6,7 @@ import com.google.auto.factory.AutoFactory;
 import com.google.auto.factory.Provided;
 import lombok.Getter;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
@@ -20,7 +21,7 @@ public class FleetingSolidDimension extends FleetingDimension {
     protected FleetingSolidDimension(World world, DimensionType type,
                                      @Provided co.q64.stars.dimension.fleeting.FleetingSolidChunkGeneratorFactory generatorFactory,
                                      @Provided FleetingSolidBiome fleetingBiome) {
-        super(world, type, generatorFactory, fleetingBiome);
+        super(world, type, generatorFactory, fleetingBiome, new Vec3d(1, 1, 1));
     }
 
     @Singleton

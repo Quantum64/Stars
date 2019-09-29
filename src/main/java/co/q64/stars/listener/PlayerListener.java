@@ -13,6 +13,7 @@ import co.q64.stars.block.SeedBlock;
 import co.q64.stars.capability.gardener.GardenerCapabilityProvider;
 import co.q64.stars.capability.hub.HubCapabilityProvider;
 import co.q64.stars.dimension.StarsDimension;
+import co.q64.stars.dimension.fleeting.ChallengeDimension;
 import co.q64.stars.dimension.fleeting.FleetingDimension;
 import co.q64.stars.dimension.hub.HubDimension;
 import co.q64.stars.level.LevelType;
@@ -141,7 +142,7 @@ public class PlayerListener implements Listener {
             if (world.getDimension() instanceof StarsDimension) {
                 if (player.posY < 25) {
                     capabilities.gardener(player, gardener -> {
-                        if(world.getDimension() instanceof FleetingDimension) {
+                        if (world.getDimension() instanceof FleetingDimension) {
                             if (!gardener.isEnteringHub()) {
                                 if (gardener.isOpenChallengeDoor()) {
                                     gardener.setEnteringHub(true);
@@ -164,7 +165,11 @@ public class PlayerListener implements Listener {
                             player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, 1, true, false));
                         } else {
                             if (gardener.getLevelType() == LevelType.YELLOW) {
-                                player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, 2, true, false));
+                                if (player.getEntityWorld().getDimension() instanceof ChallengeDimension) {
+                                    player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, -2, true, false));
+                                } else {
+                                    player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, 1, true, false));
+                                }
                             } else if (gardener.getLevelType() == LevelType.BLUE) {
                                 player.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 2, 8, true, false));
                             } else {

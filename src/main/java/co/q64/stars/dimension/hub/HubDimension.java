@@ -7,6 +7,7 @@ import com.google.auto.factory.AutoFactory;
 import com.google.auto.factory.Provided;
 import lombok.Getter;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
@@ -21,7 +22,7 @@ public class HubDimension extends StarsDimension {
     protected HubDimension(World world, DimensionType type,
                            @Provided co.q64.stars.dimension.hub.HubChunkGeneratorFactory generatorFactory,
                            @Provided HubBiome hubBiome) {
-        super(world, type, generatorFactory, hubBiome);
+        super(world, type, generatorFactory, hubBiome, new Vec3d(1, 1, 1));
     }
 
     @Singleton

@@ -9,6 +9,7 @@ import co.q64.stars.block.SpecialDecayBlock;
 import co.q64.stars.block.SpecialDecayEdgeBlock;
 import co.q64.stars.block.StarboundGatewayBlock;
 import co.q64.stars.capability.GardenerCapability;
+import co.q64.stars.dimension.fleeting.ChallengeDimension.ChallengeDimensionTemplate;
 import co.q64.stars.dimension.fleeting.FleetingDimension.FleetingDimensionTemplate;
 import co.q64.stars.dimension.fleeting.FleetingSolidDimension.FleetingSolidDimensionTemplate;
 import co.q64.stars.entity.PickupEntity;
@@ -73,6 +74,7 @@ public class FleetingManager {
     protected @Inject @Thunder Set<SoundEvent> thunderSounds;
     protected @Inject FleetingDimensionTemplate fleetingDimensionTemplate;
     protected @Inject FleetingSolidDimensionTemplate fleetingSolidDimensionTemplate;
+    protected @Inject ChallengeDimensionTemplate challengeDimensionTemplate;
 
     private Set<FormingBlockType> formingBlockTypes;
     private Map<UUID, Integer> levitationQueue = new HashMap<>();
@@ -260,7 +262,8 @@ public class FleetingManager {
 
     private ServerWorld getSpawnWorld(ServerPlayerEntity player) {
         return DimensionManager.getWorld(player.getServer(), player.getCapability(gardenerCapability.get())
-                .map(gardener -> gardener.getLevelType() == LevelType.TEAL ? fleetingSolidDimensionTemplate.getType() : fleetingDimensionTemplate.getType())
+                .map(gardener -> gardener.isOpenChallengeDoor() ? challengeDimensionTemplate.getType() :
+                        gardener.getLevelType() == LevelType.TEAL ? fleetingSolidDimensionTemplate.getType() : fleetingDimensionTemplate.getType())
                 .orElse(fleetingDimensionTemplate.getType()), false, true);
     }
 
