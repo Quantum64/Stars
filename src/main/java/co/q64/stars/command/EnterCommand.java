@@ -20,7 +20,7 @@ public class EnterCommand {
 
     public ArgumentBuilder<CommandSource, ?> register() {
         return Commands.literal("enter")
-                .requires(cs -> cs.hasPermissionLevel(0))
+                .requires(cs -> cs.hasPermissionLevel(2))
                 .then(Commands.argument("effect", BoolArgumentType.bool()).executes(this::execute))
                 .executes(this::execute);
     }

@@ -20,7 +20,7 @@ public class TpxCommand {
 
     public ArgumentBuilder<CommandSource, ?> register() {
         return Commands.literal("tpx")
-                .requires(cs -> cs.hasPermissionLevel(0))
+                .requires(cs -> cs.hasPermissionLevel(2))
                 .then(Commands.argument("dim", DimensionArgument.getDimension()).executes(this::execute));
     }
 

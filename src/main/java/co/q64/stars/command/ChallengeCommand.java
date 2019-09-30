@@ -23,7 +23,7 @@ public class ChallengeCommand {
 
     public ArgumentBuilder<CommandSource, ?> register() {
         return Commands.literal("challenge")
-                .requires(cs -> cs.hasPermissionLevel(0))
+                .requires(cs -> cs.hasPermissionLevel(2))
                 .then(Commands.argument("level", EnumArgument.enumArgument(LevelType.class)).executes(this::execute));
     }
 

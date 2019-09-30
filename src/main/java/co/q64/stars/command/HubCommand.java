@@ -30,7 +30,7 @@ public class HubCommand {
 
     public ArgumentBuilder<CommandSource, ?> register() {
         return Commands.literal("hub")
-                .requires(cs -> cs.hasPermissionLevel(0))
+                .requires(cs -> cs.hasPermissionLevel(2))
                 .then(Commands.literal("setnext").then(Commands.argument("id", IntegerArgumentType.integer()).executes(this::setNext)))
                 .then(Commands.literal("update").then(Commands.argument("player", EntityArgument.player()).then(Commands.argument("id", IntegerArgumentType.integer()).executes(this::update))))
                 .then(Commands.literal("info").then(Commands.argument("player", EntityArgument.player()).executes(this::info)))
