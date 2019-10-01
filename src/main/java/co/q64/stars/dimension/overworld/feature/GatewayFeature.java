@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 @Singleton
 public class GatewayFeature extends Feature<NoFeatureConfig> {
     private static final Collection<Direction> NOT_UP = Stream.of(Direction.values()).filter(d -> d != Direction.UP).collect(Collectors.toList());
-    private static final int RADIUS = 10;
+    private static final int RADIUS = 5;
 
     protected @Inject Set<FormingBlockType> formingTypes;
     protected @Inject StarboundGatewayBlock starboundGatewayBlock;
