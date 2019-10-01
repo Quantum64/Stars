@@ -13,6 +13,7 @@ import co.q64.stars.qualifier.SoundQualifiers.AmbientHub;
 import co.q64.stars.qualifier.SoundQualifiers.AmbientLight;
 import co.q64.stars.qualifier.SoundQualifiers.Lost;
 import co.q64.stars.util.Identifiers;
+import co.q64.stars.util.NamedSoundEvent;
 import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
@@ -35,10 +36,10 @@ public interface ClientModule {
         return new Properties().group(starsGroup).maxStackSize(1).setTEISR(() -> () -> trophyItemRenderer);
     }
 
-    static @Provides @Singleton @AmbientDark SoundEvent provideAmbientDarkSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("ambient_dark")); }
-    static @Provides @Singleton @AmbientLight SoundEvent provideAmbientLightSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("ambient_light")); }
-    static @Provides @Singleton @AmbientHub SoundEvent provideAmbientHubSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("ambient_hub")); }
-    static @Provides @Singleton @Lost SoundEvent provideLostSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("lost")); }
+    static @Provides @Singleton @AmbientDark SoundEvent provideAmbientDarkSound(Identifiers identifiers) { return new NamedSoundEvent(identifiers.get("ambient_dark")); }
+    static @Provides @Singleton @AmbientLight SoundEvent provideAmbientLightSound(Identifiers identifiers) { return new NamedSoundEvent(identifiers.get("ambient_light")); }
+    static @Provides @Singleton @AmbientHub SoundEvent provideAmbientHubSound(Identifiers identifiers) { return new NamedSoundEvent(identifiers.get("ambient_hub")); }
+    static @Provides @Singleton @Lost SoundEvent provideLostSound(Identifiers identifiers) { return new NamedSoundEvent(identifiers.get("lost")); }
 
     @Binds @IntoSet SoundEvent bindAmbientDarkSound(@AmbientDark SoundEvent event);
     @Binds @IntoSet SoundEvent bindAmbientLightSound(@AmbientLight SoundEvent event);

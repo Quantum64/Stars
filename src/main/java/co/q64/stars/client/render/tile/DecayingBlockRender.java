@@ -87,6 +87,8 @@ public class DecayingBlockRender extends TileEntityRenderer<DecayingTile> {
         GlStateManager.pushMatrix();
         GlStateManager.translated(x, y, z);
 
+        BufferBuilder builder = tessellator.getBuffer();
+        builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
         if (tile.isCalculated()) {
             long position = tile.getPos().toLong();
             long now = System.currentTimeMillis();
@@ -94,9 +96,6 @@ public class DecayingBlockRender extends TileEntityRenderer<DecayingTile> {
             if (progress > 1.0f) {
                 progress = 1.0f;
             }
-            BufferBuilder builder = tessellator.getBuffer();
-            builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-
             for (int index = 0; index < COUNTS_PER_SIDE; index++) {
                 float cutoff = cutoffs[index];
                 if (progress > cutoff) {

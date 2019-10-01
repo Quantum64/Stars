@@ -62,6 +62,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
@@ -358,7 +359,9 @@ public class PlayerListener implements Listener {
     public void onPlayerChangeDimension(EntityJoinWorldEvent event) {
         if (event.getEntity() instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) event.getEntity();
-            player.getAttribute(PlayerEntity.REACH_DISTANCE).removeAllModifiers(); // TODO ?
+            for (AttributeModifier modifier : new ArrayList<>(player.getAttribute(PlayerEntity.REACH_DISTANCE).getModifiers())) {
+                player.getAttribute(PlayerEntity.REACH_DISTANCE).removeModifier(modifier);
+            }
             if (event.getWorld().getDimension() instanceof StarsDimension) {
                 player.getAttribute(PlayerEntity.REACH_DISTANCE).applyModifier(reach);
                 if (!player.getEntityWorld().isRemote) {
