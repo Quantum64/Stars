@@ -179,6 +179,7 @@ import co.q64.stars.type.forming.TealFormingBlockType;
 import co.q64.stars.type.forming.WhiteFormingBlockType;
 import co.q64.stars.type.forming.YellowFormingBlockType;
 import co.q64.stars.util.Identifiers;
+import co.q64.stars.util.NamedSoundEvent;
 import co.q64.stars.util.UnfortunateForgeBlackMagic;
 import dagger.Binds;
 import dagger.Module;
@@ -428,17 +429,17 @@ public interface CommonModule {
     static @Provides @ElementsIntoSet @Singleton @Fall Set<SoundEvent> provideFallSounds(Identifiers identifiers) { return indexedSounds(identifiers, "fall", 4); }
     static @Provides @ElementsIntoSet @Singleton @Thunder Set<SoundEvent> provideThunderSounds(Identifiers identifiers) { return indexedSounds(identifiers, "thunder", 2); }
 
-    static @Provides @Singleton @ExplodeDark SoundEvent provideExplodeDarkSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("explode_dark")); }
-    static @Provides @Singleton @Door SoundEvent provideDoorSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("door")); }
-    static @Provides @Singleton @Ticking SoundEvent provideTickingSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("ticking")); }
-    static @Provides @Singleton @Empty SoundEvent provideEmptySound(Identifiers identifiers) { return new SoundEvent(identifiers.get("empty")); }
-    static @Provides @Singleton @DarkAir SoundEvent provideDarkAirSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("dark_air")); }
-    static @Provides @Singleton @Key SoundEvent provideKeySound(Identifiers identifiers) { return new SoundEvent(identifiers.get("key")); }
-    static @Provides @Singleton @Bubble SoundEvent provideBubbleSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("bubble")); }
-    static @Provides @Singleton @Pop SoundEvent providePopSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("pop")); }
-    static @Provides @Singleton @Complete SoundEvent provideCompleteSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("complete")); }
-    static @Provides @Singleton @Exit SoundEvent provideExitSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("exit")); }
-    static @Provides @Singleton @Wind SoundEvent provideWindSound(Identifiers identifiers) { return new SoundEvent(identifiers.get("wind")); }
+    static @Provides @Singleton @ExplodeDark SoundEvent provideExplodeDarkSound(Identifiers identifiers) { return new NamedSoundEvent(identifiers.get("explode_dark")); }
+    static @Provides @Singleton @Door SoundEvent provideDoorSound(Identifiers identifiers) { return new NamedSoundEvent(identifiers.get("door")); }
+    static @Provides @Singleton @Ticking SoundEvent provideTickingSound(Identifiers identifiers) { return new NamedSoundEvent(identifiers.get("ticking")); }
+    static @Provides @Singleton @Empty SoundEvent provideEmptySound(Identifiers identifiers) { return new NamedSoundEvent(identifiers.get("empty")); }
+    static @Provides @Singleton @DarkAir SoundEvent provideDarkAirSound(Identifiers identifiers) { return new NamedSoundEvent(identifiers.get("dark_air")); }
+    static @Provides @Singleton @Key SoundEvent provideKeySound(Identifiers identifiers) { return new NamedSoundEvent(identifiers.get("key")); }
+    static @Provides @Singleton @Bubble SoundEvent provideBubbleSound(Identifiers identifiers) { return new NamedSoundEvent(identifiers.get("bubble")); }
+    static @Provides @Singleton @Pop SoundEvent providePopSound(Identifiers identifiers) { return new NamedSoundEvent(identifiers.get("pop")); }
+    static @Provides @Singleton @Complete SoundEvent provideCompleteSound(Identifiers identifiers) { return new NamedSoundEvent(identifiers.get("complete")); }
+    static @Provides @Singleton @Exit SoundEvent provideExitSound(Identifiers identifiers) { return new NamedSoundEvent(identifiers.get("exit")); }
+    static @Provides @Singleton @Wind SoundEvent provideWindSound(Identifiers identifiers) { return new NamedSoundEvent(identifiers.get("wind")); }
 
     @Binds @IntoSet SoundEvent bindExplodeDarkSound(@ExplodeDark SoundEvent event);
     @Binds @IntoSet SoundEvent bindDoorSound(@Door SoundEvent event);
@@ -459,6 +460,6 @@ public interface CommonModule {
     }
 
     public static Set<SoundEvent> sounds(Identifiers identifiers, String... sounds) {
-        return Arrays.stream(sounds).map(name -> new SoundEvent(identifiers.get(name))).collect(Collectors.toSet());
+        return Arrays.stream(sounds).map(name -> new NamedSoundEvent(identifiers.get(name))).collect(Collectors.toSet());
     }
 }

@@ -1,5 +1,6 @@
 package co.q64.stars.listener;
 
+import co.q64.stars.util.NamedSoundEvent;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
@@ -73,7 +74,7 @@ public class RegistryListener implements Listener {
 
     @SubscribeEvent
     public void onSoundEventRegistry(Register<SoundEvent> event) {
-        event.getRegistry().registerAll(soundEvents.get().stream().map(sound -> sound.setRegistryName(sound.getName())).toArray(SoundEvent[]::new));
+        event.getRegistry().registerAll(soundEvents.get().stream().map(sound -> sound.setRegistryName(((NamedSoundEvent) sound).getLoc())).toArray(SoundEvent[]::new));
     }
 
     @SubscribeEvent
