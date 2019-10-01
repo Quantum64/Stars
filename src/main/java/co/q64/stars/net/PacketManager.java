@@ -12,6 +12,7 @@ import co.q64.stars.net.packets.UpdateOverlayPacket;
 import co.q64.stars.net.packets.UpdateOverlayPacketFactory;
 import co.q64.stars.util.Identifiers;
 import lombok.Getter;
+import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.NetworkRegistry.ChannelBuilder;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
@@ -32,8 +33,8 @@ public class PacketManager {
 
     protected @Inject PacketManager(Identifiers identifiers) {
         this.channel = ChannelBuilder.named(identifiers.get("main"))
-                .clientAcceptedVersions(protocolVersion::equals)
-                .serverAcceptedVersions(protocolVersion::equals)
+                .clientAcceptedVersions(v -> protocolVersion.equals(v) || v.equals(NetworkRegistry.ABSENT))
+                .serverAcceptedVersions(v -> protocolVersion.equals(v) || v.equals(NetworkRegistry.ABSENT))
                 .networkProtocolVersion(() -> protocolVersion)
                 .simpleChannel();
     }
