@@ -61,7 +61,7 @@ public class InitializationListener implements Listener {
         for (DimensionType type : Arrays.asList(fleetingDimensionTemplate.getType(), fleetingSolidDimensionTemplate.getType(), challengeDimensionTemplate.getType())) {
             for (String extension : Arrays.asList("region", "poi")) {
                 try {
-                    Files.walk(type.getDirectory(new File(event.getServer().getWorld(type).getSaveHandler().getWorldDirectory(), extension)).toPath())
+                    Files.walk(new File(type.getDirectory(event.getServer().getWorld(type).getSaveHandler().getWorldDirectory()), extension).toPath())
                             .sorted(Comparator.reverseOrder())
                             .forEach(t -> {
                                 try {
@@ -70,9 +70,7 @@ public class InitializationListener implements Listener {
                                     e.printStackTrace();
                                 }
                             });
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                } catch (IOException e) {}
             }
         }
     }
