@@ -58,7 +58,6 @@ import co.q64.stars.capability.HubCapability;
 import co.q64.stars.capability.gardener.GardenerCapabilityImpl;
 import co.q64.stars.capability.hub.HubCapabilityImpl;
 import co.q64.stars.dimension.fleeting.ChallengeBiome;
-import co.q64.stars.dimension.fleeting.ChallengeDimension;
 import co.q64.stars.dimension.fleeting.ChallengeDimension.ChallengeDimensionTemplate;
 import co.q64.stars.dimension.fleeting.FleetingBiome;
 import co.q64.stars.dimension.fleeting.FleetingDimension.FleetingDimensionTemplate;
@@ -96,6 +95,7 @@ import co.q64.stars.item.PurpleSeedItem.PurpleSeedItemRobust;
 import co.q64.stars.item.RedSeedItem;
 import co.q64.stars.item.RedSeedItem.RedSeedItemRobust;
 import co.q64.stars.item.StarItem;
+import co.q64.stars.item.StarguideItem;
 import co.q64.stars.item.TealSeedItem;
 import co.q64.stars.item.TealSeedItem.TealSeedItemRobust;
 import co.q64.stars.item.TrophyBlockItem;
@@ -324,6 +324,7 @@ public interface CommonModule {
     @Binds @IntoSet BaseItem bindStarItem(StarItem starItem);
     @Binds @IntoSet BaseItem bindArrowItem(ArrowItem arrowItem);
     @Binds @IntoSet BaseItem bindChallengeStarItem(ChallengeStarItem challengeStarItem);
+    @Binds @IntoSet BaseItem bindStarguideItem(StarguideItem starguideItem);
 
     @Binds @ElementsIntoSet Set<BlockItem> bindTrophyBlockItem(Set<TrophyBlockItem> trophyBlockItems);
 

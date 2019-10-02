@@ -23,12 +23,13 @@ import java.util.Set;
 public class GardenerCapabilityImpl implements GardenerCapability {
     private @Setter @Getter int seeds, keys, seedVisibility = 3, seedsSincePink, totalSeeds, hubIndex = -1;
     private @Setter @Getter long lastJumped;
-    private @Setter @Getter boolean openDoor, openChallengeDoor, enteringHub, enteringFleeting, completeChallenge;
+    private @Setter @Getter boolean openDoor, openChallengeDoor, enteringHub, enteringFleeting, completeChallenge, tutorialMode;
     private @Setter @Getter FleetingStage fleetingStage = FleetingStage.NONE;
     private @Setter @Getter FormingBlockType lastSeed;
     private @Setter @Getter LevelType levelType = LevelType.RED;
-    private @Setter @Getter BlockPos hubSpawn = BlockPos.ZERO, hubEntryPosition = BlockPos.ZERO;
+    private @Setter @Getter BlockPos hubSpawn = BlockPos.ZERO, hubEntryPosition = BlockPos.ZERO, tutorialEntryPosition = BlockPos.ZERO;
     private @Setter @Getter ResourceLocation hubEntryDimension = DimensionType.OVERWORLD.getRegistryName();
+    private @Setter @Getter ResourceLocation tutorialEntryDimension = hubEntryDimension;
     private @Getter Deque<FormingBlockType> nextSeeds = new ArrayDeque<>();
     private @Getter Set<SoundEvent> lastSounds = new HashSet<>();
     private Map<SoundEvent, Long> lastPlayed = new HashMap<>();

@@ -19,8 +19,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Singleton
 public class RegistryListener implements Listener {
@@ -43,8 +45,7 @@ public class RegistryListener implements Listener {
 
     @SubscribeEvent
     public void onItemRegistry(Register<Item> event) {
-        //event.getRegistry().registerAll(items.get().toArray(new Item[0]));
-        event.getRegistry().registerAll(items.get().stream().sorted(((o1, o2) -> o1.getRegistryName().compareTo(o2.getRegistryName()))).toArray(Item[]::new));
+        event.getRegistry().registerAll(items.get().stream().collect(Collectors.toList()).stream().sorted(((o1, o2) -> getNameForSorting(o1).compareTo(getNameForSorting(o2)))).toArray(Item[]::new));
     }
 
     @SubscribeEvent
@@ -94,5 +95,15 @@ public class RegistryListener implements Listener {
                 DimensionManager.registerDimension(dimension.getRegistryName(), dimension, null, false);
             }
         }
+    }
+
+    private String getNameForSorting(Item item) {
+        String result = item.getRegistryName().toString();
+        Class<?> clazz = item.getClass();
+        while (clazz != null) {
+            result = clazz.getSimpleName() + result;
+            clazz = clazz.getSuperclass();
+        }
+        return result;
     }
 }

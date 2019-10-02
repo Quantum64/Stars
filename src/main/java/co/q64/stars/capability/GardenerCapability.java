@@ -67,6 +67,10 @@ public interface GardenerCapability {
 
     public void setCompleteChallenge(boolean completeChallenge);
 
+    public boolean isTutorialMode();
+
+    public void setTutorialMode(boolean tutorialMode);
+
     public FormingBlockType getLastSeed();
 
     public void setLastSeed(FormingBlockType formingBlockType);
@@ -83,9 +87,17 @@ public interface GardenerCapability {
 
     public void setHubEntryDimension(ResourceLocation location);
 
+    public ResourceLocation getTutorialEntryDimension();
+
+    public void setTutorialEntryDimension(ResourceLocation dimension);
+
     public BlockPos getHubEntryPosition();
 
     public void setHubEntryPosition(BlockPos position);
+
+    public BlockPos getTutorialEntryPosition();
+
+    public void setTutorialEntryPosition(BlockPos position);
 
     public Deque<FormingBlockType> getNextSeeds();
 
