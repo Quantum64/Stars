@@ -3,15 +3,18 @@ package co.q64.stars.command;
 import co.q64.stars.capability.GardenerCapability;
 import co.q64.stars.capability.HubCapability;
 import co.q64.stars.dimension.hub.HubDimension;
+import co.q64.stars.util.Capabilities;
 import co.q64.stars.util.HubManager;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import jdk.nashorn.internal.ir.Block;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.capabilities.Capability;
@@ -23,8 +26,7 @@ import javax.inject.Singleton;
 @Singleton
 public class HubCommand {
     protected @Inject HubManager hubManager;
-    protected @Inject Provider<Capability<HubCapability>> hubCapability;
-    protected @Inject Provider<Capability<GardenerCapability>> gardenerCapability;
+    protected @Inject Capabilities capabilities;
 
     protected @Inject HubCommand() {}
 
@@ -41,7 +43,7 @@ public class HubCommand {
         int id = IntegerArgumentType.getInteger(context, "id");
         for (ServerWorld world : context.getSource().getServer().getWorlds()) {
             if (world.getDimension() instanceof HubDimension) {
-                world.getCapability(hubCapability.get()).ifPresent(hub -> {
+                capabilities.hub(world, hub -> {
                     hub.setNextIndex(id);
                     context.getSource().sendFeedback(new StringTextComponent("Next hub index for world '" + world.getDimension().getType().getRegistryName() + "' updated to " + id + "."), true);
                 });
@@ -53,7 +55,7 @@ public class HubCommand {
     private int update(CommandContext<CommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity player = EntityArgument.getPlayer(context, "player");
         int id = IntegerArgumentType.getInteger(context, "id");
-        player.getCapability(gardenerCapability.get()).ifPresent(gardener -> {
+        capabilities.gardener(player, gardener -> {
             gardener.setHubIndex(id);
             context.getSource().sendFeedback(new StringTextComponent("Updated hub index for '" + player.getName().getFormattedText() + "' to " + id + "."), true);
         });
@@ -62,7 +64,7 @@ public class HubCommand {
 
     private int info(CommandContext<CommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity player = EntityArgument.getPlayer(context, "player");
-        player.getCapability(gardenerCapability.get()).ifPresent(gardener -> {
+        capabilities.gardener(player, gardener -> {
             context.getSource().sendFeedback(new StringTextComponent("Hub index for '" + player.getName().getFormattedText() + "' is " + gardener.getHubIndex() + "."), true);
         });
         return 0;
@@ -70,6 +72,11 @@ public class HubCommand {
 
     private int enter(CommandContext<CommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity player = context.getSource().asPlayer();
+        capabilities.gardener(player, gardener -> {
+            if (gardener.getHubEntryPosition().equals(BlockPos.ZERO)) {
+                gardener.setHubEntryPosition(player.getPosition());
+            }
+        });
         hubManager.enter(player);
         return 0;
     }
