@@ -26,6 +26,7 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -58,18 +59,20 @@ public class InitializationListener implements Listener {
     @SubscribeEvent
     public void onServerPreInit(FMLServerStartedEvent event) {
         for (DimensionType type : Arrays.asList(fleetingDimensionTemplate.getType(), fleetingSolidDimensionTemplate.getType(), challengeDimensionTemplate.getType())) {
-            try {
-                Files.walk(type.getDirectory(event.getServer().getWorld(type).getSaveHandler().getWorldDirectory()).toPath())
-                        .sorted(Comparator.reverseOrder())
-                        .forEach(t -> {
-                            try {
-                                Files.delete(t);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        });
-            } catch (IOException e) {
-                e.printStackTrace();
+            for (String extension : Arrays.asList("region", "poi")) {
+                try {
+                    Files.walk(type.getDirectory(new File(event.getServer().getWorld(type).getSaveHandler().getWorldDirectory(), extension)).toPath())
+                            .sorted(Comparator.reverseOrder())
+                            .forEach(t -> {
+                                try {
+                                    Files.delete(t);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
