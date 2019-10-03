@@ -140,7 +140,7 @@ public class RedFormingBlockType implements FormingBlockType {
         }
         for (ServerPlayerEntity player : world.getPlayers()) {
             if (player.getPosition().distanceSq(pos) < 200 * 200) {
-                player.connection.sendPacket(new SStopSoundPacket(tickingSound.getName(), SoundCategory.MASTER));
+                player.connection.sendPacket(new SStopSoundPacket(tickingSound.getRegistryName(), SoundCategory.MASTER));
             }
             if (player.getPosition().distanceSq(pos) < 2.9 * 2.9) {
                 if (player.getEntityWorld().getDimension() instanceof FleetingDimension) {
