@@ -14,14 +14,13 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 
 sealed class FormingBlockType(
-        val id: Int,
         val red: Int = 0,
         val green: Int = 0,
         val blue: Int = 0,
         val buildTime: Int,
         val formed: Block,
         val formedHard: Block,
-        val displayName: String,
+        val id: String,
         val buildTimeOffset: Int = 0,
         val sounds: Set<SoundEvent> = setOf(),
         val seed: Item,
@@ -33,15 +32,20 @@ sealed class FormingBlockType(
         }
     }
 
+    open fun iterations(seed: Long) = 0
+    open fun decayTime(seed: Long) = 100
     open fun canGrow(): Boolean = true
     open fun firstDirection(world: World, position: BlockPos): Direction? = Direction.UP
     open fun nextDirections(world: World, position: BlockPos, last: Direction, iterations: Int): List<Direction> = listOf()
+
+    companion object {
+        fun fromId(id: String) = types.find { it.id == id } ?: BlueFormingBlockType
+    }
 }
 
 
 object BlueFormingBlockType : FormingBlockType(
-        id = 3,
-        displayName = "blue",
+        id = "blue",
         buildTime = 4500,
         green = 114,
         blue = 255,
@@ -51,4 +55,11 @@ object BlueFormingBlockType : FormingBlockType(
         seedRobust = BlueRobustSeedItem
 ) {
 
+}
+
+
+val types by lazy {
+    listOf(
+            BlueFormingBlockType
+    )
 }
