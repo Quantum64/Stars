@@ -17,7 +17,7 @@ import net.minecraftforge.api.distmarker.OnlyIn
 abstract class StarsDimension(
         world: World,
         type: DimensionType,
-        private val generatorFactory: (IWorld) -> ChunkGenerator<GenerationSettings>,
+        private val generator: (IWorld) -> ChunkGenerator<GenerationSettings>,
         private val biome: Biome,
         private val color: Vec3d) : Dimension(world, type) {
 
@@ -27,7 +27,7 @@ abstract class StarsDimension(
         }
     }
 
-    override fun createChunkGenerator(): ChunkGenerator<*> = generatorFactory(world)
+    override fun createChunkGenerator(): ChunkGenerator<*> = generator(world)
     override fun findSpawn(chunkPosIn: ChunkPos, checkValid: Boolean): BlockPos = chunkPosIn.asBlockPos()
     override fun findSpawn(posX: Int, posZ: Int, checkValid: Boolean) = BlockPos(posX, 42, posZ)
     override fun calculateCelestialAngle(worldTime: Long, partialTicks: Float) = 0.0f

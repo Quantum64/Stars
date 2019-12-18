@@ -12,6 +12,7 @@ import net.minecraft.util.Direction
 import net.minecraft.util.SoundEvent
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
+import net.minecraft.world.server.ServerWorld
 
 sealed class FormingBlockType(
         val red: Int = 0,
@@ -57,6 +58,20 @@ object BlueFormingBlockType : FormingBlockType(
 
 }
 
+object RedFormingBlockType : FormingBlockType(
+        id = "red",
+        buildTime = 4500,
+        green = 114,
+        blue = 255,
+        formed = BlueFormedBlock,
+        formedHard = BlueFormedBlockHard,
+        seed = BlueSeedItem,
+        seedRobust = BlueRobustSeedItem
+) {
+    fun explode(world: ServerWorld, pos: BlockPos, decay: Boolean) {
+
+    }
+}
 
 val types by lazy {
     listOf(

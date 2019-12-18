@@ -8,3 +8,5 @@ abstract class BaseBlock(id: String, properties: Properties = Properties.create(
         setRegistryName(id)
     }
 }
+
+interface HardBlock {}
