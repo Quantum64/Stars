@@ -9,9 +9,6 @@ import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.BlockRenderLayer
 import net.minecraft.world.IBlockReader
 
-private val earth = Block.Properties.create(Material.EARTH).sound(SoundType.GROUND).hardnessAndResistance(0f, 0f)
-private val hard = Block.Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(-1f, 3600000f)
-
 sealed class BaseSeedBlock(id: String, properties: Properties = earth) : BaseBlock(id, properties) {
     override fun getRenderLayer() = BlockRenderLayer.CUTOUT
     override fun hasTileEntity(state: BlockState) = true

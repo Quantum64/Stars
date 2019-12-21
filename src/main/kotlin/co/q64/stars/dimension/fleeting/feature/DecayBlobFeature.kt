@@ -1,6 +1,7 @@
 package co.q64.stars.dimension.fleeting.feature
 
 import co.q64.stars.block.DecayBlock
+import co.q64.stars.block.DecaySolidBlock
 import co.q64.stars.block.SpecialDecayBlock
 import co.q64.stars.id
 import co.q64.stars.util.SPREAD_DISTANCE
@@ -70,5 +71,11 @@ sealed class DecayBlobFeatureBase(private val block: Block) : Feature<NoFeatureC
 object DecayBlobFeature : DecayBlobFeatureBase(DecayBlock) {
     init {
         id = "decay_blob"
+    }
+}
+
+object SolidDecayBlobFeature : DecayBlobFeatureBase(DecaySolidBlock) {
+    init {
+        id = "solid_decay_blob"
     }
 }

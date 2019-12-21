@@ -10,7 +10,7 @@ import net.minecraft.world.World
 import net.minecraft.world.server.ServerWorld
 
 
-fun activateDecay(world: ServerWorld, pos: BlockPos) {
+fun ServerWorld.activateDecay(pos: BlockPos) {
     for (direction in directions) {
         val target = pos.offset(direction)
         val state = world.getBlockState(target)
@@ -20,10 +20,10 @@ fun activateDecay(world: ServerWorld, pos: BlockPos) {
     }
 }
 
-fun isDecayBlock(world: World, pos: BlockPos) = world.getBlockState(pos) is BaseDecayBlock
+fun World.isDecayBlock(pos: BlockPos) = getBlockState(pos) is BaseDecayBlock
 
-fun createSpecialDecay(world: IWorld, pos: BlockPos, type: SpecialDecayType, notify: Boolean = true) =
-        world.setBlockState(pos, SpecialDecayBlock.defaultState.with(BaseDecayBlock.type, type), if (notify) 3 else 2)
+fun IWorld.createSpecialDecay(pos: BlockPos, type: SpecialDecayType, notify: Boolean = true) =
+        setBlockState(pos, SpecialDecayBlock.defaultState.with(BaseDecayBlock.type, type), if (notify) 3 else 2)
 
 enum class SpecialDecayType : IStringSerializable {
     HEART, DOOR, CHALLENGE_DOOR, KEY;

@@ -1,12 +1,5 @@
 package co.q64.stars.block
 
-import net.minecraft.block.Block
-import net.minecraft.block.SoundType
-import net.minecraft.block.material.Material
-
-private val earth = Block.Properties.create(Material.EARTH).sound(SoundType.GROUND).hardnessAndResistance(0f, 0f)
-private val hard = Block.Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(-1f, 3600000f)
-
 sealed class FormedBlock(id: String, properties: Properties = earth) : BaseBlock(id, properties)
 object BlueFormedBlock : FormedBlock("blue_formed")
 object BrownFormedBlock : FormedBlock("brown_formed")

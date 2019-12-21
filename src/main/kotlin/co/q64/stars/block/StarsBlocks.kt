@@ -10,6 +10,7 @@ val blocks: List<Block> by lazy {
             BrownFormedBlock,
             CyanFormedBlock,
             GreenFormedBlock,
+            GreenFruitBlock,
             OrangeFormedBlock,
             PinkFormedBlock,
             PurpleFormedBlock,
@@ -24,10 +25,19 @@ val blocks: List<Block> by lazy {
             BrownFormedBlockHard,
             CyanFormedBlockHard,
             GreenFormedBlockHard,
+            GreenFruitBlockHard,
             OrangeFormedBlockHard,
             PurpleFormedBlockHard,
             RedFormedBlockHard,
             RedPrimedBlockHard,
-            YellowFormedBlockHard
+            YellowFormedBlockHard,
+
+            DecayBlock,
+            DecaySolidBlock,
+            AirDecayBlock,
+            SpecialDecayBlock,
+            SpecialDecaySolidBlock,
+            DarknessBlock,
+            GatewayBlock
     )
 }

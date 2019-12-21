@@ -5,6 +5,8 @@ import co.q64.stars.block.BlueFormedBlockHard
 import co.q64.stars.block.DarkAirBlock
 import co.q64.stars.item.BlueRobustSeedItem
 import co.q64.stars.item.BlueSeedItem
+import kotlinx.serialization.*
+import kotlinx.serialization.internal.StringDescriptor
 import net.minecraft.block.Block
 import net.minecraft.block.Blocks
 import net.minecraft.item.Item
@@ -39,8 +41,13 @@ sealed class FormingBlockType(
     open fun firstDirection(world: World, position: BlockPos): Direction? = Direction.UP
     open fun nextDirections(world: World, position: BlockPos, last: Direction, iterations: Int): List<Direction> = listOf()
 
-    companion object {
-        fun fromId(id: String) = types.find { it.id == id } ?: BlueFormingBlockType
+    @Serializer(FormingBlockType::class)
+    companion object : KSerializer<FormingBlockType> {
+        override val descriptor: SerialDescriptor = StringDescriptor.withName("FormingBlockType")
+        override fun serialize(encoder: Encoder, obj: FormingBlockType) = encoder.encodeString(obj.id)
+        override fun deserialize(decoder: Decoder): FormingBlockType = fromId(decoder.decodeString())
+
+        fun fromId(id: String) = formingTypes.find { it.id == id } ?: BlueFormingBlockType
     }
 }
 
@@ -73,8 +80,67 @@ object RedFormingBlockType : FormingBlockType(
     }
 }
 
-val types by lazy {
+object PinkFormingBlockType : FormingBlockType(
+        id = "pink",
+        buildTime = 4500,
+        green = 114,
+        blue = 255,
+        formed = BlueFormedBlock,
+        formedHard = BlueFormedBlockHard,
+        seed = BlueSeedItem,
+        seedRobust = BlueRobustSeedItem
+) {
+}
+
+object CyanFormingBlockType : FormingBlockType(
+        id = "cyan",
+        buildTime = 4500,
+        green = 114,
+        blue = 255,
+        formed = BlueFormedBlock,
+        formedHard = BlueFormedBlockHard,
+        seed = BlueSeedItem,
+        seedRobust = BlueRobustSeedItem
+) {
+
+}
+
+object YellowFormingBlockType : FormingBlockType(
+        id = "cyan",
+        buildTime = 4500,
+        green = 114,
+        blue = 255,
+        formed = BlueFormedBlock,
+        formedHard = BlueFormedBlockHard,
+        seed = BlueSeedItem,
+        seedRobust = BlueRobustSeedItem
+) {
+
+}
+
+object GreenFormingBlockType : FormingBlockType(
+        id = "cyan",
+        buildTime = 4500,
+        green = 114,
+        blue = 255,
+        formed = BlueFormedBlock,
+        formedHard = BlueFormedBlockHard,
+        seed = BlueSeedItem,
+        seedRobust = BlueRobustSeedItem
+) {
+
+}
+
+val formingTypes: List<FormingBlockType> by lazy {
     listOf(
             BlueFormingBlockType
     )
+}
+
+val fleetingFormingTypes by lazy {
+    formingTypes.filter { it.canGrow() }
+}
+
+val hubFormingTypes by lazy {
+    fleetingFormingTypes.filter { it !is PinkFormingBlockType }
 }

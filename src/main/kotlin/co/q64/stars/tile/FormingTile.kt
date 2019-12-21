@@ -2,7 +2,7 @@ package co.q64.stars.tile
 
 import co.q64.stars.type.BlueFormingBlockType
 import co.q64.stars.type.FormingBlockType
-import net.minecraft.nbt.CompoundNBT
+import kotlinx.serialization.Serializable
 import net.minecraft.particles.ParticleTypes
 import net.minecraft.tileentity.ITickableTileEntity
 import net.minecraft.util.Direction
@@ -15,36 +15,49 @@ private const val fruitChance = 3
 private val directions = Direction.values()
 
 class FormingTile : SyncTileEntity(formingTileType), ITickableTileEntity {
-    var first: Boolean = true
-    var hard: Boolean = false
-    var multiplier: Double = 1.0
-    var iterations: Int = 5
-    var direction: Direction = Direction.UP
-    var formTicks: Int = 0
-    var ready: Boolean = false
-    var buildTime: Int = 0
-    var placed: Long = System.currentTimeMillis()
-    var ticks = 0
+    var data = Data()
+
+    @Serializable
+    data class Data(
+            var first: Boolean = true,
+            var hard: Boolean = false,
+            var multiplier: Double = 1.0,
+            var iterations: Int = 5,
+            var direction: Direction = Direction.UP,
+            var formTicks: Int = 0,
+            var ready: Boolean = false,
+            var buildTime: Int = 0,
+            var placed: Long = System.currentTimeMillis(),
+            var ticks: Int = 0,
+            var type: FormingBlockType = BlueFormingBlockType
+    )
+
+    init {
+        sync(::data, Data.serializer())
+    }
 
     var type: FormingBlockType = BlueFormingBlockType
         set(type) {
-            field = type
-            buildTime = type.buildTime
-            if (type.buildTimeOffset > 0) {
-                buildTime += Random.nextInt(-type.buildTimeOffset, type.buildTimeOffset)
-            }
-            /*
+            with(data) {
+                field = type
+                buildTime = type.buildTime
+                if (type.buildTimeOffset > 0) {
+                    buildTime += Random.nextInt(-type.buildTimeOffset, type.buildTimeOffset)
+                }
+                /*
              if (formType == brownFormingBlockType && direction == Direction.DOWN) {
                 buildTime = 250;
             }
             */
-            buildTime = (buildTime * multiplier).toInt()
-            formTicks = buildTime / 50
-            if (first) {
-                iterations = type.iterations(MathHelper.getPositionRandom(getPos()))
+                buildTime = (buildTime * multiplier).toInt()
+                formTicks = buildTime / 50
+                if (first) {
+                    iterations = type.iterations(MathHelper.getPositionRandom(getPos()))
+                }
             }
         }
 
+    /*
     override fun read(compound: CompoundNBT) {
         with(compound) {
             direction = Direction.valueOf(getString("direction"))
@@ -67,16 +80,19 @@ class FormingTile : SyncTileEntity(formingTileType), ITickableTileEntity {
             putInt("buildTime", buildTime)
         }
     }
+     */
 
     override fun tick() {
-        world?.let { world ->
-            if (first && !ready) {
-                direction = type.firstDirection(world, pos) ?: Direction.UP
-                ready = true
-                world.notifyBlockUpdate(pos, blockState, blockState, 2)
+        with(data) {
+            world?.let { world ->
+                if (first && !ready) {
+                    direction = type.firstDirection(world, pos) ?: Direction.UP
+                    ready = true
+                    world.notifyBlockUpdate(pos, blockState, blockState, 2)
+                }
+                if (ticks == formTicks) form(world)
+                ticks++
             }
-            if (ticks == formTicks) form(world)
-            ticks++
         }
     }
 

@@ -6,19 +6,20 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath "org.jetbrains.kotlin:kotlin-serialization:1.3.61"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.61"
     }
 }
 
 plugins {
     id "org.jetbrains.kotlin.jvm" version "1.3.61"
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.3.60'
     id 'com.github.johnrengelman.shadow' version '4.0.4'
     //id "net.ltgt.apt" version "0.21"
     //id "net.ltgt.apt-idea" version "0.21"
 }
 
 apply plugin: 'net.minecraftforge.gradle'
-// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
@@ -27,6 +28,12 @@ group = 'co.q64.stars' // http://maven.apache.org/guides/mini/guide-naming-conve
 archivesBaseName = 'stars'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
 
 minecraft {
     // The mappings can be changed at any time, and must be in the following format.
@@ -101,6 +108,7 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
     compile "org.jetbrains.kotlin:kotlin-stdlib"
+    compile "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0"
 
     // Dev environment
     compileOnly fg.deobf("mezz.jei:jei-1.14.4:6.0.0.26:api")
@@ -128,6 +136,7 @@ shadowJar {
     }
 
     relocate('kotlin', 'co.q64.library.kotlin')
+    relocate('kotlinx', 'co.q64.library.kotlinx')
 }
 
 jar.dependsOn 'shadowJar'
